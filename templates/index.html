@@ -101,14 +101,31 @@
     flex-direction:column;
     gap:18px;
   }
+  .card-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
   .card-head h2{
     font-size:22px;
-    margin:0 0 6px;
+    margin:0;
   }
   .card-head p{
     color:var(--ink-soft);
     font-size:14.5px;
     margin:0;
+  }
+  .card-icon{
+    height:32px;
+    width:auto;
+    display:block;
+    flex-shrink:0;
+  }
+  .card-icon.square{
+    height:36px;
+    width:36px;
+    border-radius:9px;
+    object-fit:cover;
   }
   .spec-pill{
     display:inline-flex;
@@ -245,6 +262,7 @@
 <section class="converter">
   <div class="card" id="panel-normales">
     <div class="card-head">
+      <img src="{{ url_for('static', filename='icon-full.png') }}" alt="" class="card-icon">
       <h2 class="display">Convertir etiquetas FULL</h2>
     </div>
     <span class="spec-pill">100 × 150 mm · 4 etiquetas por hoja</span>
@@ -256,7 +274,7 @@
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <p>Importá el PDF, se te descargará automáticamente</p>
+        <p>Importá el PDF y dale a <strong>"Convertir y descargar"</strong></p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -273,6 +291,38 @@
     <button class="convert" id="btn-normales" disabled>Convertir y descargar</button>
     <div class="status" id="status-normales"></div>
   </div>
+
+  <div class="card" id="panel-correo" style="margin-top:24px;">
+    <div class="card-head">
+      <img src="{{ url_for('static', filename='icon-correo.png') }}" alt="" class="card-icon square">
+      <h2 class="display">Convertir etiquetas de Correo Argentino</h2>
+    </div>
+    <span class="spec-pill">100 × 150 mm · 1 etiqueta por hoja</span>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p>Descargá el PDF de etiquetas de Correo Argentino</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p>Importá el PDF y dale a <strong>"Convertir y descargar"</strong></p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p>Imprimí en tu TagShip a escala 100%, sin "Ajustar a página"</p>
+      </div>
+    </div>
+
+    <div class="dropzone" id="dropzone-correo">
+      <p>Arrastrá tu PDF acá, o tocá para elegirlo</p>
+      <div class="filename" id="filename-correo"></div>
+      <input type="file" id="input-correo" accept="application/pdf">
+    </div>
+
+    <button class="convert" id="btn-correo" disabled>Convertir y descargar</button>
+    <div class="status" id="status-correo"></div>
+  </div>
 </section>
 
 <footer>
@@ -280,7 +330,7 @@
 </footer>
 
 <script>
-function setupTool(prefix, endpoint){
+function setupTool(prefix, endpoint, downloadName){
   const dropzone = document.getElementById(`dropzone-${prefix}`);
   const input = document.getElementById(`input-${prefix}`);
   const filenameEl = document.getElementById(`filename-${prefix}`);
@@ -352,7 +402,7 @@ function setupTool(prefix, endpoint){
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'Etiquetas-TagShip.pdf';
+      a.download = downloadName;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -366,7 +416,8 @@ function setupTool(prefix, endpoint){
   });
 }
 
-setupTool('normales', '/convertir/normales');
+setupTool('normales', '/convertir/normales', 'Etiquetas-TagShip.pdf');
+setupTool('correo', '/convertir/correo', 'Etiquetas-Correo-TagShip.pdf');
 </script>
 
 </body>
