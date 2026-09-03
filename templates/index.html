@@ -32,7 +32,7 @@
     padding:20px 32px;
     border-bottom:1px solid var(--line);
   }
-  header img{height:34px; display:block;}
+  header img{height:44px; display:block;}
   .header-tag{
     color:var(--ink-soft);
     font-size:13.5px;
@@ -227,18 +227,17 @@
 <body>
 
 <header>
-  <img src="{{ url_for('static', filename='logo.png') }}" alt="TagShip">
+  <a href="https://tagship.ar"><img src="{{ url_for('static', filename='logo.png') }}" alt="TagShip"></a>
   <span class="header-tag">conversor.tagship.ar</span>
 </header>
 
 <section class="hero">
   <h1 class="display">Convertí tus etiquetas <span class="accent">al toque</span></h1>
-  <p>Subí el PDF que descargaste de Mercado Libre y te devolvemos el archivo listo para imprimir en tu TagShip, sin recortar ni acomodar nada a mano.</p>
 </section>
 
 <div class="benefits">
   <div class="benefit"><span class="num">100% GRATIS</span><p>Sin límite de usos ni de archivos</p></div>
-  <div class="benefit"><span class="num">EN SEGUNDOS</span><p>Sin instalar nada, desde el navegador</p></div>
+  <div class="benefit"><span class="num">EN INSTANTES</span><p>Para que no pierdas el tiempo</p></div>
   <div class="benefit"><span class="num">SIN GUARDAR</span><p>El archivo se descarta apenas lo procesamos</p></div>
 </div>
 
@@ -246,9 +245,23 @@
   <div class="card" id="panel-normales">
     <div class="card-head">
       <h2 class="display">Etiquetas normales</h2>
-      <p>Para el rollo estándar de tu impresora TagShip.</p>
     </div>
     <span class="spec-pill">100 × 150 mm · 4 etiquetas por hoja</span>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p>Descargá en Mercado Libre todas las etiquetas Full en <strong>6x4cm</strong></p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p>Importá el PDF, se te descargará automáticamente</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p>Imprimí y recortá con tijera las 4 etiquetas Full</p>
+      </div>
+    </div>
 
     <div class="dropzone" id="dropzone-normales">
       <p>Arrastrá tu PDF acá, o tocá para elegirlo</p>
@@ -261,26 +274,8 @@
   </div>
 </section>
 
-<section class="howto">
-  <h3 class="display">Cómo funciona</h3>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <p>Descargá el PDF de etiquetas Full desde Mercado Libre, formato 6×4 cm.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <p>Subilo acá arriba y tocá "Convertir y descargar".</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <p>Imprimí el resultado en tu TagShip a escala 100%, sin "Ajustar a página".</p>
-    </div>
-  </div>
-</section>
-
 <footer>
-  ¿Dudas? Escribinos por <a href="https://wa.me/543496559982" target="_blank" rel="noopener">WhatsApp</a> o volvé a <a href="https://tagship.ar">tagship.ar</a>
+  ¿Dudas? Escribinos por <a href="https://wa.me/543496559982" target="_blank" rel="noopener">WhatsApp</a> o volvé a <a href="https://tagship.ar">la página web</a>
 </footer>
 
 <script>
