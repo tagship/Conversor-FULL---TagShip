@@ -59,12 +59,6 @@ def convertir_normales_endpoint():
     )
 
 
-@app.route("/convertir/full", methods=["POST"])
-def convertir_full_endpoint():
-    # Próximamente: conversor de etiquetas Full (dobles 100x25mm)
-    return jsonify({"error": "Esta herramienta todavía no está disponible."}), 501
-
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conversor de etiquetas — TagShip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue: #024FEB;
+    --blue-dark: #0139B8;
+    --ink: #14161C;
+    --ink-soft: #5B5F6B;
+    --line: #E4E7EE;
+    --bg-soft: #F4F6FC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#fff;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.55;
+  }
+  .display{font-family:'Poppins', sans-serif; font-weight:800;}
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 32px;
+    border-bottom:1px solid var(--line);
+  }
+  header img{height:34px; display:block;}
+  .header-tag{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    font-weight:500;
+  }
+
+  .hero{
+    max-width:760px;
+    margin:0 auto;
+    padding:68px 32px 12px;
+    text-align:center;
+  }
+  .hero h1{
+    font-size:clamp(28px, 4.2vw, 42px);
+    line-height:1.18;
+    margin:0 0 18px;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 .accent{color:var(--blue);}
+  .hero p{
+    color:var(--ink-soft);
+    font-size:17px;
+    max-width:46ch;
+    margin:0 auto;
+  }
+
+  .benefits{
+    max-width:900px;
+    margin:40px auto 0;
+    padding:0 32px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px;
+  }
+  .benefit{
+    background:var(--bg-soft);
+    border-radius:14px;
+    padding:18px 16px;
+    text-align:center;
+  }
+  .benefit .num{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--blue);
+    display:block;
+    margin-bottom:6px;
+  }
+  .benefit p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+
+  .converter{
+    max-width:640px;
+    margin:52px auto 0;
+    padding:0 32px;
+  }
+  .card{
+    border:2px solid var(--ink);
+    border-radius:20px;
+    padding:36px 32px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .card-head h2{
+    font-size:22px;
+    margin:0 0 6px;
+  }
+  .card-head p{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:0;
+  }
+  .spec-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--bg-soft);
+    color:var(--blue-dark);
+    font-weight:600;
+    font-size:13px;
+    padding:7px 14px;
+    border-radius:999px;
+    width:fit-content;
+  }
+
+  .dropzone{
+    border:2px dashed var(--line);
+    border-radius:14px;
+    padding:34px 16px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone.drag{
+    border-color:var(--blue);
+    background:var(--bg-soft);
+  }
+  .dropzone p{
+    margin:0;
+    font-size:14.5px;
+    color:var(--ink-soft);
+  }
+  .dropzone .filename{
+    color:var(--ink);
+    font-weight:600;
+    font-size:13.5px;
+    margin-top:8px;
+    word-break:break-all;
+  }
+  input[type=file]{display:none;}
+
+  button.convert{
+    font-family:'Poppins', sans-serif;
+    font-size:15px;
+    font-weight:700;
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:15px 18px;
+    cursor:pointer;
+  }
+  button.convert:disabled{
+    background:var(--line);
+    color:var(--ink-soft);
+    cursor:not-allowed;
+  }
+  button.convert:not(:disabled):hover{
+    background:var(--blue-dark);
+  }
+
+  .status{
+    font-size:13.5px;
+    min-height:18px;
+    font-weight:500;
+  }
+  .status.error{color:#D6293E;}
+  .status.ok{color:#0F9D58;}
+
+  .howto{
+    max-width:760px;
+    margin:64px auto 0;
+    padding:0 32px;
+  }
+  .howto h3{
+    font-size:20px;
+    text-align:center;
+    margin:0 0 28px;
+  }
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:22px;
+  }
+  .step .step-num{
+    font-family:'Poppins', sans-serif;
+    font-weight:800;
+    color:var(--blue);
+    font-size:22px;
+    margin-bottom:6px;
+  }
+  .step p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+
+  footer{
+    max-width:900px;
+    margin:72px auto 0;
+    padding:24px 32px 60px;
+    color:var(--ink-soft);
+    font-size:13px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  footer a{color:var(--blue); text-decoration:none; font-weight:600;}
+
+  @media (max-width: 680px){
+    .benefits, .steps{grid-template-columns:1fr;}
+    header{padding:16px 20px;}
+    .hero{padding:44px 20px 8px;}
+    .converter{padding:0 20px;}
+    .card{padding:28px 22px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="{{ url_for('static', filename='logo.png') }}" alt="TagShip">
+  <span class="header-tag">conversor.tagship.ar</span>
+</header>
+
+<section class="hero">
+  <h1 class="display">Convertí tus etiquetas <span class="accent">al toque</span></h1>
+  <p>Subí el PDF que descargaste de Mercado Libre y te devolvemos el archivo listo para imprimir en tu TagShip, sin recortar ni acomodar nada a mano.</p>
+</section>
+
+<div class="benefits">
+  <div class="benefit"><span class="num">100% GRATIS</span><p>Sin límite de usos ni de archivos</p></div>
+  <div class="benefit"><span class="num">EN SEGUNDOS</span><p>Sin instalar nada, desde el navegador</p></div>
+  <div class="benefit"><span class="num">SIN GUARDAR</span><p>El archivo se descarta apenas lo procesamos</p></div>
+</div>
+
+<section class="converter">
+  <div class="card" id="panel-normales">
+    <div class="card-head">
+      <h2 class="display">Etiquetas normales</h2>
+      <p>Para el rollo estándar de tu impresora TagShip.</p>
+    </div>
+    <span class="spec-pill">100 × 150 mm · 4 etiquetas por hoja</span>
+
+    <div class="dropzone" id="dropzone-normales">
+      <p>Arrastrá tu PDF acá, o tocá para elegirlo</p>
+      <div class="filename" id="filename-normales"></div>
+      <input type="file" id="input-normales" accept="application/pdf">
+    </div>
+
+    <button class="convert" id="btn-normales" disabled>Convertir y descargar</button>
+    <div class="status" id="status-normales"></div>
+  </div>
+</section>
+
+<section class="howto">
+  <h3 class="display">Cómo funciona</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <p>Descargá el PDF de etiquetas Full desde Mercado Libre, formato 6×4 cm.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <p>Subilo acá arriba y tocá "Convertir y descargar".</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <p>Imprimí el resultado en tu TagShip a escala 100%, sin "Ajustar a página".</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  ¿Dudas? Escribinos por <a href="https://wa.me/543496559982" target="_blank" rel="noopener">WhatsApp</a> o volvé a <a href="https://tagship.ar">tagship.ar</a>
+</footer>
+
+<script>
+function setupTool(prefix, endpoint){
+  const dropzone = document.getElementById(`dropzone-${prefix}`);
+  const input = document.getElementById(`input-${prefix}`);
+  const filenameEl = document.getElementById(`filename-${prefix}`);
+  const btn = document.getElementById(`btn-${prefix}`);
+  const statusEl = document.getElementById(`status-${prefix}`);
+  let currentFile = null;
+
+  function setFile(file){
+    if(!file) return;
+    if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
+      setStatus('El archivo tiene que ser un PDF.', 'error');
+      return;
+    }
+    currentFile = file;
+    filenameEl.textContent = file.name;
+    btn.disabled = false;
+    setStatus('', '');
+  }
+
+  function setStatus(msg, kind){
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  dropzone.addEventListener('click', () => input.click());
+  input.addEventListener('change', (e) => setFile(e.target.files[0]));
+
+  ['dragenter','dragover'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('drag');
+    });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag');
+    });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    setFile(file);
+  });
+
+  btn.addEventListener('click', async () => {
+    if(!currentFile) return;
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Convirtiendo…';
+    setStatus('', '');
+
+    const formData = new FormData();
+    formData.append('archivo', currentFile);
+
+    try{
+      const res = await fetch(endpoint, { method: 'POST', body: formData });
+      if(!res.ok){
+        let msg = 'No se pudo convertir el archivo.';
+        try{
+          const data = await res.json();
+          if(data.error) msg = data.error;
+        }catch(e){}
+        setStatus(msg, 'error');
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Etiquetas-TagShip.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setStatus('Listo. Se descargó tu PDF.', 'ok');
+    }catch(e){
+      setStatus('No se pudo conectar con el servidor. Probá de nuevo.', 'error');
+    }
+    btn.textContent = originalText;
+    btn.disabled = false;
+  });
+}
+
+setupTool('normales', '/convertir/normales');
+</script>
+
+</body>
+</html>
