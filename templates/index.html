@@ -43,16 +43,23 @@
   .hero{
     max-width:760px;
     margin:0 auto;
-    padding:68px 32px 12px;
+    padding:56px 32px 12px;
     text-align:center;
+  }
+  .hero-lockup{
+    display:block;
+    width:min(520px, 100%);
+    height:auto;
+    margin:0 auto 28px;
   }
   .hero h1{
     font-size:clamp(28px, 4.2vw, 42px);
     line-height:1.18;
     margin:0 0 18px;
     letter-spacing:-0.01em;
+    color:var(--ink);
   }
-  .hero h1 .accent{color:var(--blue);}
+  .accent{color:var(--blue);}
   .hero p{
     color:var(--ink-soft);
     font-size:17px;
@@ -100,6 +107,32 @@
     display:flex;
     flex-direction:column;
     gap:18px;
+  }
+  .badge-top{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:var(--blue);
+    font-weight:700;
+    font-size:13px;
+    margin:-4px 0 -6px;
+  }
+  .badge-top .star{font-size:14px;}
+  .card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .card-top-text{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .roll-img{
+    width:96px;
+    height:auto;
+    flex-shrink:0;
   }
   .card-head{
     display:flex;
@@ -236,9 +269,10 @@
   @media (max-width: 680px){
     .benefits, .steps{grid-template-columns:1fr;}
     header{padding:16px 20px;}
-    .hero{padding:44px 20px 8px;}
+    .hero{padding:36px 20px 8px;}
     .converter{padding:0 20px;}
     .card{padding:28px 22px;}
+    .roll-img{width:64px;}
   }
 </style>
 </head>
@@ -246,26 +280,68 @@
 
 <header>
   <a href="https://tagship.ar"><img src="{{ url_for('static', filename='logo.png') }}" alt="TagShip"></a>
-  <span class="header-tag">conversor.tagship.ar</span>
+  <span class="header-tag">Etiquetá fácil y rápido</span>
 </header>
 
 <section class="hero">
-  <h1 class="display">Convertí tus etiquetas <span class="accent">al toque</span></h1>
+  <img src="{{ url_for('static', filename='hero-lockup.png') }}" alt="TagShip x FULL" class="hero-lockup">
+  <h1 class="display">Convertí tus etiquetas FULL al toque</h1>
 </section>
 
 <div class="benefits">
   <div class="benefit"><span class="num">100% GRATIS</span><p>Sin límite de usos ni de archivos</p></div>
   <div class="benefit"><span class="num">EN INSTANTES</span><p>Para que no pierdas el tiempo</p></div>
-  <div class="benefit"><span class="num">DESCARGA AUTOMÁTICA</span><p>Convertidor online, sin programas</p></div>
+  <div class="benefit"><span class="num">DESCARGA AUTOMÁTICA</span><p>Convertidor online, sin programas raros</p></div>
 </div>
 
 <section class="converter">
-  <div class="card" id="panel-normales">
-    <div class="card-head">
-      <img src="{{ url_for('static', filename='icon-full.png') }}" alt="" class="card-icon">
-      <h2 class="display">Convertir etiquetas FULL</h2>
+  <div class="card" id="panel-full-doble">
+    <div class="badge-top"><span class="star">★</span> Más conveniente</div>
+    <div class="card-top">
+      <div class="card-top-text">
+        <div class="card-head">
+          <h2 class="display">Convertir Etiquetas <span class="accent">FULL</span></h2>
+        </div>
+        <span class="spec-pill">50x25mm - Doble banda</span>
+      </div>
+      <img src="{{ url_for('static', filename='roll-doble.jpg') }}" alt="Rollo doble banda" class="roll-img">
     </div>
-    <span class="spec-pill">100 × 150 mm · 4 etiquetas por hoja</span>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p>Descargá en Mercado Libre todas las etiquetas Full en <strong>5x2.5cm</strong></p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p>Importá el PDF y dale a <strong>"Convertir y descargar"</strong></p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p>Imprimí en tu rollo doble banda TagShip, sin recortar nada</p>
+      </div>
+    </div>
+
+    <div class="dropzone" id="dropzone-full-doble">
+      <p>Arrastrá tu PDF acá, o tocá para elegirlo</p>
+      <div class="filename" id="filename-full-doble"></div>
+      <input type="file" id="input-full-doble" accept="application/pdf">
+    </div>
+
+    <button class="convert" id="btn-full-doble" disabled>Convertir y descargar</button>
+    <div class="status" id="status-full-doble"></div>
+  </div>
+
+  <div class="card" id="panel-normales" style="margin-top:24px;">
+    <div class="card-top">
+      <div class="card-top-text">
+        <div class="card-head">
+          <h2 class="display">Convertir Etiquetas <span class="accent">Normales</span></h2>
+        </div>
+        <span class="spec-pill">100 × 150 mm · 4 etiquetas por hoja</span>
+      </div>
+      <img src="{{ url_for('static', filename='roll-normal.jpg') }}" alt="Rollo normal" class="roll-img">
+    </div>
 
     <div class="steps">
       <div class="step">
@@ -278,7 +354,7 @@
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <p>Imprimí y recortá con tijera las 4 etiquetas Full</p>
+        <p>Imprimí y recortá con tijera</p>
       </div>
     </div>
 
@@ -290,38 +366,6 @@
 
     <button class="convert" id="btn-normales" disabled>Convertir y descargar</button>
     <div class="status" id="status-normales"></div>
-  </div>
-
-  <div class="card" id="panel-correo" style="margin-top:24px;">
-    <div class="card-head">
-      <img src="{{ url_for('static', filename='icon-correo.png') }}" alt="" class="card-icon square">
-      <h2 class="display">Convertir etiquetas de Correo Argentino</h2>
-    </div>
-    <span class="spec-pill">100 × 150 mm · 1 etiqueta por hoja</span>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <p>Descargá el PDF de etiquetas de Correo Argentino</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <p>Importá el PDF y dale a <strong>"Convertir y descargar"</strong></p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <p>Imprimí en tu TagShip a escala 100%, sin "Ajustar a página"</p>
-      </div>
-    </div>
-
-    <div class="dropzone" id="dropzone-correo">
-      <p>Arrastrá tu PDF acá, o tocá para elegirlo</p>
-      <div class="filename" id="filename-correo"></div>
-      <input type="file" id="input-correo" accept="application/pdf">
-    </div>
-
-    <button class="convert" id="btn-correo" disabled>Convertir y descargar</button>
-    <div class="status" id="status-correo"></div>
   </div>
 </section>
 
@@ -416,8 +460,8 @@ function setupTool(prefix, endpoint, downloadName){
   });
 }
 
+setupTool('full-doble', '/convertir/full-doble', 'Etiquetas-Full-Doble-TagShip.pdf');
 setupTool('normales', '/convertir/normales', 'Etiquetas-TagShip.pdf');
-setupTool('correo', '/convertir/correo', 'Etiquetas-Correo-TagShip.pdf');
 </script>
 
 </body>
