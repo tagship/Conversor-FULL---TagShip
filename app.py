@@ -5,7 +5,7 @@ import traceback
 from flask import Flask, request, render_template, send_file, jsonify
 
 import convertir_normales
-import convertir_correo
+import convertir_full
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
@@ -60,8 +60,8 @@ def convertir_normales_endpoint():
     )
 
 
-@app.route("/convertir/correo", methods=["POST"])
-def convertir_correo_endpoint():
+@app.route("/convertir/full-doble", methods=["POST"])
+def convertir_full_doble_endpoint():
     archivo = request.files.get("archivo")
     if not archivo or archivo.filename == "":
         return jsonify({"error": "No se recibió ningún archivo."}), 400
@@ -74,14 +74,15 @@ def convertir_correo_endpoint():
     archivo.save(entrada_path)
 
     try:
-        total = convertir_correo.convertir(entrada_path, salida_path)
+        total, paginas = convertir_full.convertir(entrada_path, salida_path)
     except ValueError as e:
         return jsonify({"error": str(e)}), 422
     except Exception:
         traceback.print_exc()
         return jsonify({
             "error": "No pudimos abrir ese archivo. Verificá que sea el PDF "
-                     "de etiquetas descargado de Correo Argentino sin editar."
+                     "de etiquetas descargado de Mercado Libre (formato 5 × 2.5 cm) "
+                     "sin editar."
         }), 422
     finally:
         if os.path.exists(entrada_path):
@@ -90,7 +91,7 @@ def convertir_correo_endpoint():
     return send_file(
         salida_path,
         as_attachment=True,
-        download_name="Etiquetas-Correo-TagShip.pdf",
+        download_name="Etiquetas-Full-Doble-TagShip.pdf",
         mimetype="application/pdf",
     )
 
