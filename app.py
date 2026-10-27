@@ -32,7 +32,15 @@ def redirigir_a_nueva_direccion():
 
 @app.route("/")
 def index():
-    # TagStudio: Diseños, Etiquetas Full y (pronto) Recortar PDF
+    # TagStudio: pantalla de inicio
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
+@app.route("/disenos")
+def disenos():
+    # Enlace directo a Diseños personalizados
     resp = send_from_directory(STUDIO_DIR, "index.html")
     resp.headers["Cache-Control"] = "no-cache"
     return resp
