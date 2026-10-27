@@ -2,7 +2,7 @@ import os
 import uuid
 import traceback
 
-from flask import Flask, request, send_file, send_from_directory, jsonify
+from flask import Flask, request, send_file, send_from_directory, jsonify, redirect
 
 import convertir_normales
 import convertir_full
@@ -20,9 +20,19 @@ app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = MAX_MB * 1024 * 1024
 
 
+# Si este servicio tiene la variable REDIRECT_TO (ej: https://tagstudio.onrender.com),
+# manda todas las visitas a la dirección nueva. Sirve para que el link viejo siga funcionando.
+@app.before_request
+def redirigir_a_nueva_direccion():
+    destino = os.environ.get("REDIRECT_TO", "").strip().rstrip("/")
+    if destino:
+        url = destino + request.full_path.rstrip("?")
+        return redirect(url, code=301 if request.method == "GET" else 307)
+
+
 @app.route("/")
 def index():
-    # TagShip Studio: Diseños, Etiquetas Full y (pronto) Recortar PDF
+    # TagStudio: Diseños, Etiquetas Full y (pronto) Recortar PDF
     resp = send_from_directory(STUDIO_DIR, "index.html")
     resp.headers["Cache-Control"] = "no-cache"
     return resp
