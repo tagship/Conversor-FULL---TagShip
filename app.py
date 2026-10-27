@@ -2,12 +2,13 @@ import os
 import uuid
 import traceback
 
-from flask import Flask, request, render_template, send_file, jsonify
+from flask import Flask, request, send_file, send_from_directory, jsonify
 
 import convertir_normales
 import convertir_full
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STUDIO_DIR = os.path.join(BASE_DIR, "studio")
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -21,7 +22,26 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_MB * 1024 * 1024
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # TagShip Studio: Diseños, Etiquetas Full y (pronto) Recortar PDF
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
+@app.route("/recortar")
+def recortar():
+    # Enlace directo a la sección Recortar PDF del Studio
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
+@app.route("/full")
+def full():
+    # Enlace directo a la sección Etiquetas Full del Studio
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
 
 
 @app.route("/convertir/normales", methods=["POST"])
