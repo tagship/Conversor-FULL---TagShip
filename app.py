@@ -17,6 +17,10 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 MAX_MB = 15
 
 app = Flask(__name__)
+
+# Activación de cuentas (Google + número de compra de Mercado Libre)
+from cuentas import bp as cuentas_bp
+app.register_blueprint(cuentas_bp)
 app.config["MAX_CONTENT_LENGTH"] = MAX_MB * 1024 * 1024
 
 

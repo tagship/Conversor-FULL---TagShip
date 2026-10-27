@@ -1,28 +1,28 @@
 # TagStudio: cómo subirlo a Render
 
-Este paquete convierte tu conversor actual (conversor-full-tagship.onrender.com) en TagStudio:
-Diseños personalizados + Etiquetas Full + (pronto) Recortar PDF, todo en la misma página.
+Archivos de este paquete (todos van en la raíz de tu repositorio de GitHub):
 
-## Qué cambia en tu repositorio de GitHub
+- app.py            → REEMPLAZAR
+- cuentas.py        → NUEVO (activación de cuentas con el número de compra)
+- requirements.txt  → REEMPLAZAR (suma firebase-admin y requests)
+- convertir_full.py → igual que antes
+- studio/index.html → REEMPLAZAR
 
-- app.py → REEMPLAZAR por el de este paquete.
-- studio/index.html → AGREGAR (carpeta nueva "studio").
-- convertir_full.py → es el mismo que ya tenés, no cambia.
+No borres convertir_normales.py, Procfile ni la carpeta static/.
 
-No borres nada más: convertir_normales.py, requirements.txt, Procfile y la carpeta static/
-siguen igual. La carpeta templates/ queda sin usar (podés dejarla).
+## Configuración en Render (Environment)
 
-## Pasos
+- FIREBASE_SERVICE_ACCOUNT: el contenido completo del archivo JSON de la clave privada de Firebase.
+- ADMIN_KEY: una contraseña inventada por vos (solo para conectar Mercado Libre).
+- ML_CLIENT_ID y ML_CLIENT_SECRET: los datos de tu aplicación de Mercado Libre (cuando la crees).
 
-1. Entrá a tu repositorio en github.com.
-2. Tocá "Add file" → "Upload files".
-3. Arrastrá el archivo app.py y la carpeta studio completa (con su index.html adentro).
-4. Abajo, tocá "Commit changes".
-5. Render detecta el cambio y vuelve a publicar solo (tarda 2 o 3 minutos).
-   Si no lo hace: en Render, entrá al servicio → "Manual Deploy" → "Deploy latest commit".
+Mientras Mercado Libre no esté conectado, cualquier número de compra con formato válido activa la cuenta
+y queda registrado como "sin_verificar". Cuando conectes Mercado Libre, la verificación pasa a ser real.
 
 ## Direcciones
 
-- https://conversor-full-tagship.onrender.com/      → TagStudio (Diseños)
-- https://conversor-full-tagship.onrender.com/full  → directo a Etiquetas Full
-- https://conversor-full-tagship.onrender.com/recortar  → directo a Recortar PDF
+- https://tagstudio.onrender.com/          → Inicio
+- https://tagstudio.onrender.com/disenos   → Diseños
+- https://tagstudio.onrender.com/full      → Etiquetas Full
+- https://tagstudio.onrender.com/recortar  → Recortar PDF
+- https://tagstudio.onrender.com/api/estado-activacion → muestra si el servidor y Mercado Libre están configurados
