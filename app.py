@@ -42,6 +42,26 @@ def index():
     return resp
 
 
+@app.route("/manifest.webmanifest")
+def manifest():
+    resp = send_from_directory(STUDIO_DIR, "manifest.webmanifest", mimetype="application/manifest+json")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
+@app.route("/sw.js")
+def service_worker():
+    resp = send_from_directory(STUDIO_DIR, "sw.js", mimetype="application/javascript")
+    resp.headers["Cache-Control"] = "no-cache"
+    resp.headers["Service-Worker-Allowed"] = "/"
+    return resp
+
+
+@app.route("/icons/<path:nombre>")
+def iconos(nombre):
+    return send_from_directory(os.path.join(STUDIO_DIR, "icons"), nombre, max_age=86400)
+
+
 @app.route("/disenos")
 def disenos():
     # Enlace directo a Diseños personalizados
