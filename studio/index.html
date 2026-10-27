@@ -242,7 +242,18 @@ svg.i{ fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; s
 .st-item.on{ background:var(--blue-soft); color:var(--blue); }
 .st-item:disabled{ color:var(--muted); cursor:default; }
 .st-soon{ margin-left:auto; font-size:11px; font-weight:600; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:2px 8px; }
-.st-foot{ margin-top:auto; display:flex; align-items:center; gap:10px; font-size:12.5px; line-height:1.35; color:var(--muted); padding:10px 10px; border-radius:10px; text-decoration:none; }
+.st-acct{ margin-top:auto; display:grid; gap:8px; padding:12px 10px; border:1px solid var(--line); border-radius:12px; }
+.acct-note{ margin:0; font-size:12px; color:var(--muted); line-height:1.4; }
+.gbtn{ gap:8px; border-color:var(--line); width:100%; background:var(--surface); font-size:13.5px; padding:9px 8px; white-space:nowrap; }
+.gbtn:disabled{ opacity:.55; cursor:default; }
+.acct-user{ display:flex; align-items:center; gap:10px; min-width:0; }
+.acct-user img, .acct-ini{ width:34px; height:34px; border-radius:50%; flex:none; object-fit:cover; }
+.acct-ini{ display:grid; place-items:center; background:var(--blue); color:#fff; font-weight:700; }
+.acct-user div{ min-width:0; }
+.acct-user b{ display:block; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.acct-user small{ display:block; font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.acct-out{ padding:6px 10px; font-size:12.5px; border-color:var(--line); }
+.st-foot{ margin-top:0; display:flex; align-items:center; gap:10px; font-size:12.5px; line-height:1.35; color:var(--muted); padding:10px 10px; border-radius:10px; text-decoration:none; }
 .st-foot:hover{ background:var(--line-soft); }
 .st-foot b{ color:var(--blue); font-weight:600; }
 .st-foot .wa{ width:22px; height:22px; flex:none; color:var(--blue); }
@@ -401,6 +412,9 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
   .st-item{ white-space:nowrap; padding:8px 10px; font-size:13px; }
   .st-item .ext{ margin-left:2px; }
   .st-foot{ display:none; }
+  .st-acct{ margin-top:0; grid-template-columns:1fr auto; align-items:center; padding:8px 10px; }
+  .st-acct .acct-note{ grid-column:1 / -1; }
+  .st-acct .gbtn{ grid-column:1 / -1; }
   .st-main{ padding:22px 16px 48px; }
   .st-head h1{ font-size:24px; }
   .benefits{ grid-template-columns:1fr; }
@@ -446,6 +460,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <button class="st-item" data-sec="full"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 2L4 13.5h6.5L9.5 22 20 9.5h-6.6z"/></svg><span>Etiquetas Full</span></button>
       <button class="st-item" data-sec="crop"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg><span>Recortar PDF</span></button>
     </nav>
+    <div class="st-acct" id="acct"></div>
     <a class="st-foot" href="https://wa.me/543496559982" target="_blank" rel="noopener"><svg class="wa" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35zM12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88zm8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.9-11.89a11.82 11.82 0 0 0-3.49-8.41z"/></svg><span>¿Dudas? <b>Escribinos por WhatsApp</b></span></a>
   </aside>
 
@@ -482,7 +497,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
     
       </section>
       <section class="st-sec" id="myDesigns" hidden>
-        <div class="my-head"><h2>Mis diseños</h2><p>Se guardan en este navegador.</p></div>
+        <div class="my-head"><h2>Mis diseños</h2><p id="myWhere">Se guardan en este navegador.</p></div>
         <div class="my-grid" id="myGrid"></div>
       </section>
     </div>
@@ -1019,7 +1034,7 @@ function fileToDataURL(file){
       if (/svg/.test(file.type)){ res(src); return; }
       try {
         const im = await loadImgEl(src);
-        const max = 1600, s = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+        const max = 1200, s = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
         if (s >= 1 && /png/.test(file.type)){ res(src); return; }
         const c = document.createElement('canvas');
         c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s));
@@ -1445,7 +1460,16 @@ function restore(s){
     orient = d.orient || 'v';
     sepMode = !!d.sep;
     updateDocSize();
-    canvas.loadFromJSON(d.json, () => {
+    const fixImgs = arr => (arr || []).forEach(o => {
+      if (o.type === 'image' && !o.src && o.origSrc) o.src = o.origSrc;
+      if (o.objects) fixImgs(o.objects);
+    });
+    fixImgs(d.json && d.json.objects);
+    canvas.loadFromJSON(d.json, async () => {
+      const pend = [];
+      const walk = arr => arr.forEach(o => { if (o.tsNeedStyle){ delete o.tsNeedStyle; pend.push(o); } if (o._objects) walk(o._objects); });
+      walk(canvas.getObjects());
+      for (const o of pend){ if (o.imgStyle !== 'original' || o.imgInvert){ try { await applyImageStyle(o); } catch(e){} } }
       canvas.getObjects().forEach(o => {
         if (o.tsType === 'qr') o.setControlsVisibility({ mt:false, mb:false, ml:false, mr:false });
         if (o.tsType === 'line') o.setControlsVisibility({ mt:false, mb:false });
@@ -2231,7 +2255,7 @@ function exportDialog(mode){
 }
 
 /* ================= Mis diseños (guardados en el navegador) ================= */
-const store = {
+const localStore = {
   db:null,
   open(){
     if (this.db) return Promise.resolve(this.db);
@@ -2256,6 +2280,13 @@ const store = {
   put(d){ return this.run('readwrite', s => s.put(d)); },
   del(id){ return this.run('readwrite', s => s.delete(id)); }
 };
+// Si hay sesión iniciada los diseños van a la cuenta (nube); si no, quedan en este navegador
+const store = {
+  all(){ return fbUser ? cloud.all() : localStore.all(); },
+  get(id){ return fbUser ? cloud.get(id) : localStore.get(id); },
+  put(d){ return fbUser ? cloud.put(d) : localStore.put(d); },
+  del(id){ return fbUser ? cloud.del(id) : localStore.del(id); }
+};
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const fmtDate = t => { const d = new Date(t); return d.toLocaleDateString('es-AR', { day:'numeric', month:'short' }) + ', ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }); };
 function designThumb(){
@@ -2274,7 +2305,7 @@ let autoT = null, saving = false;
 function queueAutosave(){
   if (!current.id || restoring || skipAuto) return;
   setSaveState('Guardando…', false);
-  clearTimeout(autoT); autoT = setTimeout(persist, 900);
+  clearTimeout(autoT); autoT = setTimeout(persist, fbUser ? 2500 : 900);
 }
 async function persist(){
   if (!current.id || !canvas) return false;
@@ -2288,7 +2319,9 @@ async function persist(){
     return true;
   } catch(e){
     setSaveState('No se pudo guardar', false);
-    toast('No se pudo guardar. Puede que el navegador no tenga espacio o esté en modo privado.');
+    if (e && e.code === 'too-big') toast('Este diseño tiene imágenes muy pesadas para guardarlo en tu cuenta. Probá con una imagen más chica.');
+    else if (fbUser) toast('No se pudo guardar en tu cuenta. Revisá tu conexión.');
+    else toast('No se pudo guardar. Puede que el navegador no tenga espacio o esté en modo privado.');
     return false;
   } finally { saving = false; }
 }
@@ -2349,6 +2382,8 @@ async function renderMyDesigns(){
   let list = [];
   try { list = await store.all(); } catch(e){ sec.hidden = true; return; }
   sec.hidden = !list.length;
+  const w = $('#myWhere');
+  if (w) w.textContent = fbUser ? `Guardados en tu cuenta (${fbUser.email || 'Google'}): los ves en todos tus dispositivos.` : 'Se guardan en este navegador. Iniciá sesión con Google para tenerlos en todos tus dispositivos.';
   grid.innerHTML = list.map(d => `<div class="my-card" data-id="${d.id}">
       <button class="my-open" data-act="open" aria-label="Abrir ${esc(d.name)}"><img src="${d.thumb}" alt=""></button>
       <div><div class="my-name">${esc(d.name)}</div><div class="my-meta">${esc(SIZES[d.size] ? SIZES[d.size].label : '')} · ${fmtDate(d.updated)}</div></div>
@@ -2951,10 +2986,132 @@ paintThemeButtons();
   if (location.hash === '#crop' || path === '/recortar') show('crop');
 }
 
+/* ================= Cuentas con Google (Firebase) ================= */
+const FB_CONFIG = {
+  apiKey: "AIzaSyAd_u7A_VyXBOBUhW5PbHRAFPdIrWAsWAw",
+  authDomain: "tagshipstudio.firebaseapp.com",
+  projectId: "tagshipstudio",
+  storageBucket: "tagshipstudio.firebasestorage.app",
+  messagingSenderId: "363270381595",
+  appId: "1:363270381595:web:d32474e6162937390a58be"
+};
+const FB_V = 'https://cdn.jsdelivr.net/npm/firebase@10.14.1/';
+const CLOUD_LIMIT = 950000;   // Firestore admite hasta ~1 MB por diseño
+let fbAuth = null, fbDb = null, fbUser = null, cloudState = 'off';
+const G_ICON = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>';
+
+const cloudCol = () => fbDb.collection('users').doc(fbUser.uid).collection('designs');
+// Para la nube no se repite la imagen procesada: se guarda solo la original y se vuelve a procesar al abrir
+function slimDesign(rec){
+  try {
+    const d = JSON.parse(rec.data);
+    const walk = arr => (arr || []).forEach(o => {
+      if (o.type === 'image' && o.origSrc){ delete o.src; o.tsNeedStyle = true; }
+      if (o.objects) walk(o.objects);
+    });
+    walk(d.json && d.json.objects);
+    return Object.assign({}, rec, { data:JSON.stringify(d) });
+  } catch(e){ return rec; }
+}
+const cloud = {
+  async all(){ const s = await cloudCol().orderBy('updated', 'desc').get(); return s.docs.map(x => x.data()); },
+  async get(id){ const x = await cloudCol().doc(id).get(); return x.exists ? x.data() : undefined; },
+  async put(rec){
+    const r = slimDesign(rec);
+    if (JSON.stringify(r).length > CLOUD_LIMIT){ const e = new Error('big'); e.code = 'too-big'; throw e; }
+    await cloudCol().doc(r.id).set(r);
+  },
+  async del(id){ await cloudCol().doc(id).delete(); }
+};
+function renderAccount(){
+  const box = $('#acct'); if (!box) return;
+  if (!HAS_SERVER){
+    box.innerHTML = '<p class="acct-note">Iniciar sesión con Google funciona en tagstudio.onrender.com.</p>';
+    return;
+  }
+  if (cloudState === 'error'){
+    box.innerHTML = '<p class="acct-note">No se pudo conectar con las cuentas. Revisá tu conexión y recargá la página.</p>';
+    return;
+  }
+  if (fbUser){
+    const name = fbUser.displayName || 'Mi cuenta', mail = fbUser.email || '';
+    const pic = fbUser.photoURL ? `<img src="${esc(fbUser.photoURL)}" alt="" referrerpolicy="no-referrer">` : `<span class="acct-ini">${esc(name.charAt(0).toUpperCase())}</span>`;
+    box.innerHTML = `<div class="acct-user">${pic}<div><b>${esc(name)}</b><small>${esc(mail)}</small></div></div>
+      <button class="btn ghost acct-out" id="acctOut">Cerrar sesión</button>`;
+    $('#acctOut').onclick = signOutGoogle;
+  } else {
+    box.innerHTML = `<button class="btn gbtn" id="acctIn" ${cloudState !== 'ready' ? 'disabled' : ''}>${G_ICON}<span>Continuar con Google</span></button>
+      <p class="acct-note">Guardá tus diseños en tu cuenta y abrilos desde el celular o la compu.</p>`;
+    $('#acctIn').onclick = signInGoogle;
+  }
+}
+async function signInGoogle(){
+  if (!fbAuth) return;
+  const prov = new firebase.auth.GoogleAuthProvider();
+  prov.setCustomParameters({ prompt:'select_account' });
+  try { await fbAuth.signInWithPopup(prov); }
+  catch(e){
+    const c = e && e.code;
+    if (c === 'auth/popup-blocked' || c === 'auth/operation-not-supported-in-this-environment' || c === 'auth/cancelled-popup-request'){
+      try { await fbAuth.signInWithRedirect(prov); } catch(e2){ toast('No se pudo iniciar sesión. Probá de nuevo.'); }
+    } else if (c !== 'auth/popup-closed-by-user'){
+      toast('No se pudo iniciar sesión. Probá de nuevo.');
+    }
+  }
+}
+async function signOutGoogle(){
+  if (!(await ask('¿Cerrar sesión?', 'Tus diseños quedan guardados en tu cuenta. Los vas a ver de nuevo cuando vuelvas a entrar.', 'Cerrar sesión'))) return;
+  if (current.id) await persist();
+  current = { id:null, name:'', created:0 };
+  try { localStorage.removeItem(DRAFT_KEY); } catch(e){}
+  await fbAuth.signOut();
+  if (!$('#editor').hidden){ document.body.classList.remove('has-sel', 'show-label'); show('home'); }
+  toast('Sesión cerrada');
+}
+// La primera vez que alguien entra, sube a su cuenta los diseños que tenía en este navegador
+async function migrateLocal(u){
+  const key = 'tagstudio-migrado-' + u.uid;
+  try { if (localStorage.getItem(key)) return; } catch(e){}
+  let up = 0, big = 0;
+  try {
+    const local = await localStore.all();
+    for (const d of local){
+      try { if (!(await cloud.get(d.id))){ await cloud.put(d); up++; } }
+      catch(e){ if (e.code === 'too-big') big++; }
+    }
+    try { localStorage.setItem(key, '1'); } catch(e){}
+    if (up) toast(`Subimos ${up} diseño${up > 1 ? 's' : ''} de este navegador a tu cuenta`);
+    if (big) setTimeout(() => toast(`${big} diseño${big > 1 ? 's' : ''} con imágenes muy pesadas quedaron solo en este navegador`), 3000);
+  } catch(e){}
+}
+async function initCloud(){
+  renderAccount();
+  if (!HAS_SERVER) return;
+  try {
+    await loadScript(FB_V + 'firebase-app-compat.js');
+    await loadScript(FB_V + 'firebase-auth-compat.js');
+    await loadScript(FB_V + 'firebase-firestore-compat.js');
+    firebase.initializeApp(FB_CONFIG);
+    fbAuth = firebase.auth(); fbDb = firebase.firestore();
+    fbAuth.useDeviceLanguage();
+    fbAuth.getRedirectResult().catch(() => {});
+    cloudState = 'ready'; renderAccount();
+    fbAuth.onAuthStateChanged(async u => {
+      const was = fbUser && fbUser.uid;
+      fbUser = u;
+      renderAccount();
+      if (u && u.uid !== was) await migrateLocal(u);
+      renderMyDesigns(); updateResume();
+      if (!$('#editor').hidden && $('#ed').dataset.tool === 'saved') fillSavedList();
+    });
+  } catch(e){ cloudState = 'error'; renderAccount(); }
+}
+
 /* ================= Inicio ================= */
 (async function boot(){
   updateResume();
   renderMyDesigns();
+  initCloud();
   getDownloads();
   const pre = [];
   FONTS.forEach(f => { pre.push(loadFont(f, 400)); pre.push(loadFont(f, 700)); });
