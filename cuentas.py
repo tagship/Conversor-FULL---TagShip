@@ -4,7 +4,8 @@ Configuración (en Render → Environment):
   FIREBASE_SERVICE_ACCOUNT   JSON completo de la clave privada de Firebase (obligatorio)
   ADMIN_KEY                  una contraseña tuya, para conectar Mercado Libre
   ML_CLIENT_ID / ML_CLIENT_SECRET   datos de tu aplicación de Mercado Libre
-  ML_PRECIO_MINIMO_IMPRESORA (opcional) precio mínimo de un ítem para contar como impresora. Por defecto 100000
+  ML_SKU_PATRON             (opcional) qué SKU cuentan como impresora. Por defecto: tagship + número
+                             + letra opcional (tagship230, tagship15b, tagship56d…). No entran mini ni rollos.
   MAX_CUENTAS_POR_COMPRA     (opcional) cuántas cuentas puede activar un mismo número. Por defecto 2
   BASE_URL                   (opcional) dirección pública. Por defecto https://tagstudio.onrender.com
 
@@ -35,7 +36,7 @@ ADMIN_KEY = os.environ.get("ADMIN_KEY", "").strip()
 BASE_URL = os.environ.get("BASE_URL", "https://tagstudio.onrender.com").strip().rstrip("/")
 REDIRECT_URI = BASE_URL + "/ml/callback"
 MAX_CUENTAS = int(os.environ.get("MAX_CUENTAS_POR_COMPRA", "2") or 2)
-PRECIO_MIN = float(os.environ.get("ML_PRECIO_MINIMO_IMPRESORA", "100000") or 100000)
+SKU_RE = re.compile(os.environ.get("ML_SKU_PATRON", r"^tagship\s*\d+\s*[a-z]?$"), re.IGNORECASE)
 
 _db = None
 _tok = {"access": None, "exp": 0, "seller": None}
@@ -102,6 +103,37 @@ def ml_get(path):
     return requests.get(ML_API + path, headers={"Authorization": "Bearer " + ml_token()}, timeout=20)
 
 
+def sku_de(item):
+    """SKU del ítem vendido. Si la orden no lo trae, lo busca en la publicación."""
+    for k in ("seller_sku", "seller_custom_field"):
+        v = (item.get(k) or "").strip()
+        if v:
+            return v
+    iid = item.get("id")
+    if not iid:
+        return ""
+    r = ml_get(f"/items/{iid}?include_attributes=all")
+    if r.status_code != 200:
+        return ""
+    j = r.json()
+    var_id = item.get("variation_id")
+    for var in j.get("variations") or []:
+        if var_id and str(var.get("id")) == str(var_id):
+            for a in var.get("attributes") or []:
+                if a.get("id") == "SELLER_SKU" and a.get("value_name"):
+                    return a["value_name"].strip()
+            if var.get("seller_custom_field"):
+                return var["seller_custom_field"].strip()
+    for a in j.get("attributes") or []:
+        if a.get("id") == "SELLER_SKU" and a.get("value_name"):
+            return a["value_name"].strip()
+    return (j.get("seller_custom_field") or "").strip()
+
+
+def es_impresora(sku):
+    return bool(SKU_RE.match((sku or "").strip()))
+
+
 def verificar_compra(numero):
     """(True, "") si el número es una compra pagada de una impresora a tu cuenta."""
     ordenes = []
@@ -120,16 +152,42 @@ def verificar_compra(numero):
         return False, ("No encontramos esa compra. Revisá el número en Mercado Libre, "
                        "en Mis compras → detalle de la compra.")
     seller = _tok.get("seller")
+    en_devolucion = False
     for o in ordenes:
         if seller and str((o.get("seller") or {}).get("id")) != str(seller):
             continue
         if o.get("status") != "paid":
             continue
-        for it in o.get("order_items", []):
-            if float(it.get("unit_price") or 0) >= PRECIO_MIN:
-                return True, ""
+        if not any(es_impresora(sku_de(it.get("item") or {})) for it in o.get("order_items", [])):
+            continue
+        if tiene_devolucion(o):
+            en_devolucion = True
+            continue
+        return True, ""
+    if en_devolucion:
+        return False, ("Esa compra tiene una devolución o un reclamo abierto. "
+                       "Si es un error, escribinos por WhatsApp.")
     return False, ("Ese número de compra no corresponde a una impresora TagShip "
                    "o la compra fue cancelada.")
+
+
+def tiene_devolucion(orden):
+    """True si la compra fue reembolsada o tiene un reclamo/devolución abierto."""
+    for p in orden.get("payments") or []:
+        if p.get("status") in ("refunded", "charged_back", "cancelled"):
+            return True
+    tags = [str(t).lower() for t in (orden.get("tags") or [])]
+    if any("return" in t or "refund" in t for t in tags):
+        return True
+    try:
+        r = ml_get(f"/post-purchase/v1/claims/search?resource=order&resource_id={orden.get('id')}")
+        if r.status_code == 200:
+            for c in (r.json() or {}).get("data") or []:
+                if str(c.get("status", "")).lower() == "opened":
+                    return True
+    except Exception:
+        traceback.print_exc()
+    return False
 
 
 # ---------------- Activación ----------------
@@ -229,6 +287,12 @@ def ml_callback():
     return ("<h2 style='font-family:sans-serif'>Listo: Mercado Libre quedó conectado a TagStudio.</h2>"
             "<p style='font-family:sans-serif'>Desde ahora los números de compra se verifican solos. "
             "Ya podés cerrar esta pestaña.</p>")
+
+
+@bp.route("/ml/notificaciones", methods=["GET", "POST"])
+def ml_notificaciones():
+    # Mercado Libre puede pedir una URL de notificaciones: respondemos OK y no hacemos nada
+    return "", 200
 
 
 @bp.get("/api/estado-activacion")
