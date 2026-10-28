@@ -168,16 +168,47 @@ def buscar_ordenes(numero, log=None):
             return ordenes
     sid = seller_id()
     if sid:
-        for q in (f"/orders/search?seller={sid}&q={numero}", f"/orders/search?seller={sid}&pack_id={numero}"):
+        desde = time.strftime("%Y-%m-%dT00:00:00.000-00:00", time.gmtime(time.time() - 540 * 86400))
+        for q in (f"/orders/search?seller={sid}&q={numero}&order.date_created.from={desde}",
+                  f"/orders/search?seller={sid}&pack_id={numero}"):
             sr = ml_get(q)
             anotar("búsqueda " + q.split("&", 1)[1].split("=")[0], sr)
+            if sr.status_code == 200 and log is not None:
+                res = sr.json().get("results", [])
+                log[-1]["resultados"] = len(res)
+                log[-1]["ejemplos"] = [{"orden": o.get("id"), "paquete": o.get("pack_id"),
+                                        "fecha": (o.get("date_created") or "")[:10]} for o in res[:3]]
             if sr.status_code == 200:
                 for o in sr.json().get("results", []):
-                    if str(o.get("id")) == numero or str(o.get("pack_id")) == numero:
+                    if coincide(o, numero):
                         ordenes.append(o)
                 if ordenes:
                     return ordenes
+    # El número de "Mis compras" del comprador suele ser apenas distinto al de la venta
+    # (ej.: compra ...335 → venta ...337). Probamos los números vecinos.
+    if numero.isdigit():
+        base = int(numero)
+        for k in (2, 1, 3, 4, -1, -2, 5, 6):
+            rr = ml_get(f"/orders/{base + k}")
+            anotar(f"orden vecina {base + k}", rr)
+            if rr.status_code == 200:
+                o = rr.json()
+                if str((o.get("seller") or {}).get("id")) == str(sid or seller_id()):
+                    return [o]
     return ordenes
+
+
+def coincide(o, numero):
+    """La venta corresponde al número: es su orden o paquete, el número aparece dentro de la venta,
+    o es el número de compra del comprador (que va casi pegado al de la venta)."""
+    if str(o.get("id")) == numero or str(o.get("pack_id")) == numero:
+        return True
+    try:
+        if numero in json.dumps(o):
+            return True
+        return abs(int(o.get("id")) - int(numero)) <= 10
+    except Exception:
+        return False
 
 
 def verificar_compra(numero):
@@ -185,7 +216,7 @@ def verificar_compra(numero):
     ordenes = buscar_ordenes(numero)
     if not ordenes:
         return False, ("No encontramos esa compra. Revisá el número en Mercado Libre, "
-                       "en Mis compras → detalle de la compra.")
+                       "en Mis compras → detalle de la compra."), None
     seller = _tok.get("seller")
     en_devolucion = False
     for o in ordenes:
@@ -198,12 +229,12 @@ def verificar_compra(numero):
         if tiene_devolucion(o):
             en_devolucion = True
             continue
-        return True, ""
+        return True, "", str(o.get("pack_id") or o.get("id"))
     if en_devolucion:
         return False, ("Esa compra tiene una devolución o un reclamo abierto. "
-                       "Si es un error, escribinos por WhatsApp.")
+                       "Si es un error, escribinos por WhatsApp."), None
     return False, ("Ese número de compra no corresponde a una impresora TagShip "
-                   "o la compra fue cancelada.")
+                   "o la compra fue cancelada."), None
 
 
 def tiene_devolucion(orden):
@@ -250,16 +281,9 @@ def activar():
     if not 10 <= len(numero) <= 20:
         return jsonify(error="El número de compra tiene que tener entre 10 y 20 números."), 400
 
-    aref = d.collection("activations").document(numero)
-    a = aref.get()
-    uids = (a.to_dict() or {}).get("uids", []) if a.exists else []
-    if uid not in uids and len(uids) >= MAX_CUENTAS:
-        return jsonify(error="Ese número de compra ya se usó para activar otra cuenta. "
-                             "Si es un error, escribinos por WhatsApp."), 409
-
     if ml_conectado():
         try:
-            ok, motivo = verificar_compra(numero)
+            ok, motivo, venta = verificar_compra(numero)
         except Exception:
             traceback.print_exc()
             return jsonify(error="No pudimos verificar la compra con Mercado Libre. "
@@ -267,8 +291,16 @@ def activar():
         if not ok:
             return jsonify(error=motivo), 422
         fuente = "mercadolibre"
+        numero = venta or numero
     else:
         fuente = "sin_verificar"
+
+    aref = d.collection("activations").document(numero)
+    a = aref.get()
+    uids = (a.to_dict() or {}).get("uids", []) if a.exists else []
+    if uid not in uids and len(uids) >= MAX_CUENTAS:
+        return jsonify(error="Ese número de compra ya se usó para activar otra cuenta. "
+                             "Si es un error, escribinos por WhatsApp."), 409
 
     aref.set({"uids": firestore.ArrayUnion([uid]), "emails": firestore.ArrayUnion([email]),
               "fuente": fuente, "actualizado": firestore.SERVER_TIMESTAMP}, merge=True)
