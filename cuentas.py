@@ -168,9 +168,7 @@ def buscar_ordenes(numero, log=None):
             return ordenes
     sid = seller_id()
     if sid:
-        desde = time.strftime("%Y-%m-%dT00:00:00.000-00:00", time.gmtime(time.time() - 540 * 86400))
-        for q in (f"/orders/search?seller={sid}&q={numero}&order.date_created.from={desde}",
-                  f"/orders/search?seller={sid}&pack_id={numero}"):
+        for q in (f"/orders/search?seller={sid}&q={numero}",):
             sr = ml_get(q)
             anotar("búsqueda " + q.split("&", 1)[1].split("=")[0], sr)
             if sr.status_code == 200 and log is not None:
@@ -188,14 +186,51 @@ def buscar_ordenes(numero, log=None):
     # (ej.: compra ...335 → venta ...337). Probamos los números vecinos.
     if numero.isdigit():
         base = int(numero)
-        for k in (2, 1, 3, 4, -1, -2, 5, 6):
-            rr = ml_get(f"/orders/{base + k}")
-            anotar(f"orden vecina {base + k}", rr)
+        for k in (2, 1, 3, -1, -2, 4):
+            n = base + k
+            rr = ml_get(f"/orders/{n}")
             if rr.status_code == 200:
+                anotar(f"orden vecina {n}", rr)
                 o = rr.json()
                 if str((o.get("seller") or {}).get("id")) == str(sid or seller_id()):
                     return [o]
+            pp = ml_get(f"/packs/{n}")
+            anotar(f"paquete vecino {n}", pp)
+            if pp.status_code == 200:
+                for o in pp.json().get("orders", []):
+                    r2 = ml_get(f"/orders/{o.get('id')}")
+                    if r2.status_code == 200:
+                        ordenes.append(r2.json())
+                if ordenes:
+                    return ordenes
+        # Último recurso: revisar tus ventas recientes buscando el número en cualquier dato de la venta
+        ordenes = escanear_ventas(numero, sid or seller_id(), log)
     return ordenes
+
+
+def escanear_ventas(numero, sid, log=None, paginas=12):
+    """Recorre tus últimas ventas (hasta 600) buscando el número o uno pegado."""
+    if not sid:
+        return []
+    vecinos = [numero] + [str(int(numero) + k) for k in (1, 2, 3, -1, -2, -3)]
+    for pg in range(paginas):
+        r = ml_get(f"/orders/search?seller={sid}&sort=date_desc&limit=50&offset={pg * 50}")
+        if r.status_code != 200:
+            break
+        res = r.json().get("results", [])
+        for o in res:
+            texto = json.dumps(o)
+            if any(v in texto for v in vecinos):
+                if log is not None:
+                    log.append({"consulta": "escaneo de ventas", "estado": 200,
+                                "detalle": f"encontrada en la página {pg + 1}",
+                                "orden": o.get("id"), "paquete": o.get("pack_id")})
+                return [o]
+        if len(res) < 50:
+            break
+    if log is not None:
+        log.append({"consulta": "escaneo de ventas", "estado": 200, "detalle": "no apareció en las últimas ventas"})
+    return []
 
 
 def coincide(o, numero):
