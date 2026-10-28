@@ -134,20 +134,55 @@ def es_impresora(sku):
     return bool(SKU_RE.match((sku or "").strip()))
 
 
-def verificar_compra(numero):
-    """(True, "") si el número es una compra pagada de una impresora a tu cuenta."""
+def seller_id():
+    if not _tok.get("seller"):
+        r = ml_get("/users/me")
+        if r.status_code == 200:
+            _tok["seller"] = r.json().get("id")
+    return _tok.get("seller")
+
+
+def buscar_ordenes(numero, log=None):
+    """Busca la compra de varias formas, porque Mercado Libre muestra distintos números:
+    número de orden, número de paquete (compras de varios productos o Full) o búsqueda."""
+    def anotar(nombre, r):
+        if log is not None:
+            log.append({"consulta": nombre, "estado": r.status_code,
+                        "detalle": (r.text[:160] if r.status_code != 200 else "ok")})
+        print(f"[activar] {nombre} -> {r.status_code}", flush=True)
+
     ordenes = []
     r = ml_get(f"/orders/{numero}")
+    anotar("orden", r)
     if r.status_code == 200:
-        ordenes = [r.json()]
-    else:
-        # Si compró varias cosas juntas, Mercado Libre puede mostrarle el número de "paquete"
-        p = ml_get(f"/packs/{numero}")
-        if p.status_code == 200:
-            for o in p.json().get("orders", []):
-                rr = ml_get(f"/orders/{o.get('id')}")
-                if rr.status_code == 200:
-                    ordenes.append(rr.json())
+        return [r.json()]
+    p = ml_get(f"/packs/{numero}")
+    anotar("paquete", p)
+    if p.status_code == 200:
+        for o in p.json().get("orders", []):
+            rr = ml_get(f"/orders/{o.get('id')}")
+            anotar(f"orden del paquete {o.get('id')}", rr)
+            if rr.status_code == 200:
+                ordenes.append(rr.json())
+        if ordenes:
+            return ordenes
+    sid = seller_id()
+    if sid:
+        for q in (f"/orders/search?seller={sid}&q={numero}", f"/orders/search?seller={sid}&pack_id={numero}"):
+            sr = ml_get(q)
+            anotar("búsqueda " + q.split("&", 1)[1].split("=")[0], sr)
+            if sr.status_code == 200:
+                for o in sr.json().get("results", []):
+                    if str(o.get("id")) == numero or str(o.get("pack_id")) == numero:
+                        ordenes.append(o)
+                if ordenes:
+                    return ordenes
+    return ordenes
+
+
+def verificar_compra(numero):
+    """(True, "") si el número es una compra pagada de una impresora a tu cuenta."""
+    ordenes = buscar_ordenes(numero)
     if not ordenes:
         return False, ("No encontramos esa compra. Revisá el número en Mercado Libre, "
                        "en Mis compras → detalle de la compra.")
@@ -293,6 +328,51 @@ def ml_callback():
 def ml_notificaciones():
     # Mercado Libre puede pedir una URL de notificaciones: respondemos OK y no hacemos nada
     return "", 200
+
+
+@bp.get("/ml/diagnostico")
+def ml_diagnostico():
+    """Para vos: muestra qué responde Mercado Libre con un número de compra.
+    Uso: /ml/diagnostico?clave=TU_ADMIN_KEY&orden=2000013842197335"""
+    if not ADMIN_KEY or request.args.get("clave", "") != ADMIN_KEY:
+        return "No autorizado.", 403
+    numero = re.sub(r"\D", "", request.args.get("orden", ""))
+    log = []
+    try:
+        ordenes = buscar_ordenes(numero, log)
+    except Exception as e:
+        return jsonify(error=str(e)[:300], consultas=log)
+    resumen = []
+    for o in ordenes:
+        items = []
+        for it in o.get("order_items", []):
+            sku = sku_de(it.get("item") or {})
+            items.append({"titulo": (it.get("item") or {}).get("title"), "sku": sku, "es_impresora": es_impresora(sku)})
+        resumen.append({"orden": o.get("id"), "paquete": o.get("pack_id"), "estado": o.get("status"),
+                        "vendedor_ok": str((o.get("seller") or {}).get("id")) == str(seller_id()),
+                        "devolucion": tiene_devolucion(o), "items": items})
+    return jsonify(numero=numero, vendedor=seller_id(), consultas=log, ordenes=resumen)
+
+
+@bp.get("/admin/activar")
+def admin_activar():
+    """Para vos: activa a mano la cuenta de un cliente por su mail de Google.
+    Uso: /admin/activar?clave=TU_ADMIN_KEY&email=cliente@gmail.com&orden=2000...(opcional)"""
+    if not ADMIN_KEY or request.args.get("clave", "") != ADMIN_KEY:
+        return "No autorizado.", 403
+    d = db()
+    if not d:
+        return "Falta FIREBASE_SERVICE_ACCOUNT.", 500
+    email = request.args.get("email", "").strip()
+    try:
+        user = fb_auth.get_user_by_email(email)
+    except Exception:
+        return (f"No encontramos una cuenta con {email}. El cliente primero tiene que entrar a "
+                "TagStudio y tocar 'Continuar con Google'."), 404
+    numero = re.sub(r"\D", "", request.args.get("orden", "")) or "manual"
+    d.collection("access").document(user.uid).set({"activa": True, "orden": numero, "email": email,
+                                                    "fuente": "manual", "fecha": firestore.SERVER_TIMESTAMP})
+    return f"Listo: la cuenta {email} quedó activada. Que recargue TagStudio."
 
 
 @bp.get("/api/estado-activacion")
