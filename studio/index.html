@@ -299,6 +299,51 @@ button{ cursor:pointer; }
 .btn.btn-send:disabled{ opacity:.45; cursor:not-allowed; background:var(--surface); }
 @media (max-width: 860px){ .q-act .btn span{ display:none; } .q-th{ width:58px; height:58px; } .q-th img{ max-width:50px; max-height:50px; } }
 
+/* Tamaños personalizados */
+.size-card.custom-size{ position:relative; cursor:pointer; }
+.size-card.custom-size:hover{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.size-del{ position:absolute; top:8px; right:8px; width:30px; height:30px; background:var(--surface); border:1px solid var(--line); }
+.size-del svg{ width:15px; height:15px; }
+.size-card.add-size{ border-style:dashed; border-color:var(--line); }
+.size-card.add-size:hover{ border-color:var(--blue); }
+.add-plus{ width:54px; height:54px; border-radius:50%; background:var(--blue); color:#fff; display:grid; place-items:center; font:400 34px/1 "Poppins",sans-serif; }
+.modal-card.wide{ width:min(520px,100%); }
+.ns-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.ns-opt{ display:grid; gap:2px; padding:12px 8px; border:1.5px solid var(--line); border-radius:12px; background:var(--surface); }
+.ns-opt b{ font:700 15px "Poppins",sans-serif; }
+.ns-opt small{ font-size:11.5px; color:var(--muted); }
+.ns-opt:hover, .ns-opt.on{ border-color:var(--blue); background:var(--blue-soft); }
+.ns-custom{ display:flex; align-items:center; gap:10px; }
+.ns-custom .field{ flex:1; }
+.ns-custom span{ font-weight:700; color:var(--muted); }
+@media (max-width: 860px){ .ns-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Capas */
+.ly-list{ display:grid; gap:6px; }
+.ly{ display:flex; align-items:center; gap:4px; padding:5px 4px 5px 6px; border:1.5px solid var(--line); border-radius:10px; background:var(--surface); }
+.ly.on{ border-color:var(--blue); background:var(--blue-soft); }
+.ly.off .ly-name, .ly.off .ly-ico{ opacity:.4; }
+.ly.over{ box-shadow:0 -3px 0 var(--blue); }
+.ly.drag{ opacity:.5; }
+.ly-grip{ cursor:grab; color:var(--muted); font-size:12px; letter-spacing:-2px; padding:0 2px; user-select:none; }
+.ly-ico{ width:16px; height:16px; flex:none; color:var(--muted); }
+.ly-name{ flex:1; min-width:0; text-align:left; border:none; background:none; padding:6px 4px; font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ly .icon-btn{ width:28px; height:28px; flex:none; }
+.ly .icon-btn svg{ width:16px; height:16px; }
+/* Recorte de imagen */
+.ic-stage{ display:grid; place-items:center; background:var(--mat); border-radius:12px; padding:14px; }
+.ic-page{ position:relative; touch-action:none; user-select:none; overflow:hidden; cursor:crosshair; background:#fff; }
+.ic-page img{ width:100%; height:100%; display:block; pointer-events:none; }
+
+/* Recortes automáticos */
+.auto-crop{ margin-top:34px; }
+.auto-crop > h2{ font:800 22px/1.2 "Poppins",sans-serif; margin:0 0 4px; text-align:center; }
+.auto-sub{ text-align:center; color:var(--muted); font-size:14.5px; margin:0 0 18px; }
+.auto-ico{ width:52px; height:52px; flex:none; border-radius:14px; background:var(--blue-soft); color:var(--blue); display:grid; place-items:center; }
+.auto-ico svg{ width:26px; height:26px; }
+.auto-desc{ margin:-4px 0 0; color:var(--muted); font-size:13.5px; }
+#crop.loaded .auto-crop{ margin-top:28px; }
+
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .my-head p{ margin:0; color:var(--muted); font-size:13px; }
@@ -702,6 +747,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <span class="size-name">50 × 25 mm</span>
           <span class="size-use">Doble banda, 2 por fila</span>
         </button>
+        <button class="size-card add-size" id="btnNewSize"><span class="size-stage"><span class="add-plus">+</span></span><span class="size-name">Otro tamaño</span><span class="size-use">100 × 50, 55 × 44, triple banda o la medida que quieras</span></button>
       </div>
     
       </section>
@@ -752,7 +798,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       </header>
       <div class="benefits">
         <div class="benefit"><b>100% GRATIS</b><p>Sin límite de usos ni de archivos</p></div>
-        <div class="benefit"><b>PRIVADO</b><p>Tu archivo no sale de tu computadora</p></div>
+        <div class="benefit"><b>PRIVADO</b><p>Tus archivos no se guardan</p></div>
         <div class="benefit"><b>CALIDAD ORIGINAL</b><p>El recorte no pierde nitidez</p></div>
       </div>
       <div class="crop-drop" id="cropDrop" role="button" tabindex="0">
@@ -813,6 +859,27 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
         </div>
         <p class="crop-tip">Arrastrá el recuadro para moverlo, tirá de los puntos para cambiar el tamaño, o dibujá uno nuevo sobre la hoja.</p>
       </div>
+      <section class="auto-crop">
+        <h2>Recortes automáticos</h2>
+        <p class="auto-sub">Para estos formatos no hace falta marcar nada: subí el PDF en A4 y sale listo en 10 × 15.</p>
+        <div class="cv-grid">
+        <div class="cv-card auto-card" id="panel-paqar">
+          <div class="cv-top"><div class="cv-top-text"><h2>PAQ.AR</h2><span class="spec-pill">Correo Argentino · A4 → 10 × 15</span></div><span class="auto-ico"><svg class="i" viewBox="0 0 24 24"><path d="M1.5 5h12.5v10.5H1.5zM15 8.5h4l3.5 3.8v3.2H15z"/><circle cx="6.5" cy="17.5" r="2.3"/><circle cx="18" cy="17.5" r="2.3"/></svg></span></div>
+          <p class="auto-desc">La etiqueta de envío de Correo Argentino (PAQ.AR).</p>
+          <div class="cv-drop" id="dropzone-paqar" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-paqar"></div><input type="file" id="input-paqar" accept="application/pdf" hidden></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-paqar" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-paqar" disabled>Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-paqar" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button></div>
+          <div class="cv-status" id="status-paqar" role="status"></div>
+        </div>
+        <div class="cv-card auto-card" id="panel-bultos">
+          <div class="cv-top"><div class="cv-top-text"><h2>Bultos para <span class="accent">Full</span></h2><span class="spec-pill">Mercado Libre · A4 → 10 × 15</span></div><span class="auto-ico"><svg class="i" viewBox="0 0 24 24"><path d="M12 2l9 4.5v11L12 22l-9-4.5v-11z"/><path d="M3 6.5l9 4.5 9-4.5M12 11v11"/></svg></span></div>
+          <p class="auto-desc">La etiqueta de las cajas que mandás a Full.</p>
+          <div class="cv-drop" id="dropzone-bultos" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-bultos"></div><input type="file" id="input-bultos" accept="application/pdf" hidden></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-bultos" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-bultos" disabled>Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-bultos" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button></div>
+          <div class="cv-status" id="status-bultos" role="status"></div>
+        </div>
+        </div>
+      </section>
+
     </div>
 
     <!-- ============ COLA DE IMPRESIÓN ============ -->
@@ -891,6 +958,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <button data-tool="barcode"><svg class="i" viewBox="0 0 24 24"><path d="M4 5v14M7 5v14M10.5 5v14M14 5v14M16.5 5v14M20 5v14"/></svg>Código</button>
       <button data-tool="shapes"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="10" height="10" rx="1.5"/><circle cx="16" cy="16" r="5"/></svg>Formas</button>
       <button data-tool="icons"><svg class="i" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>Íconos</button>
+      <button data-tool="layers"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>Capas</button>
       <button data-tool="saved"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Guardados</button>
       <button data-tool="label" class="m-only"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6"/></svg>Etiqueta</button>
     </nav>
@@ -926,6 +994,10 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <section data-panel="shapes" hidden>
         <div class="drawer-head"><div><h2>Formas</h2><p class="hint">Recuadros, líneas de corte y separadores.</p></div><button class="icon-btn drawer-close" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
         <div class="tile-grid" id="shapeGrid"></div>
+      </section>
+      <section data-panel="layers" hidden>
+        <div class="drawer-head"><div><h2>Capas</h2><p class="hint">Arriba está lo que se ve adelante. Arrastrá para reordenar.</p></div><button class="icon-btn drawer-close" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+        <div class="ly-list" id="layersList"></div>
       </section>
       <section data-panel="saved" hidden>
         <div class="drawer-head"><div><h2>Mis diseños</h2><p class="hint">Tocá uno para abrirlo. Se guardan en este navegador.</p></div><button class="icon-btn drawer-close" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -976,7 +1048,7 @@ const EXPORT_SCALE = 2;     // 8 puntos por mm = 203 dpi (resolución real de la
 const MARGIN_MM = 3;
 const INK = '#000000', PAPER = '#ffffff';
 const DRAFT_KEY = 'tagship-editor-borrador-v1';
-const PROPS = ['tsType','tsLocked','qrData','bcData','origSrc','imgStyle','imgThreshold','imgInvert',
+const PROPS = ['tsType','tsLocked','qrData','bcData','origSrc','imgStyle','imgThreshold','imgInvert','imgCrop',
   'lockMovementX','lockMovementY','lockScalingX','lockScalingY','lockRotation','hasControls'];
 const FONTS = ['Inter','Poppins','Montserrat','Archivo Black','Bebas Neue','Oswald','Anton','Roboto Slab',
   'Playfair Display','Lobster','Pacifico','Caveat','Dancing Script','Permanent Marker','Space Mono','Righteous'];
@@ -995,8 +1067,21 @@ const SIZES = {
 let canvas = null, orient = 'v', zoom = 1, manualZoom = false, showMargin = true, sizeKey = '100x150';
 const SZ = () => SIZES[sizeKey];
 const K = () => SZ().k;
+// Tamaños personalizados: clave 'c<ancho>x<alto>' o 'c<ancho>x<alto>-<n>b' para varias bandas
+function sizeFromKey(key){
+  if (SIZES[key]) return SIZES[key];
+  const m = /^c(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)(?:-(\d)b)?$/.exec(key || '');
+  if (!m) return null;
+  const w = +m[1], h = +m[2], lanes = +(m[3] || 1), gap = 3;
+  const sz = { label:`${w} × ${h} mm${lanes === 3 ? ' triple banda' : lanes === 2 ? ' doble banda' : ''}`, w, h, custom:true,
+    margin:Math.max(1, Math.min(3, Math.min(w, h) * 0.06)), k:Math.max(0.25, Math.min(1, w / 100, h / 66)), file:`${w}x${h}${lanes > 1 ? '-' + lanes + 'bandas' : ''}` };
+  if (lanes > 1) sz.dual = { pageW:+(w * lanes + gap * (lanes - 1)).toFixed(2), gap, lanes };
+  SIZES[key] = sz;
+  return sz;
+}
+const sizeLabel = key => (sizeFromKey(key) || {}).label || '';
 let sepMode = false;   // doble banda: false = duplicado, true = dos diseños distintos
-const isSep = () => !!(SZ().dual && sepMode);
+const isSep = () => !!(SZ().dual && (SZ().dual.lanes || 2) === 2 && sepMode);
 const W = () => isSep() ? SZ().dual.pageW * MM : (orient === 'v' ? SZ().w : SZ().h) * MM;
 const labelW = () => SZ().dual ? SZ().w * MM : W();
 function zoneX(cx){
@@ -1033,7 +1118,8 @@ const SVGI = {
   ungroup:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke-dasharray="2 2"/>',
   upload:'<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>',
   edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
-  close:'<path d="M6 6l12 12M18 6L6 18"/>'
+  close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  crop:'<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>'
 };
 const ic = (k, extra='') => `<svg class="i" viewBox="0 0 24 24" ${extra}>${SVGI[k]}</svg>`;
 
@@ -1282,7 +1368,8 @@ function fileToDataURL(file){
 }
 async function applyImageStyle(o){
   const dispW = o.getScaledWidth(), dispH = o.getScaledHeight();
-  const orig = await loadImgEl(o.origSrc);
+  const orig0 = await loadImgEl(o.origSrc);
+  const orig = o.imgCrop ? cropCanvas(orig0, o.imgCrop) : orig0;
   let el;
   const style = o.imgStyle || 'bn';
   if (style === 'original' && !o.imgInvert){
@@ -1526,6 +1613,7 @@ function initCanvas(){
     // en el celular: un toque sin arrastrar abre el panel de edición
     if (isMobileUI() && e.target && !touchMoved && canvas.getActiveObject()) openSheet();
   });
+  ['object:added','object:removed','selection:created','selection:updated','selection:cleared','text:changed'].forEach(ev => canvas.on(ev, () => { if ($('#ed').dataset.tool === 'layers') renderLayers(); }));
   canvas.on('selection:created', renderProps);
   canvas.on('selection:updated', renderProps);
   canvas.on('selection:cleared', renderProps);
@@ -1560,7 +1648,7 @@ function initCanvas(){
 function fitZoom(){
   const st = $('#stage');
   const aw = st.clientWidth - 90, ah = st.clientHeight - 130;
-  setZoom(Math.max(0.3, Math.min(aw / W(), ah / H(), SZ().dual ? 5 : 3)), false);
+  setZoom(Math.max(0.3, Math.min(aw / W(), ah / H(), (SZ().dual || SZ().w * SZ().h < 6000) ? 5 : 3)), false);
 }
 function setZoom(z, manual){
   zoom = Math.max(0.3, Math.min(7, z));
@@ -1697,7 +1785,7 @@ function restore(s){
   return new Promise(res => {
     restoring = true;
     const d = JSON.parse(s);
-    if (d.size && SIZES[d.size] && d.size !== sizeKey){ sizeKey = d.size; }
+    if (d.size && sizeFromKey(d.size) && d.size !== sizeKey){ sizeKey = d.size; }
     orient = d.orient || 'v';
     sepMode = !!d.sep;
     updateDocSize();
@@ -1737,6 +1825,149 @@ let touchMoved = false;
 const isMobileUI = () => window.matchMedia('(max-width: 860px)').matches;
 function openSheet(){ document.body.classList.add('sheet-open'); }
 function closeSheet(){ document.body.classList.remove('sheet-open'); }
+
+/* ---- Recortar una imagen subida ---- */
+function cropCanvas(img, r){
+  const nw = img.naturalWidth || img.width, nh = img.naturalHeight || img.height;
+  const w = Math.max(1, Math.round(r.w * nw)), h = Math.max(1, Math.round(r.h * nh));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(img, Math.round(r.x * nw), Math.round(r.y * nh), w, h, 0, 0, w, h);
+  return c;
+}
+function imageCropDialog(src, initial){
+  return new Promise(async res => {
+    const im = await loadImgEl(src);
+    const m = $('#modal'), c = $('#modalCard');
+    c.classList.add('wide');
+    const H8 = ['nw','n','ne','e','se','s','sw','w'].map(h => `<i data-h="${h}" class="h-${h}"></i>`).join('');
+    c.innerHTML = `<h2>Recortar imagen</h2><p>Mové el recuadro o tirá de los puntos. Lo de afuera se oculta.</p>
+      <div class="ic-stage"><div class="ic-page" id="icPage"><img src="${src}" alt="" draggable="false"><div class="crop-box" id="icBox">${H8}</div></div></div>
+      <div class="modal-actions"><button class="btn ghost" data-r="cancel">Cancelar</button>${initial ? '<button class="btn ghost" data-r="clear">Quitar recorte</button>' : ''}<button class="btn primary" data-r="ok">Aplicar recorte</button></div>`;
+    m.hidden = false;
+    let r = initial ? { ...initial } : { x:0, y:0, w:1, h:1 };
+    const page = $('#icPage'), box = $('#icBox');
+    const ar = (im.naturalWidth || 1) / (im.naturalHeight || 1);
+    const maxW = Math.min(c.clientWidth - 48, 560), maxH = Math.min(window.innerHeight * 0.55, 460);
+    const pw = Math.min(maxW, maxH * ar);
+    page.style.width = Math.round(pw) + 'px'; page.style.height = Math.round(pw / ar) + 'px';
+    const draw = () => { box.style.left = r.x * 100 + '%'; box.style.top = r.y * 100 + '%'; box.style.width = r.w * 100 + '%'; box.style.height = r.h * 100 + '%'; };
+    draw();
+    let drag = null;
+    const pt = e => { const b = page.getBoundingClientRect(); return { x:(e.clientX - b.left) / b.width, y:(e.clientY - b.top) / b.height }; };
+    page.onpointerdown = e => {
+      e.preventDefault();
+      const h = e.target.dataset && e.target.dataset.h;
+      drag = { type: h || (e.target.closest('#icBox') ? 'move' : 'new'), p:pt(e), s:{ ...r } };
+      page.setPointerCapture(e.pointerId);
+    };
+    page.onpointermove = e => {
+      if (!drag) return;
+      const p = pt(e), dx = p.x - drag.p.x, dy = p.y - drag.p.y, s0 = drag.s, MIN = 0.03, cl = v => Math.max(0, Math.min(1, v));
+      if (drag.type === 'move') r = { x:cl(Math.min(1 - s0.w, s0.x + dx)), y:cl(Math.min(1 - s0.h, s0.y + dy)), w:s0.w, h:s0.h };
+      else if (drag.type === 'new'){
+        const x1 = cl(drag.p.x), y1 = cl(drag.p.y), x2 = cl(p.x), y2 = cl(p.y);
+        if (Math.abs(x2 - x1) < MIN || Math.abs(y2 - y1) < MIN) return;
+        r = { x:Math.min(x1, x2), y:Math.min(y1, y2), w:Math.abs(x2 - x1), h:Math.abs(y2 - y1) };
+      } else {
+        let l = s0.x, t = s0.y, rr = s0.x + s0.w, b = s0.y + s0.h;
+        if (drag.type.includes('w')) l = Math.min(cl(s0.x + dx), rr - MIN);
+        if (drag.type.includes('e')) rr = Math.max(cl(s0.x + s0.w + dx), l + MIN);
+        if (drag.type.includes('n')) t = Math.min(cl(s0.y + dy), b - MIN);
+        if (drag.type.includes('s')) b = Math.max(cl(s0.y + s0.h + dy), t + MIN);
+        r = { x:l, y:t, w:rr - l, h:b - t };
+      }
+      draw();
+    };
+    page.onpointerup = page.onpointercancel = () => { drag = null; };
+    const done = v => { m.hidden = true; c.classList.remove('wide'); res(v); };
+    c.querySelector('[data-r="cancel"]').onclick = () => done(undefined);
+    const clr = c.querySelector('[data-r="clear"]'); if (clr) clr.onclick = () => done(null);
+    c.querySelector('[data-r="ok"]').onclick = () => done((r.x < 0.002 && r.y < 0.002 && r.w > 0.996 && r.h > 0.996) ? null : r);
+    m.onclick = e => { if (e.target === m) done(undefined); };
+  });
+}
+async function cropImageObj(o){
+  const res = await imageCropDialog(o.origSrc, o.imgCrop || null);
+  if (res === undefined) return;   // canceló
+  const im = await loadImgEl(o.origSrc);
+  const nw = im.naturalWidth, nh = im.naturalHeight;
+  const oldR = o.imgCrop || { x:0, y:0, w:1, h:1 }, newR = res || { x:0, y:0, w:1, h:1 };
+  // mantiene la escala: el mismo píxel de la foto ocupa lo mismo en la etiqueta
+  const unit = o.getScaledWidth() / (oldR.w * nw);
+  const c0 = o.getCenterPoint();
+  o.imgCrop = res;
+  const dispW = newR.w * nw * unit, dispH = newR.h * nh * unit;
+  o.set({ scaleX:dispW / o.width, scaleY:dispH / o.height });
+  await applyImageStyle(o);
+  o.setPositionByOrigin(c0, 'center', 'center'); o.setCoords();
+  canvas.requestRenderAll(); queueSnap(); renderProps();
+}
+
+/* ---- Capas ---- */
+const LAYER_ICO = {
+  text:'<path d="M5 7V4h14v3M12 4v16M9 20h6"/>', image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  barcode:'<path d="M4 5v14M7 5v14M10.5 5v14M14 5v14M16.5 5v14M20 5v14"/>', shape:'<rect x="4" y="4" width="16" height="16" rx="2"/>', line:'<path d="M4 12h16"/>',
+  icon:'<path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/>', group:'<rect x="3" y="3" width="9" height="9" rx="1.5"/><rect x="12" y="12" width="9" height="9" rx="1.5"/>',
+  placeholder:'<rect x="3" y="3" width="18" height="18" rx="3" stroke-dasharray="3 3"/>'
+};
+function layerName(o){
+  const t = o.tsType;
+  if (t === 'text') return (o.text || '').replace(/\s+/g, ' ').trim().slice(0, 28) || 'Texto';
+  if (t === 'image') return 'Imagen';
+  if (t === 'qr') return 'Código QR';
+  if (t === 'barcode') return 'Código ' + ((o.bcData && o.bcData.value) || '');
+  if (t === 'line') return 'Línea';
+  if (t === 'icon') return 'Ícono';
+  if (t === 'group') return 'Grupo';
+  if (t === 'placeholder') return 'Espacio para logo';
+  if (o.type === 'circle') return 'Círculo';
+  return hasFill(o.fill) && !isWhite(o.fill) ? 'Bloque' : 'Recuadro';
+}
+const EYE = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+const EYE_OFF = '<path d="M3 3l18 18M10.6 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a9.6 9.6 0 0 0 4.4-1"/>';
+let layersDragFrom = null;
+function renderLayers(){
+  const box = $('#layersList'); if (!box || !canvas) return;
+  if ($('#ed').dataset.tool !== 'layers' && window.matchMedia('(min-width: 861px)').matches) return;
+  const objs = canvas.getObjects(), n = objs.length, act = canvas.getActiveObjects();
+  if (!n){ box.innerHTML = '<p class="note" style="margin-top:0">Todavía no hay elementos en la etiqueta.</p>'; return; }
+  box.innerHTML = objs.slice().reverse().map((o, i) => {
+    const idx = n - 1 - i;
+    return `<div class="ly ${act.includes(o) ? 'on' : ''} ${o.visible === false ? 'off' : ''}" draggable="true" data-idx="${idx}">
+      <span class="ly-grip" aria-hidden="true">⋮⋮</span>
+      <svg class="i ly-ico" viewBox="0 0 24 24">${LAYER_ICO[o.tsType] || LAYER_ICO.shape}</svg>
+      <button class="ly-name" data-sel>${esc(layerName(o))}</button>
+      <button class="icon-btn" data-up title="Subir" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>${ic('fwd')}</button>
+      <button class="icon-btn" data-down title="Bajar" aria-label="Bajar" ${i === n - 1 ? 'disabled' : ''}>${ic('bwd')}</button>
+      <button class="icon-btn" data-vis title="${o.visible === false ? 'Mostrar' : 'Ocultar'}" aria-label="${o.visible === false ? 'Mostrar' : 'Ocultar'}"><svg class="i" viewBox="0 0 24 24">${o.visible === false ? EYE_OFF : EYE}</svg></button>
+      <button class="icon-btn" data-lock title="${o.tsLocked ? 'Desbloquear' : 'Bloquear'}" aria-label="${o.tsLocked ? 'Desbloquear' : 'Bloquear'}">${ic(o.tsLocked ? 'lock' : 'unlock')}</button>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('.ly').forEach(row => {
+    const o = objs[+row.dataset.idx];
+    row.querySelector('[data-sel]').onclick = () => { if (o.visible === false) return; canvas.setActiveObject(o); canvas.requestRenderAll(); };
+    row.querySelector('[data-up]').onclick = () => { canvas.bringForward(o); afterLayerChange(); };
+    row.querySelector('[data-down]').onclick = () => { canvas.sendBackwards(o); afterLayerChange(); };
+    row.querySelector('[data-vis]').onclick = () => {
+      o.visible = o.visible === false;
+      if (!o.visible && canvas.getActiveObjects().includes(o)) canvas.discardActiveObject();
+      afterLayerChange();
+    };
+    row.querySelector('[data-lock]').onclick = () => { setLocked(o, !o.tsLocked); afterLayerChange(); };
+    row.ondragstart = e => { layersDragFrom = +row.dataset.idx; e.dataTransfer.effectAllowed = 'move'; row.classList.add('drag'); };
+    row.ondragend = () => { row.classList.remove('drag'); box.querySelectorAll('.ly').forEach(x => x.classList.remove('over')); };
+    row.ondragover = e => { e.preventDefault(); box.querySelectorAll('.ly').forEach(x => x.classList.toggle('over', x === row)); };
+    row.ondrop = e => {
+      e.preventDefault();
+      const to = +row.dataset.idx, from = layersDragFrom; layersDragFrom = null;
+      if (from == null || from === to) return;
+      canvas.moveTo(canvas.getObjects()[from], to);
+      afterLayerChange();
+    };
+  });
+}
+function afterLayerChange(){ canvas.requestRenderAll(); queueSnap(); renderLayers(); }
 
 /* ================= Acciones sobre objetos ================= */
 function addObj(o, select = true){
@@ -1918,10 +2149,10 @@ function setOrient(v){
 function updateDocSize(){
   const s = SZ();
   $('#docSize').textContent = s.rotatable ? `${s.label} · ${orient === 'v' ? 'vertical' : 'horizontal'}`
-    : s.dual ? `${s.label} · ${isSep() ? 'dos diseños' : 'duplicado'}` : s.label;
+    : (s.dual && (s.dual.lanes || 2) === 2) ? `${s.label} · ${isSep() ? 'dos diseños' : 'duplicado'}` : s.label;
   const bar = $('#dualBar');
   if (bar){
-    bar.hidden = !s.dual;
+    bar.hidden = !(s.dual && (s.dual.lanes || 2) === 2);
     $('#dualDup').checked = !isSep();
     $('#dualHint').textContent = isSep() ? 'Cada columna tiene su propio diseño' : 'La misma etiqueta en las dos columnas';
   }
@@ -2037,7 +2268,8 @@ function imageHTML(o){
       <input type="range" id="pTh" min="20" max="240" step="2" value="${o.imgThreshold}">` : ''}
       <p class="note" style="margin-top:0">${st === 'bn' ? 'Ideal para logos y dibujos. Mové la intensidad si se pierden detalles.' : st === 'tramado' ? 'Ideal para fotos: simula grises con puntos.' : 'Así como la subiste. Al imprimir, los grises se convierten a blanco o negro.'}</p>
       <label class="check"><input type="checkbox" id="pImgInv" ${o.imgInvert ? 'checked' : ''}> Invertir (para usar sobre fondo negro)</label>`) +
-    sec('Imagen', `<div class="p-row">
+    sec('Imagen', `<button class="btn primary block" id="pCrop" style="margin-bottom:8px">${ic('crop')}${o.imgCrop ? 'Cambiar recorte' : 'Recortar imagen'}</button>
+      <div class="p-row">
       <button class="btn ghost" id="pFlipH" style="flex:1" title="Espejar horizontal">${ic('flipH')}Espejar</button>
       <button class="btn ghost" id="pFlipV" style="flex:1" title="Voltear vertical">${ic('flipV')}Voltear</button></div>
       <button class="btn ghost block" id="pReplace">${ic('upload')}Reemplazar imagen</button>`);
@@ -2206,6 +2438,7 @@ function bindProps(o){
     on('pImgInv', 'change', async e => { o.imgInvert = e.target.checked; await applyImageStyle(o); changed(o); });
     on('pFlipH', 'click', () => { o.set('flipX', !o.flipX); changed(o); });
     on('pFlipV', 'click', () => { o.set('flipY', !o.flipY); changed(o); });
+    on('pCrop', 'click', () => cropImageObj(o));
     on('pReplace', 'click', () => pickImage(async src => {
       const c = o.getCenterPoint(), w = o.getScaledWidth(), h = o.getScaledHeight();
       const idx = canvas.getObjects().indexOf(o);
@@ -2278,11 +2511,13 @@ function openTool(tool){
   if (mobile){ ed.classList.add('drawer-open'); canvas && canvas.discardActiveObject(); canvas && canvas.requestRenderAll(); }
   if (tool === 'templates') fillDrawerTemplates();
   if (tool === 'saved') fillSavedList();
+  if (tool === 'layers') renderLayers();
 }
 async function fillDrawerTemplates(){
   const box = $('#drawerTpl');
   if (box.dataset.size === sizeKey) return;
-  const key = sizeKey, list = TPLS[key], sz = SIZES[key];
+  const key = sizeKey, list = TPLS[key] || [], sz = SIZES[key];
+  if (!list.length){ box.dataset.size = key; box.style.gridTemplateColumns = '1fr'; box.innerHTML = '<p class="note" style="margin-top:0">Este tamaño es personalizado: no tiene plantillas. Arrancás en blanco y armás tu diseño con Texto, Imagen, QR y Formas.</p>'; return; }
   box.dataset.size = key;
   box.style.gridTemplateColumns = sz.dual ? '1fr' : '';
   box.innerHTML = list.map(t => `<button data-tpl="${t.id}" title="${esc(t.name)}" aria-label="${esc(t.name)}" style="aspect-ratio:${sz.w}/${sz.h}"><span class="thumb-loading"></span></button>`).join('');
@@ -2355,12 +2590,12 @@ function toPortrait(src){
   return c;
 }
 // Doble banda: arma la fila de 103 × 25 mm con 1 o 2 etiquetas
-function dualRow(img, both){
-  const d = SZ().dual, ppm = MM * EXPORT_SCALE;
+function dualRow(img, count){
+  const d = SZ().dual, ppm = MM * EXPORT_SCALE, lanes = d.lanes || 2;
+  const n = count === true ? lanes : count === false ? 1 : count;
   const c = document.createElement('canvas'); c.width = Math.round(d.pageW * ppm); c.height = img.height;
   const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
-  ctx.drawImage(img, 0, 0);
-  if (both) ctx.drawImage(img, Math.round((SZ().w + d.gap) * ppm), 0);
+  for (let k = 0; k < n; k++) ctx.drawImage(img, Math.round(k * (SZ().w + d.gap) * ppm), 0);
   return c;
 }
 /* ---- Impresión directa (abre la ventana de impresión del navegador) ---- */
@@ -2417,19 +2652,20 @@ function exportDialog(mode){
   const printing = mode === 'print';
   const m = $('#modal'), c = $('#modalCard'), s = SZ();
   const sep = isSep();
-  const sizeTxt = sep || s.dual ? '103 × 25 mm (rollo doble banda)' : s.cut ? '100 × 190 mm, con el talón de 40 mm arriba' : '100 × 150 mm';
+  const lanesN = s.dual ? (s.dual.lanes || 2) : 1;
+  const sizeTxt = s.dual ? `${String(s.dual.pageW).replace('.', ',')} × ${s.h} mm (${lanesN === 3 ? 'triple' : 'doble'} banda)` : s.cut ? '100 × 190 mm, con el talón de 40 mm arriba' : `${s.w} × ${s.h} mm`;
   const intro = printing
     ? `Se abre la ventana de impresión con tu etiqueta en ${sizeTxt}. ${PRINT_HINT}`
     : sep ? 'Se descarga la fila de 103 × 25 mm con tus dos etiquetas, lista para el rollo doble banda.'
-    : s.dual ? 'Se arma un archivo de 103 × 25 mm con dos etiquetas por fila, listo para el rollo doble banda.'
+    : s.dual ? `Se arma un archivo de ${sizeTxt} con ${lanesN === 3 ? 'tres' : 'dos'} etiquetas por fila.`
     : s.cut ? 'Se descarga en 100 × 190 mm, con el talón de 40 mm arriba.'
-    : 'Se descarga en 100 × 150 mm. Abrila e imprimila en tu TagShip como cualquier etiqueta.';
+    : `Se descarga en ${s.w} × ${s.h} mm. Abrila e imprimila en tu TagShip como cualquier etiqueta.`;
   c.innerHTML = `<h2>${printing ? 'Imprimir etiqueta' : 'Descargar etiqueta'}</h2><p>${intro}</p>
     <div ${printing ? 'hidden' : ''}><div class="lbl"><span>Formato</span></div>
     <div class="seg" id="exFmt"><button data-f="pdf" class="on">PDF (recomendado)</button><button data-f="png">Imagen PNG</button></div></div>
     <div id="exCopiesRow"><div class="lbl"><span>${sep ? 'Cantidad de filas (2 etiquetas por fila)' : s.dual ? 'Cantidad de etiquetas' : 'Cantidad de copias'}</span></div>
-    <input class="field" type="number" id="exCopies" min="1" max="400" value="${s.dual && !sep ? 2 : 1}" style="width:110px;margin-bottom:12px">
-    ${s.dual && !sep ? '<p class="note" style="margin-top:-4px">Van de a dos por fila. Si pedís un número impar, la última fila sale con una sola.</p>' : ''}</div>
+    <input class="field" type="number" id="exCopies" min="1" max="400" value="${s.dual && !sep ? lanesN : 1}" style="width:110px;margin-bottom:12px">
+    ${s.dual && !sep ? `<p class="note" style="margin-top:-4px">Van de a ${lanesN === 3 ? 'tres' : 'dos'} por fila. Si no completás la última fila, sale con las que falten.</p>` : ''}</div>
     <label class="check"><input type="checkbox" id="exThermal" checked> Optimizar para impresora térmica (blanco y negro puro)</label>
     <div class="modal-actions"><button class="btn ghost" id="exCancel">Cancelar</button>
       <button class="btn btn-send" id="exSend">${SEND_ICO}Mandar a la compu</button>
@@ -2462,8 +2698,8 @@ function exportDialog(mode){
         pw = s.dual.pageW; ph = s.h;
         if (sep) pages = Array(copies).fill(img);
         else {
-          const full = dualRow(img, true), rows = Math.ceil(copies / 2);
-          for (let i = 0; i < rows; i++) pages.push((i === rows - 1 && copies % 2 === 1) ? dualRow(img, false) : full);
+          const lanes = s.dual.lanes || 2, full = dualRow(img, lanes), rows = Math.ceil(copies / lanes), rest = copies % lanes;
+          for (let i = 0; i < rows; i++) pages.push((i === rows - 1 && rest) ? dualRow(img, rest) : full);
         }
       } else { pw = s.w; ph = s.h; pages = Array(copies).fill(img); }
       const urls = new Map();
@@ -2623,7 +2859,7 @@ async function fillSavedList(){
   let list = [];
   try { list = await store.all(); } catch(e){ box.innerHTML = '<p class="note">Este navegador no permite guardar diseños.</p>'; return; }
   if (!list.length){ box.innerHTML = '<p class="note" style="margin-top:0">Todavía no guardaste ningún diseño. Tocá “Guardar” arriba para guardar el que estás haciendo.</p>'; return; }
-  box.innerHTML = list.map(d => `<button class="saved-item ${d.id === current.id ? 'cur' : ''}" data-id="${d.id}"><span class="th"><img src="${d.thumb}" alt=""></span><span><b>${esc(d.name)}</b><small>${esc(SIZES[d.size] ? SIZES[d.size].label : '')} · ${fmtDate(d.updated)}</small></span></button>`).join('');
+  box.innerHTML = list.map(d => `<button class="saved-item ${d.id === current.id ? 'cur' : ''}" data-id="${d.id}"><span class="th"><img src="${d.thumb}" alt=""></span><span><b>${esc(d.name)}</b><small>${esc(sizeLabel(d.size))} · ${fmtDate(d.updated)}</small></span></button>`).join('');
   box.querySelectorAll('[data-id]').forEach(b => b.onclick = async () => {
     const rec = list.find(x => x.id === b.dataset.id);
     if (!rec || rec.id === current.id) return;
@@ -2641,7 +2877,7 @@ async function renderMyDesigns(){
   if (w) w.textContent = fbUser ? `Guardados en tu cuenta (${fbUser.email || 'Google'}): los ves en todos tus dispositivos.` : 'Se guardan en este navegador. Iniciá sesión con Google para tenerlos en todos tus dispositivos.';
   grid.innerHTML = list.map(d => `<div class="my-card" data-id="${d.id}">
       <button class="my-open" data-act="open" aria-label="Abrir ${esc(d.name)}"><img src="${d.thumb}" alt=""></button>
-      <div><div class="my-name">${esc(d.name)}</div><div class="my-meta">${esc(SIZES[d.size] ? SIZES[d.size].label : '')} · ${fmtDate(d.updated)}</div></div>
+      <div><div class="my-name">${esc(d.name)}</div><div class="my-meta">${esc(sizeLabel(d.size))} · ${fmtDate(d.updated)}</div></div>
       <div class="my-actions">
         <button class="icon-btn" data-act="rename" title="Cambiar nombre" aria-label="Cambiar nombre">${ic('edit')}</button>
         <button class="icon-btn" data-act="dup" title="Duplicar" aria-label="Duplicar">${ic('copy')}</button>
@@ -2839,7 +3075,7 @@ window.addEventListener('beforeunload', () => { if (current.id && autoT){ persis
 
 /* ================= Etiquetas Full (conversor) ================= */
 const HAS_SERVER = /^https?:$/.test(location.protocol) && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
-function setupTool(prefix, endpoint, downloadName){
+function setupTool(prefix, endpoint, downloadName, queueLabel){
   const dz = $('#dropzone-' + prefix), input = $('#input-' + prefix), fn = $('#filename-' + prefix);
   const btn = $('#btn-' + prefix), pbtn = $('#print-' + prefix), sbtn = $('#send-' + prefix), st = $('#status-' + prefix);
   let file = null;
@@ -2874,7 +3110,7 @@ function setupTool(prefix, endpoint, downloadName){
       } else if (action === 'queue'){
         b.textContent = 'Mandando…';
         const pages = await pdfToPages(new Uint8Array(await (await res.blob()).arrayBuffer()));
-        if (await sendToQueue(file.name.replace(/\.pdf$/i, '') + ' · ' + (prefix === 'full-doble' ? 'Full' : 'Normales'), 'full', pages)) status('Listo. Ya está en la cola de impresión de tu compu.', 'ok');
+        if (await sendToQueue(file.name.replace(/\.pdf$/i, '') + ' · ' + (queueLabel || (prefix === 'full-doble' ? 'Full' : 'Normales')), 'full', pages)) status('Listo. Ya está en la cola de impresión de tu compu.', 'ok');
       } else {
         const r = await saveFile(await res.blob(), downloadName);
         if (r === 'saved') status('Listo. Se descargó tu PDF.', 'ok');
@@ -2893,6 +3129,8 @@ if (FULL_TUTORIAL_YT){
 }
 setupTool('full-doble', '/convertir/full-doble', 'Etiquetas-Full-Doble-TagShip.pdf');
 setupTool('normales', '/convertir/normales', 'Etiquetas-TagShip.pdf');
+setupTool('paqar', '/recortar/paqar', 'Etiquetas-PAQAR-10x15-TagShip.pdf', 'PAQ.AR 10×15');
+setupTool('bultos', '/recortar/bultos', 'Bultos-Full-10x15-TagShip.pdf', 'Bultos Full 10×15');
 $('#cvNote').hidden = HAS_SERVER;
 $$('.st-item[data-sec]').forEach(b => b.onclick = () => goSection(b.dataset.sec));
 
@@ -3125,9 +3363,9 @@ async function cropExport(action){
   drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); input.value = ''; input.click(); } };
   input.onchange = e => cropLoad(e.target.files[0]);
   const sec = $('#crop');
-  ['dragenter','dragover'].forEach(ev => sec.addEventListener(ev, e => { if (Array.from(e.dataTransfer.types || []).includes('Files')){ e.preventDefault(); drop.classList.add('drag'); } }));
+  ['dragenter','dragover'].forEach(ev => sec.addEventListener(ev, e => { if (e.target.closest('.auto-crop')) return; if (Array.from(e.dataTransfer.types || []).includes('Files')){ e.preventDefault(); drop.classList.add('drag'); } }));
   ['dragleave','drop'].forEach(ev => sec.addEventListener(ev, () => drop.classList.remove('drag')));
-  sec.addEventListener('drop', e => { const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f){ e.preventDefault(); cropLoad(f); } });
+  sec.addEventListener('drop', e => { if (e.target.closest('.auto-crop')) return; const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f){ e.preventDefault(); cropLoad(f); } });
   $('#cropChange').onclick = () => { input.value = ''; input.click(); };
   $('#cropPrev').onclick = () => crop.page > 1 && cropRenderPage(crop.page - 1);
   $('#cropNext').onclick = () => crop.page < crop.count && cropRenderPage(crop.page + 1);
@@ -3370,7 +3608,7 @@ async function initCloud(){
       if (!u) stopQueue();
       renderAccount();
       refreshAccess();
-      if (u && u.uid !== was) await migrateLocal(u);
+      if (u && u.uid !== was){ await migrateLocal(u); loadSizes(); }
       renderMyDesigns(); updateResume();
       if (!$('#editor').hidden && $('#ed').dataset.tool === 'saved') fillSavedList();
       if (!$('#start').hidden) renderStart();
@@ -3633,6 +3871,100 @@ if (HAS_SERVER && 'serviceWorker' in navigator){
 }
 paintInstall();
 
+/* ================= Tamaños personalizados ================= */
+const SIZE_PRESETS = [
+  { w:100, h:50 }, { w:55, h:44 }, { w:80, h:50 }, { w:50, h:25 }, { w:29, h:20, lanes:3 }, { w:100, h:100 }
+];
+const keyOf = (w, h, lanes) => `c${+w}x${+h}${lanes > 1 ? '-' + lanes + 'b' : ''}`;
+let mySizes = [];
+try { mySizes = JSON.parse(localStorage.getItem('tagstudio-tamanos') || '[]').filter(k => sizeFromKey(k)); } catch(e){ mySizes = []; }
+const sizesDoc = () => fbDb.collection('users').doc(fbUser.uid).collection('settings').doc('sizes');
+async function saveSizes(){
+  try { localStorage.setItem('tagstudio-tamanos', JSON.stringify(mySizes)); } catch(e){}
+  if (fbUser && fbDb){ try { await sizesDoc().set({ keys:mySizes }); } catch(e){} }
+}
+async function loadSizes(){
+  if (!(fbUser && fbDb)) return;
+  try {
+    const d = await sizesDoc().get();
+    const cloud = d.exists ? (d.data().keys || []) : [];
+    const merged = [...new Set([...cloud, ...mySizes])].filter(k => sizeFromKey(k));
+    const changed = merged.length !== cloud.length;
+    mySizes = merged;
+    if (changed) await saveSizes(); else { try { localStorage.setItem('tagstudio-tamanos', JSON.stringify(mySizes)); } catch(e){} }
+    renderSizeCards();
+  } catch(e){}
+}
+function sizeShape(sz){
+  const lanes = sz.dual ? (sz.dual.lanes || 2) : 1;
+  const totalW = sz.w * lanes + (lanes - 1) * 4, f = Math.min(120 / totalW, 96 / sz.h);
+  const one = `<span class="size-shape" style="width:${Math.round(sz.w * f)}px;height:${Math.round(sz.h * f)}px;padding:4px"><i style="width:55%;height:${Math.max(3, Math.round(sz.h * f * 0.12))}px"></i><i style="width:40%;height:3px;background:#777"></i></span>`;
+  return `<span class="size-stage"><span style="display:flex;gap:4px">${one.repeat(lanes)}</span></span>`;
+}
+function openCustomSize(key){
+  sizeFromKey(key);
+  sizeKey = key; orient = 'v'; sepMode = false;
+  applyTemplate(null, false);
+}
+function renderSizeCards(){
+  const grid = document.querySelector('#home .size-grid'), add = $('#btnNewSize');
+  if (!grid || !add) return;
+  grid.querySelectorAll('.custom-size').forEach(el => el.remove());
+  mySizes.forEach(key => {
+    const sz = sizeFromKey(key); if (!sz) return;
+    const card = document.createElement('div');
+    card.className = 'size-card custom-size'; card.tabIndex = 0; card.setAttribute('role', 'button');
+    card.innerHTML = `${sizeShape(sz)}<span class="size-name">${esc(sz.label.replace(' triple banda', '').replace(' doble banda', ''))}</span>
+      <span class="size-use">${sz.dual ? (sz.dual.lanes === 3 ? 'Triple banda · ' : 'Doble banda · ') : ''}Personalizado, en blanco</span>
+      <button class="icon-btn size-del" title="Quitar este tamaño" aria-label="Quitar este tamaño">${ic('close')}</button>`;
+    card.onclick = e => { if (e.target.closest('.size-del')) return; openCustomSize(key); };
+    card.onkeydown = e => { if (e.key === 'Enter') openCustomSize(key); };
+    card.querySelector('.size-del').onclick = async e => {
+      e.stopPropagation();
+      if (!(await ask('¿Quitar este tamaño?', 'Desaparece de tus tamaños. Los diseños que ya hiciste con esta medida no se borran.', 'Quitar'))) return;
+      mySizes = mySizes.filter(k => k !== key); await saveSizes(); renderSizeCards();
+    };
+    grid.insertBefore(card, add);
+  });
+}
+function newSizeDialog(){
+  const m = $('#modal'), c = $('#modalCard');
+  c.classList.add('wide');
+  c.innerHTML = `<h2>Nuevo tamaño</h2><p>Elegí una medida o escribí la tuya (ancho × alto). Arrancás con la etiqueta en blanco.</p>
+    <div class="ns-grid">${SIZE_PRESETS.map((p, i) => `<button class="ns-opt" data-i="${i}"><b>${p.w} × ${p.h}</b><small>${p.lanes === 3 ? 'Triple banda' : 'mm'}</small></button>`).join('')}</div>
+    <div class="lbl" style="margin-top:14px"><span>Tamaño personalizado (mm)</span></div>
+    <div class="ns-custom"><input class="field" id="nsW" inputmode="decimal" placeholder="Ancho" aria-label="Ancho en mm"><span>×</span><input class="field" id="nsH" inputmode="decimal" placeholder="Alto" aria-label="Alto en mm"></div>
+    <p class="err" id="nsErr" style="margin:8px 0 0"></p>
+    <div class="modal-actions"><button class="btn ghost" data-r="0">Cancelar</button><button class="btn primary" data-r="1">Crear y empezar</button></div>`;
+  m.hidden = false;
+  let lanes = 1;
+  const close = () => { m.hidden = true; c.classList.remove('wide'); };
+  c.querySelectorAll('.ns-opt').forEach(b => b.onclick = () => {
+    const p = SIZE_PRESETS[+b.dataset.i];
+    $('#nsW').value = p.w; $('#nsH').value = p.h; lanes = p.lanes || 1;
+    c.querySelectorAll('.ns-opt').forEach(x => x.classList.toggle('on', x === b));
+  });
+  ['nsW','nsH'].forEach(id => $('#' + id).addEventListener('input', () => { lanes = 1; c.querySelectorAll('.ns-opt').forEach(x => x.classList.remove('on')); }));
+  c.querySelector('[data-r="0"]').onclick = close;
+  m.onclick = e => { if (e.target === m) close(); };
+  c.querySelector('[data-r="1"]').onclick = async () => {
+    const w = parseFloat(String($('#nsW').value).replace(',', '.')), h = parseFloat(String($('#nsH').value).replace(',', '.'));
+    const err = $('#nsErr');
+    if (!(w > 0 && h > 0)){ err.textContent = 'Elegí una medida o completá el ancho y el alto.'; return; }
+    const total = w * lanes + 3 * (lanes - 1);
+    if (w < 10 || h < 10){ err.textContent = 'La medida mínima es 10 × 10 mm.'; return; }
+    if (total > 104){ err.textContent = 'El ancho máximo que imprime la TagShip es 104 mm.'; return; }
+    if (h > 300){ err.textContent = 'El alto máximo es 300 mm.'; return; }
+    const key = keyOf(Math.round(w * 10) / 10, Math.round(h * 10) / 10, lanes);
+    sizeFromKey(key);
+    if (!mySizes.includes(key)){ mySizes.push(key); await saveSizes(); renderSizeCards(); }
+    close();
+    openCustomSize(key);
+  };
+}
+$('#btnNewSize').onclick = newSizeDialog;
+renderSizeCards();
+
 /* ================= Pantalla de inicio ================= */
 const START_ICONS = {
   design:'<svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
@@ -3685,7 +4017,7 @@ async function renderStart(){
   if (accessState !== 'active') list = [];
   sec.hidden = !list.length;
   grid.innerHTML = list.slice(0, 4).map(d => `<div class="my-card"><button class="my-open" data-open="${d.id}" aria-label="Abrir ${esc(d.name)}"><img src="${d.thumb}" alt=""></button>
-    <div><div class="my-name">${esc(d.name)}</div><div class="my-meta">${esc(SIZES[d.size] ? SIZES[d.size].label : '')} · ${fmtDate(d.updated)}</div></div></div>`).join('');
+    <div><div class="my-name">${esc(d.name)}</div><div class="my-meta">${esc(sizeLabel(d.size))} · ${fmtDate(d.updated)}</div></div></div>`).join('');
   grid._list = list;
 }
 $('#start').addEventListener('click', async e => {

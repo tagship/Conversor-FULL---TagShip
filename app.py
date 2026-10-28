@@ -21,6 +21,10 @@ app = Flask(__name__)
 # Activación de cuentas (Google + número de compra de Mercado Libre)
 from cuentas import bp as cuentas_bp
 app.register_blueprint(cuentas_bp)
+
+# Recortes automáticos (PAQ.AR y Bultos para Full)
+from recortes import bp as recortes_bp
+app.register_blueprint(recortes_bp)
 app.config["MAX_CONTENT_LENGTH"] = MAX_MB * 1024 * 1024
 
 
