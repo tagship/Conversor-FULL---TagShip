@@ -7,6 +7,7 @@ from flask import Flask, request, send_file, send_from_directory, jsonify, redir
 import convertir_normales
 import convertir_full
 import convertir_full_simple
+import convertir_normales10
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STUDIO_DIR = os.path.join(BASE_DIR, "studio")
@@ -202,6 +203,41 @@ def convertir_full_simple_endpoint():
         salida_path,
         as_attachment=True,
         download_name="Etiquetas-Full-Simple-TagShip.pdf",
+        mimetype="application/pdf",
+    )
+
+
+@app.route("/convertir/normales-10", methods=["POST"])
+def convertir_normales10_endpoint():
+    """Etiquetas Full 5 × 2,5 cm → 10 por hoja de 10 × 15."""
+    archivo = request.files.get("archivo")
+    if not archivo or archivo.filename == "":
+        return jsonify({"error": "No se recibió ningún archivo."}), 400
+    if not archivo.filename.lower().endswith(".pdf"):
+        return jsonify({"error": "El archivo debe ser un PDF."}), 400
+
+    job_id = uuid.uuid4().hex
+    entrada_path = os.path.join(UPLOAD_DIR, f"{job_id}.pdf")
+    salida_path = os.path.join(OUTPUT_DIR, f"{job_id}.pdf")
+    archivo.save(entrada_path)
+    try:
+        convertir_normales10.convertir(entrada_path, salida_path)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 422
+    except Exception:
+        traceback.print_exc()
+        return jsonify({
+            "error": "No pudimos abrir ese archivo. Verificá que sea el PDF de etiquetas "
+                     "descargado de Mercado Libre (formato 5 × 2.5 cm) sin editar."
+        }), 422
+    finally:
+        if os.path.exists(entrada_path):
+            os.remove(entrada_path)
+
+    return send_file(
+        salida_path,
+        as_attachment=True,
+        download_name="Etiquetas-Full-10xhoja-TagShip.pdf",
         mimetype="application/pdf",
     )
 
