@@ -6,7 +6,7 @@ from flask import Flask, request, send_file, send_from_directory, jsonify, redir
 
 import convertir_normales
 import convertir_full
-import convertir_full40
+import convertir_full_simple
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STUDIO_DIR = os.path.join(BASE_DIR, "studio")
@@ -171,9 +171,9 @@ def convertir_full_doble_endpoint():
     )
 
 
-@app.route("/convertir/full-40", methods=["POST"])
-def convertir_full40_endpoint():
-    """Etiquetas Full 4 × 2,5 cm → rollo doble banda de 4 × 2,5 (83 × 25 mm por fila)."""
+@app.route("/convertir/full-simple", methods=["POST"])
+def convertir_full_simple_endpoint():
+    """Etiquetas Full 5 × 2,5 cm → rollo simple banda (una etiqueta de 50 × 25 mm por página)."""
     archivo = request.files.get("archivo")
     if not archivo or archivo.filename == "":
         return jsonify({"error": "No se recibió ningún archivo."}), 400
@@ -185,14 +185,14 @@ def convertir_full40_endpoint():
     salida_path = os.path.join(OUTPUT_DIR, f"{job_id}.pdf")
     archivo.save(entrada_path)
     try:
-        convertir_full40.convertir(entrada_path, salida_path)
+        convertir_full_simple.convertir(entrada_path, salida_path)
     except ValueError as e:
         return jsonify({"error": str(e)}), 422
     except Exception:
         traceback.print_exc()
         return jsonify({
             "error": "No pudimos abrir ese archivo. Verificá que sea el PDF de etiquetas "
-                     "descargado de Mercado Libre (formato 4 × 2,5 cm) sin editar."
+                     "descargado de Mercado Libre (formato 5 × 2.5 cm) sin editar."
         }), 422
     finally:
         if os.path.exists(entrada_path):
@@ -201,7 +201,7 @@ def convertir_full40_endpoint():
     return send_file(
         salida_path,
         as_attachment=True,
-        download_name="Etiquetas-Full-4x2,5-Doble-TagShip.pdf",
+        download_name="Etiquetas-Full-Simple-TagShip.pdf",
         mimetype="application/pdf",
     )
 
