@@ -117,6 +117,7 @@ button{ cursor:pointer; }
 .cv-go{ padding:13px 16px; font:700 15px "Poppins",sans-serif; }
 .cv-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .cv-actions .cv-go{ padding:12px 10px; font-size:14px; }
+.cv-actions .cv-send{ grid-column:1 / -1; }
 .btn.ghost:disabled{ color:var(--muted); border-color:var(--line); cursor:not-allowed; background:transparent; }
 @media (max-width: 420px){ .cv-actions{ grid-template-columns:1fr; } }
 .btn.primary:disabled{ background:var(--line); border-color:var(--line); color:var(--muted); cursor:not-allowed; }
@@ -270,6 +271,33 @@ button{ cursor:pointer; }
   .lock-inner{ flex-direction:column; gap:10px; }
   .lock-form{ flex-direction:column; }
 }
+
+/* Cola de impresión */
+.q-badge{ margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--blue); color:#fff; font:700 11px/20px "Inter",sans-serif; text-align:center; }
+.st-item.is-locked .q-badge{ display:none; }
+.q-wrap{ max-width:860px; margin:0 auto; }
+.q-bar{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:12px 16px; border:1px solid var(--line); border-radius:14px; margin-bottom:14px; }
+.q-count{ font-size:13px; font-weight:600; color:var(--muted); }
+.q-tools{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+.q-list{ display:grid; gap:10px; }
+.q-item{ display:flex; align-items:center; gap:14px; padding:12px; border:1px solid var(--ink); border-radius:14px; background:var(--surface); }
+.q-th{ width:72px; height:72px; flex:none; border-radius:10px; background:var(--mat); display:grid; place-items:center; overflow:hidden; }
+.q-th img{ max-width:62px; max-height:62px; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.15); }
+.q-info{ flex:1; min-width:0; display:grid; gap:2px; }
+.q-info b{ font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.q-info small{ font-size:12.5px; color:var(--muted); }
+.q-act{ display:flex; gap:6px; align-items:center; }
+.q-act .del{ color:var(--danger); }
+.q-empty{ display:grid; justify-items:center; text-align:center; gap:6px; padding:44px 20px; border:2px dashed var(--line); border-radius:18px; color:var(--muted); }
+.q-empty b{ color:var(--ink); font:700 17px "Poppins",sans-serif; }
+.q-empty p{ margin:0; max-width:46ch; font-size:14px; }
+.q-empty-ico{ width:56px; height:56px; border-radius:16px; background:var(--blue-soft); color:var(--blue); display:grid; place-items:center; margin-bottom:6px; }
+.q-empty-ico svg{ width:28px; height:28px; }
+.q-code{ display:block; margin-top:6px; padding:8px 10px; border-radius:8px; background:var(--mat); font:12px/1.4 ui-monospace,Menlo,Consolas,monospace; word-break:break-all; user-select:all; }
+.btn.btn-send{ border-color:var(--blue); color:var(--blue); background:var(--surface); }
+.btn.btn-send:hover{ background:var(--blue-soft); }
+.btn.btn-send:disabled{ opacity:.45; cursor:not-allowed; background:var(--surface); }
+@media (max-width: 860px){ .q-act .btn span{ display:none; } .q-th{ width:58px; height:58px; } .q-th img{ max-width:50px; max-height:50px; } }
 
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -458,6 +486,8 @@ button.size-card:hover{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blu
 .dual-bar{ position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:4; display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--ink); border-radius:999px; padding:7px 14px 7px 12px; white-space:nowrap; box-shadow:0 6px 18px -10px rgba(13,17,26,.35); }
 .dual-hint{ font-size:12.5px; color:var(--muted); }
 @media (max-width: 860px){ .dual-hint{ display:none; } }
+.m-edit{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:calc(78px + env(safe-area-inset-bottom, 0px)); z-index:19; align-items:center; gap:8px; padding:11px 20px; border-radius:999px; border:none; background:var(--blue); color:#fff; font:700 14px "Poppins",sans-serif; box-shadow:0 10px 24px -10px rgba(2,79,235,.7); }
+.m-edit svg{ width:18px; height:18px; }
 .stage-hint{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%); font-size:12.5px; color:var(--muted); background:var(--surface); border:1.5px solid var(--line); border-radius:999px; padding:5px 12px; white-space:nowrap; pointer-events:none; }
 
 .props{ grid-area:props; background:var(--surface); border-left:1.5px solid var(--line); overflow:auto; padding:16px 16px 28px; }
@@ -547,14 +577,24 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
   .switch .sw-short{ display:inline; }
   #btnExport{ padding:9px 12px; }
   #btnPrint span{ display:none; }
+  #btnExport span{ display:none; }
+  #ed .ed-top .theme-toggle{ display:none; }
+  .ed-top .grp .icon-btn{ width:32px; }
+  .props{ overflow-x:hidden; }
+  .props *{ min-width:0; }
+  .props .seg button{ padding:7px 3px; font-size:12px; white-space:normal; line-height:1.15; }
+  .props .p-title{ position:sticky; top:-16px; background:var(--surface); z-index:2; padding:6px 0; margin:-6px 0 6px; }
   #btnPrint{ padding:9px 10px; }
   .rail{ flex-direction:row; border-right:none; border-top:1.5px solid var(--line); padding:6px 6px; justify-content:space-between; }
-  .rail button{ flex:1; padding:6px 0; font-size:10px; }
+  .rail{ overflow-x:auto; scrollbar-width:none; }
+  .rail::-webkit-scrollbar{ display:none; }
+  .rail button{ flex:1 0 auto; min-width:52px; padding:6px 4px; font-size:10px; }
   .drawer, .props{ position:fixed; left:0; right:0; bottom:calc(64px + env(safe-area-inset-bottom, 0px)); max-height:56vh; z-index:20;
     border:none; border-top:2px solid var(--ink); border-radius:18px 18px 0 0; box-shadow:0 -16px 30px -16px rgba(15,28,61,.4);
     transform:translateY(calc(100% + 90px)); visibility:hidden; transition:transform .22s ease, visibility .22s; }
   .ed.drawer-open .drawer{ transform:none; visibility:visible; }
-  body.has-sel .props{ transform:none; visibility:visible; z-index:21; }
+  body.sheet-open .props{ transform:none; visibility:visible; z-index:21; }
+  body.has-sel:not(.sheet-open) .m-edit{ display:inline-flex; }
   .drawer-close, .p-close{ display:inline-grid; }
   .drawer-head{ display:flex; justify-content:space-between; align-items:start; gap:8px; }
   .stage-inner{ padding:24px 16px 30px 6px; }
@@ -574,6 +614,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <button class="st-item on" data-sec="start"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Inicio</span></button>
       <button class="st-item" data-sec="home"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Diseños</span></button>
       <button class="st-item" data-sec="full"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 2L4 13.5h6.5L9.5 22 20 9.5h-6.6z"/></svg><span>Etiquetas Full</span></button>
+      <button class="st-item" data-sec="queue"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>Impresiones</span><span class="q-badge" id="qBadge" hidden>0</span></button>
       <button class="st-item" data-sec="crop"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg><span>Recortar PDF</span></button>
     </nav>
     <button class="st-install" id="btnInstall" hidden><svg class="i" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3"/></svg><span><b>Instalar TagStudio</b><small>Usala como una app en tu celu o compu</small></span></button>
@@ -684,14 +725,14 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <div class="cv-badge">★ Más conveniente</div><div class="cv-top"><div class="cv-top-text"><h2>Convertir Etiquetas <span class="accent">FULL</span></h2><span class="spec-pill">50 × 25 mm · Doble banda</span></div><img class="roll" src="data:image/jpeg;base64,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" alt=""></div>
           <div class="cv-steps"><div class="cv-step"><b>1</b><p>Descargá las etiquetas en <strong>5 × 2,5 cm</strong></p></div><div class="cv-step"><b>2</b><p>Subí el PDF acá</p></div><div class="cv-step"><b>3</b><p>Imprimí en tu rollo doble banda</p></div></div>
           <div class="cv-drop" id="dropzone-full-doble" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-full-doble"></div><input type="file" id="input-full-doble" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-full-doble" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-full-doble" disabled>Convertir y descargar</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-full-doble" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-full-doble" disabled>Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-full-doble" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y mandar a la compu</button></div>
           <div class="cv-status" id="status-full-doble" role="status"></div>
         </div>
         <div class="cv-card" id="panel-normales">
           <div class="cv-badge ghost" aria-hidden="true">★ Más conveniente</div><div class="cv-top"><div class="cv-top-text"><h2>Convertir Etiquetas <span class="accent">Normales</span></h2><span class="spec-pill">100 × 150 mm · 4 por hoja</span></div><img class="roll" src="data:image/jpeg;base64,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" alt=""></div>
           <div class="cv-steps"><div class="cv-step"><b>1</b><p>Descargá las etiquetas en <strong>6 × 4 cm</strong></p></div><div class="cv-step"><b>2</b><p>Subí el PDF acá</p></div><div class="cv-step"><b>3</b><p>Imprimí y recortá</p></div></div>
           <div class="cv-drop" id="dropzone-normales" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-normales"></div><input type="file" id="input-normales" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-normales" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-normales" disabled>Convertir y descargar</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-normales" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-normales" disabled>Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-normales" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y mandar a la compu</button></div>
           <div class="cv-status" id="status-normales" role="status"></div>
         </div>
       </div>
@@ -762,6 +803,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
             </section>
             <section class="p-sec">
               <button class="btn primary block cv-go" id="cropGo">Recortar y descargar PDF</button>
+              <button class="btn btn-send block" id="cropQueue" style="margin-top:8px"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button>
               <button class="btn ghost block" id="cropPrint" style="margin-top:8px"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button>
               <button class="btn ghost block" id="cropReset" style="margin-top:8px">Restablecer recorte</button>
               <div class="cv-status" id="cropStatus" role="status" style="margin-top:10px"></div>
@@ -770,6 +812,33 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           </aside>
         </div>
         <p class="crop-tip">Arrastrá el recuadro para moverlo, tirá de los puntos para cambiar el tamaño, o dibujá uno nuevo sobre la hoja.</p>
+      </div>
+    </div>
+
+    <!-- ============ COLA DE IMPRESIÓN ============ -->
+    <div id="queue" hidden>
+      <div class="lock-card" data-lock hidden></div>
+      <header class="full-head">
+        <h1>Cola de impresión</h1>
+        <p class="crop-sub">Mandá etiquetas desde el celular y imprimilas acá, todas juntas.</p>
+      </header>
+      <div class="q-wrap">
+        <div class="q-bar">
+          <label class="switch" title="Imprime solo lo que llega desde el celular"><input type="checkbox" id="stationToggle"><span>Modo estación</span></label>
+          <button class="link-btn" id="stationHelp">¿Cómo imprimir sin que pregunte?</button>
+          <span class="spacer"></span>
+          <span class="q-count" id="queueCount"></span>
+        </div>
+        <div class="q-tools" id="queueTools" hidden>
+          <button class="btn primary" id="queuePrintAll"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Imprimir todo</button>
+          <button class="btn ghost" id="queueClear">Vaciar cola</button>
+        </div>
+        <div class="q-list" id="queueList"></div>
+        <div class="q-empty" id="queueEmpty">
+          <span class="q-empty-ico"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg></span>
+          <b>No hay nada para imprimir</b>
+          <p>Desde el celular, tocá <b>“Mandar a la compu”</b> en un diseño, en Etiquetas Full o en Recortar PDF, y aparece acá al instante.</p>
+        </div>
       </div>
     </div>
 
@@ -881,6 +950,7 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
         </div>
       </div>
       <div class="dual-bar" id="dualBar" hidden><label class="switch"><input type="checkbox" id="dualDup" checked><span>Duplicado</span></label><span class="dual-hint" id="dualHint">La misma etiqueta en las dos columnas</span></div>
+      <button class="m-edit" id="mEdit" type="button"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Editar</button>
       <div class="stage-hint" id="stageHint">Doble clic en un texto para editarlo · arrastrá las esquinas para agrandar</div>
     </main>
 
@@ -1447,8 +1517,15 @@ function initCanvas(){
     if (!$('#props').contains(document.activeElement)) renderProps();
     drawOverlay();
   });
-  canvas.on('object:moving', snapMove);
-  canvas.on('mouse:up', () => { guides = null; drawOverlay(); });
+  canvas.on('object:moving', e => { touchMoved = true; closeSheet(); snapMove(e); });
+  canvas.on('object:scaling', () => { touchMoved = true; closeSheet(); });
+  canvas.on('object:rotating', () => { touchMoved = true; closeSheet(); });
+  canvas.on('mouse:down', () => { touchMoved = false; });
+  canvas.on('mouse:up', e => {
+    guides = null; drawOverlay();
+    // en el celular: un toque sin arrastrar abre el panel de edición
+    if (isMobileUI() && e.target && !touchMoved && canvas.getActiveObject()) openSheet();
+  });
   canvas.on('selection:created', renderProps);
   canvas.on('selection:updated', renderProps);
   canvas.on('selection:cleared', renderProps);
@@ -1654,6 +1731,12 @@ function saveDraft(s){ try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ t:
 function readDraft(){ try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); return d && d.data ? d : null; } catch(e){ return null; } }
 let skipAuto = false;
 function resetHistory(){ hist = []; hIdx = -1; skipAuto = true; snapshot(); skipAuto = false; }
+
+/* ---- Panel de edición en el celular ---- */
+let touchMoved = false;
+const isMobileUI = () => window.matchMedia('(max-width: 860px)').matches;
+function openSheet(){ document.body.classList.add('sheet-open'); }
+function closeSheet(){ document.body.classList.remove('sheet-open'); }
 
 /* ================= Acciones sobre objetos ================= */
 function addObj(o, select = true){
@@ -2024,6 +2107,7 @@ function renderProps(){
   if (!canvas) return;
   const o = active();
   document.body.classList.toggle('has-sel', !!o);
+  if (!o) document.body.classList.remove('sheet-open');
   if (!o){ P.innerHTML = labelHTML(); bindLabel(); return; }
   let body = '';
   const t = o.type === 'activeSelection' ? 'multi' : o.tsType;
@@ -2057,7 +2141,7 @@ function bindLabel(){
   });
 }
 function bindProps(o){
-  on('pClose', 'click', () => { canvas.discardActiveObject(); canvas.requestRenderAll(); });
+  on('pClose', 'click', () => { if (isMobileUI()) closeSheet(); else { canvas.discardActiveObject(); canvas.requestRenderAll(); } });
   P.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
     const a = b.dataset.act;
     if (a === 'dup') duplicate();
@@ -2348,6 +2432,7 @@ function exportDialog(mode){
     ${s.dual && !sep ? '<p class="note" style="margin-top:-4px">Van de a dos por fila. Si pedís un número impar, la última fila sale con una sola.</p>' : ''}</div>
     <label class="check"><input type="checkbox" id="exThermal" checked> Optimizar para impresora térmica (blanco y negro puro)</label>
     <div class="modal-actions"><button class="btn ghost" id="exCancel">Cancelar</button>
+      <button class="btn btn-send" id="exSend">${SEND_ICO}Mandar a la compu</button>
       <button class="btn ${printing ? 'ghost' : 'primary'}" id="exAlt">${printing ? ic('upload', 'style="transform:rotate(180deg)"') + 'Descargar' : PRINTER_ICO + 'Imprimir'}</button>
       <button class="btn primary" id="exGo">${printing ? PRINTER_ICO + 'Imprimir' : ic('upload', 'style="transform:rotate(180deg)"') + 'Descargar'}</button></div>`;
   m.hidden = false;
@@ -2362,7 +2447,7 @@ function exportDialog(mode){
   const run = async action => {
     const thermal = $('#exThermal').checked;
     const copies = Math.max(1, Math.min(400, parseInt($('#exCopies').value, 10) || 1));
-    $('#exGo').disabled = true; $('#exAlt').disabled = true;
+    $('#exGo').disabled = true; $('#exAlt').disabled = true; $('#exSend').disabled = true;
     try {
       let img = renderLabelCanvas();
       if (sep){
@@ -2389,6 +2474,11 @@ function exportDialog(mode){
         await printPages(pages.map(cv => ({ url:urlOf(cv), w:pw, h:ph })));
         return;
       }
+      if (action === 'queue'){
+        const ok = await sendToQueue(current.name || 'Diseño sin nombre', 'diseño', pages.map(cv => ({ url:urlOf(cv), w:pw, h:ph })));
+        if (ok) close(); else { $('#exGo').disabled = false; $('#exAlt').disabled = false; $('#exSend').disabled = false; }
+        return;
+      }
       const base = 'etiqueta-tagship-' + s.file;
       let blob, name;
       if (fmt === 'pdf'){
@@ -2410,12 +2500,13 @@ function exportDialog(mode){
       const r = await saveFile(blob, name);
       if (r === 'saved') toast(fmt === 'pdf' ? 'PDF descargado' : 'Imagen descargada');
     } catch(e){
-      toast(action === 'print' ? 'No se pudo abrir la impresión. Probá descargando el PDF.' : 'No se pudo generar el archivo. Probá de nuevo.');
-      $('#exGo').disabled = false; $('#exAlt').disabled = false;
+      toast(action === 'print' ? 'No se pudo abrir la impresión. Probá descargando el PDF.' : action === 'queue' ? 'No se pudo mandar a la cola. Revisá tu conexión.' : 'No se pudo generar el archivo. Probá de nuevo.');
+      $('#exGo').disabled = false; $('#exAlt').disabled = false; $('#exSend').disabled = false;
     }
   };
   $('#exGo').onclick = () => run(printing ? 'print' : 'download');
   $('#exAlt').onclick = () => run(printing ? 'download' : 'print');
+  $('#exSend').onclick = () => run('queue');
 }
 
 /* ================= Mis diseños (guardados en el navegador) ================= */
@@ -2590,6 +2681,8 @@ function show(id){
   $('#tpl').hidden = id !== 'tpl';
   $('#full').hidden = id !== 'full';
   $('#crop').hidden = id !== 'crop';
+  $('#queue').hidden = id !== 'queue';
+  if (id === 'queue') renderQueue();
   $$('.st-item[data-sec]').forEach(b => b.classList.toggle('on', b.dataset.sec === (id === 'tpl' ? 'home' : id)));
   window.scrollTo(0, 0);
 }
@@ -2718,7 +2811,7 @@ $('#btnExport').onclick = () => exportDialog('download');
 $('#btnPrint').onclick = () => exportDialog('print');
 async function goHome(){
   if (canvas){ snapshot(); canvas.discardActiveObject(); if (current.id) await persist(); }
-  document.body.classList.remove('has-sel', 'show-label');
+  document.body.classList.remove('has-sel', 'show-label', 'sheet-open');
   updateResume(); renderMyDesigns(); show('home');
 }
 $('#btnHome').onclick = goHome;
@@ -2726,6 +2819,7 @@ $$('.ts-word[href="#"]').forEach(a => a.onclick = async e => { e.preventDefault(
 $('#tplBack').onclick = () => show('home');
 $$('[data-size]').forEach(b => b.onclick = () => { sizeKey = b.dataset.size; orient = 'v'; sepMode = false; show('tpl'); buildTemplateScreen(); });
 $('#btnSave').onclick = () => saveNow();
+$('#mEdit').onclick = () => openSheet();
 $('#dualDup').addEventListener('change', e => setSepMode(!e.target.checked));
 $('#docName').addEventListener('change', async e => {
   const v = e.target.value.trim();
@@ -2747,13 +2841,13 @@ window.addEventListener('beforeunload', () => { if (current.id && autoT){ persis
 const HAS_SERVER = /^https?:$/.test(location.protocol) && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
 function setupTool(prefix, endpoint, downloadName){
   const dz = $('#dropzone-' + prefix), input = $('#input-' + prefix), fn = $('#filename-' + prefix);
-  const btn = $('#btn-' + prefix), pbtn = $('#print-' + prefix), st = $('#status-' + prefix);
+  const btn = $('#btn-' + prefix), pbtn = $('#print-' + prefix), sbtn = $('#send-' + prefix), st = $('#status-' + prefix);
   let file = null;
   const status = (msg, kind) => { st.textContent = msg; st.className = 'cv-status' + (kind ? ' ' + kind : ''); };
   const setFile = f => {
     if (!f) return;
     if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')){ status('El archivo tiene que ser un PDF.', 'error'); return; }
-    file = f; fn.textContent = f.name; btn.disabled = false; pbtn.disabled = false; status('', '');
+    file = f; fn.textContent = f.name; btn.disabled = false; pbtn.disabled = false; sbtn.disabled = false; status('', '');
   };
   dz.addEventListener('click', () => input.click());
   dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); input.click(); } });
@@ -2764,8 +2858,8 @@ function setupTool(prefix, endpoint, downloadName){
   const go = async action => {
     if (!file) return;
     if (!HAS_SERVER){ status('En la vista previa no hay servidor. Cuando el Studio esté en Render, convierte de verdad.', 'error'); return; }
-    const b = action === 'print' ? pbtn : btn, label = b.innerHTML;
-    btn.disabled = true; pbtn.disabled = true; b.textContent = 'Convirtiendo…'; status('', '');
+    const b = action === 'print' ? pbtn : action === 'queue' ? sbtn : btn, label = b.innerHTML;
+    btn.disabled = true; pbtn.disabled = true; sbtn.disabled = true; b.textContent = 'Convirtiendo…'; status('', '');
     const fd = new FormData(); fd.append('archivo', file);
     try {
       const res = await fetch(endpoint, { method:'POST', body:fd });
@@ -2777,15 +2871,20 @@ function setupTool(prefix, endpoint, downloadName){
         b.textContent = 'Preparando…';
         await printPdfBytes(new Uint8Array(await (await res.blob()).arrayBuffer()));
         status('Listo. Se abrió la ventana de impresión.', 'ok');
+      } else if (action === 'queue'){
+        b.textContent = 'Mandando…';
+        const pages = await pdfToPages(new Uint8Array(await (await res.blob()).arrayBuffer()));
+        if (await sendToQueue(file.name.replace(/\.pdf$/i, '') + ' · ' + (prefix === 'full-doble' ? 'Full' : 'Normales'), 'full', pages)) status('Listo. Ya está en la cola de impresión de tu compu.', 'ok');
       } else {
         const r = await saveFile(await res.blob(), downloadName);
         if (r === 'saved') status('Listo. Se descargó tu PDF.', 'ok');
       }
     } catch(e){ status(action === 'print' ? 'No se pudo abrir la impresión. Probá descargando el PDF.' : 'No se pudo conectar con el servidor. Probá de nuevo.', 'error'); }
-    b.innerHTML = label; btn.disabled = false; pbtn.disabled = false;
+    b.innerHTML = label; btn.disabled = false; pbtn.disabled = false; sbtn.disabled = false;
   };
   btn.addEventListener('click', () => go('download'));
   pbtn.addEventListener('click', () => go('print'));
+  sbtn.addEventListener('click', () => go('queue'));
 }
 // Para poner el video: pegá acá el código del video de YouTube (lo que va después de "watch?v=")
 const FULL_TUTORIAL_YT = '';
@@ -2955,7 +3054,7 @@ function cropReset(){
   if (cropPreset()) fitPreset(DEF_RECT); else drawCropBox();
 }
 async function cropExport(action){
-  const btn = action === 'print' ? $('#cropPrint') : $('#cropGo'), st = $('#cropStatus');
+  const btn = action === 'print' ? $('#cropPrint') : action === 'queue' ? $('#cropQueue') : $('#cropGo'), st = $('#cropStatus');
   const any = crop.mode === 'all' ? !isFull(crop.all) : Object.values(crop.per).some(r => !isFull(r));
   if (!any){ st.textContent = 'Marcá el área que querés conservar antes de descargar.'; st.className = 'cv-status error'; return; }
   btn.disabled = true; const label = btn.innerHTML; btn.textContent = 'Recortando…';
@@ -3003,7 +3102,11 @@ async function cropExport(action){
       }
       out = await nd.save();
     } else out = await doc.save();
-    if (action === 'print'){
+    if (action === 'queue'){
+      btn.textContent = 'Mandando…';
+      const pages = await pdfToPages(out);
+      if (await sendToQueue((crop.name || 'PDF') + ' · recortado', 'recorte', pages)){ st.textContent = 'Listo. Ya está en la cola de impresión de tu compu.'; st.className = 'cv-status ok'; }
+    } else if (action === 'print'){
       btn.textContent = 'Preparando…';
       await printPdfBytes(out);
       st.textContent = 'Listo. Se abrió la ventana de impresión.'; st.className = 'cv-status ok';
@@ -3032,6 +3135,7 @@ async function cropExport(action){
   $$('#cropPresets button').forEach(b => b.onclick = () => setPreset(b.dataset.p));
   $('#cropGo').onclick = () => cropExport('download');
   $('#cropPrint').onclick = () => cropExport('print');
+  $('#cropQueue').onclick = () => cropExport('queue');
   $$('#cropMode button').forEach(b => b.onclick = () => {
     const m = b.dataset.m; if (m === crop.mode) return;
     if (m === 'page' && !crop.per[crop.page]) crop.per[crop.page] = { ...crop.all };
@@ -3145,6 +3249,7 @@ paintThemeButtons();
   if (location.hash === '#full' || path === '/full') show('full');
   else if (location.hash === '#crop' || path === '/recortar') show('crop');
   else if (location.hash === '#home' || path === '/disenos') show('home');
+  else if (location.hash === '#queue' || path === '/cola') show('queue');
   else show('start');
 }
 
@@ -3228,7 +3333,7 @@ async function signOutGoogle(){
   current = { id:null, name:'', created:0 };
   try { localStorage.removeItem(DRAFT_KEY); } catch(e){}
   await fbAuth.signOut();
-  if (!$('#editor').hidden){ document.body.classList.remove('has-sel', 'show-label'); show('home'); }
+  if (!$('#editor').hidden){ document.body.classList.remove('has-sel', 'show-label', 'sheet-open'); show('home'); }
   toast('Sesión cerrada');
 }
 // La primera vez que alguien entra, sube a su cuenta los diseños que tenía en este navegador
@@ -3262,6 +3367,7 @@ async function initCloud(){
     fbAuth.onAuthStateChanged(async u => {
       const was = fbUser && fbUser.uid;
       fbUser = u;
+      if (!u) stopQueue();
       renderAccount();
       refreshAccess();
       if (u && u.uid !== was) await migrateLocal(u);
@@ -3305,7 +3411,9 @@ function lockCardHTML(){
 }
 function applyLock(){
   const locked = accessState !== 'active';
-  ['home','full','crop','tpl'].forEach(id => $('#' + id).classList.toggle('locked', locked));
+  ['home','full','crop','tpl','queue'].forEach(id => $('#' + id).classList.toggle('locked', locked));
+  if (!locked && fbUser && !queueUnsub) startQueue();
+  if (locked) stopQueue();
   $$('.st-item[data-sec]').forEach(b => b.classList.toggle('is-locked', locked && b.dataset.sec !== 'start'));
   $$('[data-lock]').forEach(el => { el.hidden = !locked; if (locked) el.innerHTML = lockCardHTML(); });
   renderAccount();
@@ -3338,6 +3446,157 @@ document.addEventListener('click', e => {
   const s = e.target.closest('.lock-card [data-signin]');
   if (s){ if (!fbAuth) toast('Conectando… probá de nuevo en un segundo.'); else signInGoogle(); }
 });
+
+/* ================= Cola de impresión (mandar del celu a la compu) ================= */
+const SEND_ICO = '<svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>';
+const QUEUE_LIMIT = 900000;   // tamaño máximo de cada tarea en la nube (Firestore ~1 MB)
+let queueItems = [], queueUnsub = null, queueFirst = true;
+const QUEUE_SESSION = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const stationOn = () => { try { return localStorage.getItem('tagstudio-estacion') === '1'; } catch(e){ return false; } };
+function deviceName(){
+  const ua = navigator.userAgent;
+  if (/iphone/i.test(ua)) return 'iPhone';
+  if (/ipad/i.test(ua)) return 'iPad';
+  if (/android/i.test(ua)) return /mobile/i.test(ua) ? 'Celular Android' : 'Tablet Android';
+  if (/mac/i.test(ua)) return 'Mac';
+  if (/win/i.test(ua)) return 'Compu Windows';
+  return 'Otro dispositivo';
+}
+const queueCol = () => fbDb.collection('users').doc(fbUser.uid).collection('printQueue');
+// PDF → páginas en imagen blanco y negro a 203 dpi (lo que imprime la TagShip)
+async function pdfToPages(bytes){
+  await ensurePdfJs();
+  const pdf = await window.pdfjsLib.getDocument({ data:bytes.slice ? bytes.slice() : new Uint8Array(bytes), isEvalSupported:false }).promise;
+  const pages = [], pxPerPt = (8 * 25.4) / 72;
+  const n = Math.min(pdf.numPages, 400);
+  for (let i = 1; i <= n; i++){
+    const page = await pdf.getPage(i);
+    const v1 = page.getViewport({ scale:1 });
+    const scale = Math.min(pxPerPt, 2400 / Math.max(v1.width, v1.height));
+    const vp = page.getViewport({ scale });
+    const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    await page.render({ canvasContext:ctx, viewport:vp }).promise;
+    pages.push({ url:toThermal(c).toDataURL('image/png'), w:+ptToMm(v1.width).toFixed(2), h:+ptToMm(v1.height).toFixed(2) });
+  }
+  return pages;
+}
+// Sube páginas [{url,w,h}] a la cola. Si no entran en una tarea, las parte en varias.
+async function sendToQueue(name, kind, pages){
+  if (!HAS_SERVER){ toast('La cola de impresión funciona en tagstudio.onrender.com'); return false; }
+  if (!fbUser || !fbDb){ toast('Iniciá sesión con Google para usar la cola de impresión.'); return false; }
+  const chunks = []; let cur = { imgs:[], map:new Map(), pages:[], size:0 };
+  for (const p of pages){
+    let i = cur.map.get(p.url);
+    const add = i === undefined ? p.url.length : 40;
+    if (cur.pages.length && cur.size + add > QUEUE_LIMIT){ chunks.push(cur); cur = { imgs:[], map:new Map(), pages:[], size:0 }; i = undefined; }
+    if (i === undefined){
+      if (p.url.length > QUEUE_LIMIT){ toast('Una de las páginas es muy pesada para la cola. Imprimila o descargala.'); return false; }
+      i = cur.imgs.length; cur.imgs.push(p.url); cur.map.set(p.url, i); cur.size += p.url.length;
+    }
+    cur.pages.push({ i, w:p.w, h:p.h }); cur.size += 40;
+  }
+  if (cur.pages.length) chunks.push(cur);
+  const from = deviceName(), now = Date.now();
+  for (let k = 0; k < chunks.length; k++){
+    const ch = chunks[k];
+    await queueCol().add({ name: chunks.length > 1 ? `${name} (${k + 1}/${chunks.length})` : name, kind,
+      imgs:ch.imgs, pages:ch.pages, from, session:QUEUE_SESSION, created: now + k });
+  }
+  toast(`Listo: mandado a la cola de impresión${chunks.length > 1 ? ` (${chunks.length} partes)` : ''}`);
+  return true;
+}
+function startQueue(){
+  stopQueue();
+  if (!fbUser || !fbDb || accessState !== 'active') return;
+  queueFirst = true;
+  queueUnsub = queueCol().orderBy('created').onSnapshot(snap => {
+    const added = [];
+    snap.docChanges().forEach(ch => { if (ch.type === 'added' && !queueFirst) added.push(ch.doc); });
+    queueItems = snap.docs.map(d => Object.assign({ id:d.id }, d.data()));
+    queueFirst = false;
+    paintQueueBadge(); if (!$('#queue').hidden) renderQueue();
+    const fromOther = added.filter(d => d.data().session !== QUEUE_SESSION);
+    if (fromOther.length){
+      if (stationOn() && !isMobileUI()) autoPrint(fromOther.map(d => Object.assign({ id:d.id }, d.data())));
+      else if (!isMobileUI()) toast(fromOther.length === 1 ? `Llegó “${fromOther[0].data().name}” a tu cola de impresión` : `Llegaron ${fromOther.length} etiquetas a tu cola de impresión`);
+    }
+  }, () => {});
+}
+function stopQueue(){ if (queueUnsub){ queueUnsub(); queueUnsub = null; } queueItems = []; paintQueueBadge(); }
+function paintQueueBadge(){
+  const n = queueItems.length, b = $('#qBadge');
+  if (b){ b.hidden = !n; b.textContent = n; }
+  document.title = n ? `(${n}) TagStudio` : 'TagStudio';
+}
+const itemPages = it => (it.pages || []).map(p => ({ url:it.imgs[p.i], w:p.w, h:p.h }));
+async function removeItems(ids){ for (const id of ids){ try { await queueCol().doc(id).delete(); } catch(e){} } }
+// Imprime tareas agrupando las páginas de igual tamaño en una sola ventana de impresión
+async function printItems(items){
+  const all = items.flatMap(itemPages);
+  const groups = [];
+  all.forEach(p => { const g = groups[groups.length - 1]; if (g && g[0].w === p.w && g[0].h === p.h) g.push(p); else groups.push([p]); });
+  for (const g of groups) await printPages(g);
+}
+let autoBusy = Promise.resolve();
+function autoPrint(items){
+  autoBusy = autoBusy.then(async () => {
+    try { await printItems(items); await removeItems(items.map(i => i.id)); toast(`Impreso: ${items.map(i => i.name).join(', ')}`); }
+    catch(e){ toast('No se pudo imprimir automáticamente. Revisá la impresora.'); }
+  });
+}
+async function printFromQueue(items){
+  if (!items.length) return;
+  try { await printItems(items); } catch(e){ toast('No se pudo abrir la impresión.'); return; }
+  if (await ask('¿Ya salieron las etiquetas?', 'Si se imprimieron bien, las sacamos de la cola. Si cancelaste o salió algo mal, quedan para volver a imprimir.', 'Sacar de la cola', 'Dejar en la cola')){
+    await removeItems(items.map(i => i.id));
+  }
+}
+function renderQueue(){
+  const list = $('#queueList'), empty = $('#queueEmpty');
+  const n = queueItems.length;
+  empty.hidden = !!n; $('#queueTools').hidden = !n;
+  $('#queueCount').textContent = n ? `${n} en la cola` : '';
+  $('#stationToggle').checked = stationOn();
+  list.innerHTML = queueItems.map(it => {
+    const p = (it.pages || [])[0] || {};
+    const pages = (it.pages || []).length;
+    const when = it.created ? fmtDate(it.created) : '';
+    return `<div class="q-item" data-id="${it.id}">
+      <span class="q-th"><img src="${it.imgs[p.i]}" alt=""></span>
+      <div class="q-info"><b>${esc(it.name || 'Etiqueta')}</b><small>${pages} ${pages === 1 ? 'página' : 'páginas'} · ${p.w ? Math.round(p.w) + ' × ' + Math.round(p.h) + ' mm' : ''}</small><small>Desde ${esc(it.from || 'otro dispositivo')} · ${when}</small></div>
+      <div class="q-act"><button class="btn primary" data-qp>${PRINTER_ICO}<span>Imprimir</span></button><button class="icon-btn del" data-qd title="Sacar de la cola" aria-label="Sacar de la cola">${ic('trash')}</button></div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.q-item').forEach(el => {
+    const it = queueItems.find(x => x.id === el.dataset.id);
+    el.querySelector('[data-qp]').onclick = () => printFromQueue([it]);
+    el.querySelector('[data-qd]').onclick = () => removeItems([it.id]);
+  });
+}
+$('#queuePrintAll').onclick = () => printFromQueue(queueItems.slice());
+$('#queueClear').onclick = async () => {
+  if (await ask('¿Vaciar la cola?', 'Se borran todas las etiquetas pendientes de imprimir.', 'Vaciar', 'Cancelar', true)) removeItems(queueItems.map(i => i.id));
+};
+$('#stationToggle').onchange = e => {
+  try { localStorage.setItem('tagstudio-estacion', e.target.checked ? '1' : '0'); } catch(err){}
+  toast(e.target.checked ? 'Modo estación activado en esta compu' : 'Modo estación desactivado');
+};
+$('#stationHelp').onclick = () => {
+  const m = $('#modal'), c = $('#modalCard');
+  c.innerHTML = `<h2>Imprimir sin que pregunte nada</h2>
+    <p>Con esto, lo que mandás desde el celular sale solo en la TagShip. Se configura una sola vez en la compu donde está conectada.</p>
+    <ol class="ios-steps">
+      <li>Poné la <b>TagShip como impresora predeterminada</b> y, en sus preferencias, el tamaño de etiqueta que más usás.</li>
+      <li>En Windows: clic derecho en el escritorio → <b>Nuevo → Acceso directo</b>, y pegá:<br><code class="q-code">"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --kiosk-printing --app=https://tagstudio.onrender.com/cola</code></li>
+      <li>Ponele de nombre <b>TagStudio Estación</b>. Cerrá Chrome por completo y abrilo desde ese acceso directo.</li>
+      <li>En la Cola de impresión, activá <b>Modo estación</b>. Listo: dejá esa ventana abierta.</li>
+    </ol>
+    <div class="modal-actions"><button class="btn primary" data-r="1">Entendido</button></div>`;
+  m.hidden = false;
+  c.querySelector('[data-r]').onclick = () => { m.hidden = true; };
+  m.onclick = e => { if (e.target === m) m.hidden = true; };
+};
 
 /* ================= Instalar como app (PWA) ================= */
 let installPrompt = null;
@@ -3384,7 +3643,7 @@ function goSection(sec){
   if (sec === 'home'){ renderMyDesigns(); updateResume(); }
   if (sec === 'start') renderStart();
   show(sec);
-  const path = { start:'/', home:'/disenos', full:'/full', crop:'/recortar' }[sec];
+  const path = { start:'/', home:'/disenos', full:'/full', crop:'/recortar', queue:'/cola' }[sec];
   try { history.replaceState(null, '', HAS_SERVER ? path : (sec === 'start' ? location.pathname + location.search : '#' + sec)); } catch(e){}
   if (sec === 'crop' && crop.pdf) cropRenderPage(crop.page);
 }

@@ -70,6 +70,14 @@ def disenos():
     return resp
 
 
+@app.route("/cola")
+def cola():
+    # Enlace directo a la Cola de impresión (ideal para el modo estación)
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
 @app.route("/recortar")
 def recortar():
     # Enlace directo a la sección Recortar PDF del Studio
