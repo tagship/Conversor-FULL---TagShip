@@ -344,6 +344,13 @@ button{ cursor:pointer; }
 .auto-desc{ margin:-4px 0 0; color:var(--muted); font-size:13.5px; }
 #crop.loaded .auto-crop{ margin-top:28px; }
 
+/* Celular o compu */
+.is-desktop [data-dev="phone"], .is-phone [data-dev="desktop"]{ display:none !important; }
+.is-phone .only-desktop, .is-desktop .only-phone{ display:none !important; }
+.is-phone .cv-actions{ grid-template-columns:minmax(0,1fr); }
+.is-phone .btn.btn-send{ background:var(--blue); border-color:var(--blue); color:#fff; }
+.is-phone .btn.btn-send:disabled{ background:var(--line); border-color:var(--line); color:var(--muted); opacity:1; }
+
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .my-head p{ margin:0; color:var(--muted); font-size:13px; }
@@ -623,6 +630,9 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
   #btnExport{ padding:9px 12px; }
   #btnPrint span{ display:none; }
   #btnExport span{ display:none; }
+  #btnQueue{ padding:9px 12px; font-size:13px; white-space:nowrap; }
+  .is-phone .ed-top .switch .sw-short{ display:none; }
+  .ed-top{ gap:2px; }
   #ed .ed-top .theme-toggle{ display:none; }
   .ed-top .grp .icon-btn{ width:32px; }
   .props{ overflow-x:hidden; }
@@ -659,8 +669,8 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <button class="st-item on" data-sec="start"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Inicio</span></button>
       <button class="st-item" data-sec="home"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Diseños</span></button>
       <button class="st-item" data-sec="full"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 2L4 13.5h6.5L9.5 22 20 9.5h-6.6z"/></svg><span>Etiquetas Full</span></button>
-      <button class="st-item" data-sec="queue"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>Impresiones</span><span class="q-badge" id="qBadge" hidden>0</span></button>
       <button class="st-item" data-sec="crop"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg><span>Recortar PDF</span></button>
+      <button class="st-item" data-sec="queue"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>Impresiones</span><span class="q-badge" id="qBadge" hidden>0</span></button>
     </nav>
     <button class="st-install" id="btnInstall" hidden><svg class="i" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3"/></svg><span><b>Instalar TagStudio</b><small>Usala como una app en tu celu o compu</small></span></button>
     <div class="st-acct" id="acct"></div>
@@ -771,14 +781,14 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <div class="cv-badge">★ Más conveniente</div><div class="cv-top"><div class="cv-top-text"><h2>Convertir Etiquetas <span class="accent">FULL</span></h2><span class="spec-pill">50 × 25 mm · Doble banda</span></div><img class="roll" src="data:image/jpeg;base64,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" alt=""></div>
           <div class="cv-steps"><div class="cv-step"><b>1</b><p>Descargá las etiquetas en <strong>5 × 2,5 cm</strong></p></div><div class="cv-step"><b>2</b><p>Subí el PDF acá</p></div><div class="cv-step"><b>3</b><p>Imprimí en tu rollo doble banda</p></div></div>
           <div class="cv-drop" id="dropzone-full-doble" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-full-doble"></div><input type="file" id="input-full-doble" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-full-doble" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-full-doble" disabled>Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-full-doble" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y mandar a la compu</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-full-doble" disabled data-dev="desktop"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-full-doble" disabled data-dev="desktop">Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-full-doble" disabled data-dev="phone"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y agregar a la cola</button></div>
           <div class="cv-status" id="status-full-doble" role="status"></div>
         </div>
         <div class="cv-card" id="panel-normales">
           <div class="cv-badge ghost" aria-hidden="true">★ Más conveniente</div><div class="cv-top"><div class="cv-top-text"><h2>Convertir Etiquetas <span class="accent">Normales</span></h2><span class="spec-pill">100 × 150 mm · 4 por hoja</span></div><img class="roll" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/wAALCADwAMgBAREA/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oACAEBAAA/APqmiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiubuvFKyXT2mg2U2r3ScOYmCQRn/AGpTx+Ayasx/8JGyBpP7Jjc9UHmuB/wLjP5Clx4h/vaUf+Ayf40h/wCEiHQaSfxlFJu8R/8APPST/wBtJR/7LQX8R9oNIP8A22lH/stHmeJP+fbRz/28S/8AxFHm+Jf+fTRz/wBvUv8A8bpfO8R97HSD/wBvkn/xql8/xF/0D9KP/b9J/wDGqT7T4iH/ADDdLP8A2/v/APGqxNT8Yajp9ytu2lWdzOxI8u3vmYjHXOYwBjuScDuRVmDxTfxxrNqWiGKFv+fW7S4cf8Bwpb6LuPoDXTWN5b39pFdWcyTW8q7kkQ5BFT0UUUUUUUUE4GTXHzTT+LLp7e0kaLQ04klQ4Nz9D/c/9C6n5cBupsbOCxtkt7WJY4kGAqjFT0UUUUUUUVzfjHW/7OtfJt9xuJMDCNhvmyFUHsWwef4VV2/hwcHSrQWaszFHuGw80vCKuDgckEIoOQOCeoUE7nOsxlMY3NIyN2bzhn2Hm5R/odvsRVLTLz+yPEEe0n+z9ScLIOcJOSQrjPI3EFGB53bc87ie5oooooooorlfFFzLqd6ug2LcOAbtgeinpH+IyW/2Rj+MGujsbSKytUghGEUfiT6mp6KKKKKKKKiu7iO0tZbiY4jiUu2OuBXmokk1DWJ7mbaXidowN2FEp/1hz6LtEeewjY9zWshMfyo2wo2TJgBlbgcA5AbGBnB2Daigtmr0sE8cDOFu0Ujlyztx/tB2II/3lA9xWfqloLzTp4CRHLIpU7T918ZV1PXBADD3jx1ya6nw3qB1XQ7K8cbZZYx5i/3XHDj8GBFaVFFFFFFUta1BNL0u4vJFL+Wvyxr1kcnCoPcsQB9a5jR4LuzAurbNxc3C77iZrdmV5GOWKEMPl+6Bx0Ra0v7S1YH/AI94z9YJh/IGnLq2pA82UR/4BcD/ANpGlOs3oHzWUI/4HMP5w0h165H3rS3/APAhh/OMUn/CROPv2sI+l3H/AFxS/wDCSxj71sPwu4P6uKcPEsB/5dpfwuLc/wDtWnDxFEf+XO6P0Mbfyc1IuvRH/ly1D8Lct/LNPGuQfxWupD/txlP8lrG8X6039lbrSC4G11IaeFog0mcRrhgCfnKscDGFNYmj24tbRFhwSFWOMvzk4+8fyLH12sO9asIMW0Rlt2DtJY5A9SRyCcnJHzEkgc7yLMZXA2iMyDnKxiJvwYMSD/v8euKrTkfK4AIK9hjPJZeO3zAjHYs46Yq74KkEcmrWQJKxXImj/wByVQ3/AKH5ldPQKKKKKK5PxK51LX7DS0J8uLE8uP7zbgn5KJW+qrXVIioioihVUYAA4Ap2KKKKKMZHPNRtBE33o0P1UGon0+zb71rbt9Y1P9Ki/snTj1sLT/vyv+FNOi6X/wBA6z/CFR/SvP8AXJlbXvsVuoWwhlacRj7ocDyhj0y3nf8AfINbVnCsaEyqTEiYbHU9C2B3LZjUD3er9tEHcK8fnSMzZjBwJXHDZPaNPu+5z1zzdnTzbcpIlrLFH95bbh4fdeucenH49Kyb4MEY8FlO7K9CeMn6NmNvxaovDMnleKWjX7lxYA/9+pMD9JK7WiiiiiiuS8H51DUL3VX5EztIhx/CTtT/AMhxof8Atoa62iiiiiiiiiq+o3Is7C4uSMiGNpMeuBnFeZaTF5t9cPOd22QozeqxABz+Lhz/AMCrpkV0iiRpAkx+d27K2WwfoD5r/wDAVq1H5Yjdp8parhCi/efAysX0A5b1JOTgGn/arSUxqkaWkv8AyxmTHyntngZXoDjI5qpOeny4HRk/u8kY/Akj6KKz7A+R4r0gL0Y3MH4bA4/9ArvaKKKKKyPFt1JaeHL97ckXDR+VCR2kchE/8eYU7wzbJa6UixDCFjs/3B8qf+OqtatFFFFFFFFFYXjO7W00Vmf7rON3+6uXb/x1DXO+G9Ob7FZK/MsgiSU/7TfvZP0wPxrUZ97SyQoG3EJGD0YnGB+Qj/77asXxPrS6Xbq8bK7qTDbh13gkEb5mUfe+YjC/xMyjjkjnIPEs4YTXs1/JbyH94lxOk24c5YAKBG4GWG3KnBU9Qa7Zp/NjimcjcwG8jpkZUn81J/Gs9cx6/oTnqL1kP4xSr/QV6FRRRRRXM+N5isemxLyTc+cR6iKNpB/4+qV0NpCLe1hhHIjQIPwGKlooooooooorjPiIxmW0slOTOfLx7u6R/wDoLSflVuyXbI8icKI5JAfeR9iH8FT9abKxisYZYQQ/ltOij+852R/of/Ha82u5RqXihtuGtLZvs0GT8rMuQMn1JLt7+YPQVuXfhz/iW3DmIAeSWRkPBYDIOPqBV/wnI154UhnPJEJGP91lH9f1q5fxhNY0llBwNTT9UkP9TXeDpRRRRRXLa8ftHizTbfGVjt3dv+ByxKP0V66miiiiiiiiiiuI8QyiTxXb/LuFt+9I/wCuUMj/APoUsdaMcbRabeqTl4/KtlPqQigf+PuaoeJroWUFxKhwIyfL9vLQKv8A4+5/Kuf8D6PFLaIJolkgmBd1ccMGOR/46F/Ku1s1DPNo98WdxHugmPWWLIGf95TgH14PfjlPh/hNAu4AP9U06D8GX/Cta8XOpaYp76nF+kUp/pXajpRRRRRXMEiXx3MP+eVvAv5+e39Frp6KKKKKKKKKK4SZWufE966945I/p5k0UX8oWroIF821twvSa+aQ+4Dsw/8AQRXD+O5zNooCk+ZMVxj/AG2eT/4ius8IWwjsApGMELk+nb8CK1ddt3ktFuLcD7VauJoj64+8v0K5H4+1cT8OFMmnStgqtxdzgbuuCwP8q1rkg+JdJiHfUJX/AASCb/4oV2VAoooormdOXf401Rv7ojH5Rr/8X+tdNRRRRRRRRRRmuE0OXztVu2/vS24z9ZJpv5MK3bYmK00sjolq8x+u1f8A4quF8dIYZdDUAlXlAYDuEWIf416PoSAafC/GWQE+vNXbmQQ28sh6IpY/gM15/wDDQ7tI0knoTPNn6sf/AK1XLEi68aaeR0SK5uPzESj/ANCNdxQKKKKK5rQzv8Va7IOnmhfyjhH9DXS0UUUUUUUUU2RgkbO3RRk1wHh4BLa4mzhvtKj/AL4sR/UmuhuHCwRKMfLp8i/oP/ia4rxk5l8R6ZbnAVDKRn13H/4kV6Lo24WiLjCqoAwP5n19qreMroWXhXVZz1W2cD6kYH6mub8Jwm10OFFGGi07AH+03T9as+GYi3jG7I+7aWSxfi8h/pGK7Siiiig9K5nwh+8vtalP8V3KB+EjL/7IK6aiiiiiiiiiqWtuY9Gv3HVYJD/46a4zQ9smlX+P4b+9jH/AY2T/ANlrYuckxgf8+Ug/Rq4rxqXHifTTHyWdwMdySf8A4qvRNDdfsMBdxlc8/wA65z4p6gr6VaaZCSXv7lI8Duowx/mv51qWqiC3nYD5DPHEv+7GNx/RTUPgNC91rd0xyxnjtz/wCJSf/HnauuoooooNcv8AD3Mmim5PWdzJ/wB9Ev8A+z11FFFFFFFFFFZniTP9i3SDrIBF/wB9MF/rXB+Cpml0C5YjLS399L+DecR/Suntj595aoeA0Tx/+hf/ABVcl40TZBpup52mFwxP/AEk/krVq6Lfl/MU7toywUZwPU/0rGS6/tnxlJcMuYtMTZGMcCQk5A/HI/4CK6dGMdm0bsSADk+hYgH9DJ/3zV/4fRFfC9tcOpEl28l02e/mOWH/AI7tro6BRRRVHXbk2ei6hcjrDbySD8FJql4Ntfsfh2zhPVUCn/gIC/8AstbdFFFFFFFFFYvi+bydH3f9NY2/BWDn9FrhPh4xl0y2QjaS4yPd4B/8XXS2blGtJc8q2MfUr/8AXqHUrBdS0uezQI0r4aAP93zEbcqn2ZXVT7E1w8Ut3pqrZ2N0rAtsWLd/pa4/gaM9HHTefk43ZPSuk8PabHYWqK4CjBeVlOQeMtgnkgKpAP8Asjuaf4luZItJnhgGLmYmIY/vsdgx/wADd69AsLZLOyt7WL/VwxrGv0UYH8qnoooorA8dvt8M3MYODO0cH1DyKp/QmtTSkKabbAjDGMMfqeT+pq3RRRRRRRRRXJfEmfydAfGd22VuPaFwP1YVz/h6E6deSQMpTyZreVlJ6KYl6/8AfNbqRlT5ROMNsz6cmPP6k/hUsm3mQkRI+GLNnbGxzgtjoOWQnthfrRdRTF4xPEBM/wAoxsLyewI6/UhQOp9KqlxENyhGRE3nbkhsYwOexYIo9VGe9ZtrC1/4r0y2yWSBjcyn1EQwD+Mjg16PRRRRRXLeNH8680WwHWWdpj9FXaP/AB6RK6kAAADoKKKKKKKKKKK4f4mlZLeC3PPmBUI/35ol/lurMsUEXiC5icFY3tonAPZVYnH4K/5YrobuPbPNv4RmO4DqFdck/h+9/ECpY5WCBpSI5d5UnAKhz9+NgSMhj8w5Gc8dgYpWij3xpBb28e3MqQx7Ny/7R6hfYDnoCehqXTMo2SErLxLLkD5Tg7FI9QNzEDvx2FP+H9qZJ9S1N1wryfZYP9yMncc+7lh/wEV2VFFFFFclKBqHj7AGUsolQ+xP7xv5wV1tFFFFFFFFFFcD4xcXHiawgHaRCf8AgEcrn9WjqPxDGLXX9HkPy29wjWzt9QR+m1fzrajZnVDM212xGxx91s5Qn6SB1x7iltWCknJgGNhLJ5sZXskg9v4W4yuOT0pZ5I7eRWAE7ggxxRxeXErdA2OrH0OcemDXP67cSJYlrYia+u2EcPOd7sQAfoWx/wABQnvXdaNYR6XpVrZQklIIwm49WI6sfcnJ/GrlFFFFNkdY42d2CooJJPQCuU8Bxtci81SQENdyGQA9RuO7H4KY1/4DXW0UUUUUUUUUV5jrchuvFbFJfLKCV8jOeXWIdD/0xatDV7G5uNAaSZvtLW4DxEOPkcEEZG0Eg7QucnGat2lxHqMEU8StNDOm4gdXBA3qP9r7ki985q7FFJ8sg3zIV/d3MKlg4/4AwZT6jlc9MdKpyptkZJVKEn5lbG9sjuMnAI9WLHn7q5qj4WibVvFEt79+zsMxxsB8rTEYYg99q/IPq1egUUUUUVznju68rRDaKSHvm8j5eojwTIf++AwHuRWvo1qbPTYIWADhdzgdNx5P6k1coooooooooqO4lSC3kmkOEjUux9gMmvBrnW4LHxVdC9lKvGkURJHGQu5v/H3euxsfFGn3tuYYrqJkkUq67sHHeq+gajHaXL6SZMl3MkDIepyT8v8AtA5YDuCwGdoB6b7UAruYVaYn53guWhVz6sAcZ9e/0rGuDd6zdvpOkMsU44uriMYWzQ9evWRuwOSepwvB7vSNOt9J0+Cys02wxKFUE5P1J9auUUUUUVxy51zxmz/etNPzCvoWBBc/i4Rf+2T12NFFFFFFFFFFZPiiZItIkSRgqzMsTH/ZJ+f8kDH8K8ljsXu4FuZEIkuybmTPrId+Pw3AfhUEvhy2VTuRQ7dwg/w/z/Mt/BiMmS8xLfdxIygH19ue/wCXcjtNH8K6vcxKt9rupm1IxkyjzCPTeFD4/Gu30nTLPSbJLTTreOCBckKgxknqT6k+tXKKKKKKyPFGptpeku8G37XKRDbhunmHOCfZQCx9lNM8J6WumaVGuG8xwCxf72O2ffqT/tM1bVFFFFFFFFFGa4v4hu10kWnRsQ8q7PoZT5efwQzH/gNRR2ZlLbQFAOB6Aen+f/1T22itPIPNyyg5rpLLT47dcMFY+pHSr3QcUUUUUUUGuRtB/wAJF4le8PzadZZig9HOfnf3yV2j/ZQ9nrrqKKKKKKKKKKK83u7pr3xa06EeVAGlBz06wx/os7D/AHxXX6bF5wUvvHHXHX8a11UKMD+VOooooooornfF+oSLHHpdkzC8vAQzIcNFF0Zh6Mc7V9znoprV0ewi02witoVVQoAIUcdMYHsAAB7AVdoooooooooorP1+5e10uZoWCTviKJj0V2OAT7DOT7A1wPhjbcW7SRhglzJviU9REAEiH12Kp+rH3r0PTLc29qqEbT3HFW6KKKKKKKhvZxa2k05R5PLQvsjGWbAzgD1NcHoGr2cepPfapMJL64AcqBgwnkeWEbDYVTgEA5y56sa7S31axnA2XKAnosnyN+TYNXsjFFFFFFFFFFFcH8Rb1pnh06BjmVvIOOxZcyN/wGLcPrKtbfhqwRUFwyADG1AOgHtXQ0UUUUUUUUVVvdOs75Cl5awzoe0iBh+tYl14N06QEWrT2QPa2kKL/wB8/dP4iqR8L6pYof7L1fJ/uyxbc/jGVH5g0z7Z4ssFzPZC7UcZiZJP0Pln9TSjxylqypqtlJat335j/wDQwF/JjWzZ+KNLuYhIJmRT/EyEqP8AgS5X9a1ba7t7tN1rPFMvrG4YfpU1FFFFV7+6Wzs5Z3BYIOFHVj0Cj3JwB9a8/wBBs5td166u5WVoISYVcHKud2ZXH1cbR/sxrXo0aLHGqIMKowBTqKKKKKKKKKKKKKY8UbghkBB9qx7vwpol1KZX0+GOc/8ALWEGN/8AvpcGsm78EIWEllqV1HIOnn7ZgPxYb/yaoTp/ivTxm3uortem1ZWVj+EgkH6inDxJrVkcajpUuB1Ihb88xmT/ANBFXLDxtpt3J5ZDiQfeWMrIR/wEHf8AmtbNvrWnTuES8iWQ9I5Dsf8A75bB/StDNcZ41v57i4g0zTn23UsnlRMP4ZCMs/8A2zQlv99o/Sun0fT4NL0+C0tYwkcaBQB7DFXKKKKKKKKKKKKKKKKKKKQqD1ANUr/SNO1BNl9ZW1wvpJGG/nWNceC9OZStpLd2YPRIpiYx/wBs2yv6VQHhXVbFgdN1KGRepSRHgz7ZhZR/47Wr4e0SW1vp7/UUtxclRDBHAzOkMfVsMwBLMxLMT/sjnFdDRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRX/9k=" alt=""></div>
           <div class="cv-steps"><div class="cv-step"><b>1</b><p>Descargá las etiquetas en <strong>6 × 4 cm</strong></p></div><div class="cv-step"><b>2</b><p>Subí el PDF acá</p></div><div class="cv-step"><b>3</b><p>Imprimí y recortá</p></div></div>
           <div class="cv-drop" id="dropzone-normales" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-normales"></div><input type="file" id="input-normales" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-normales" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-normales" disabled>Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-normales" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y mandar a la compu</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-normales" disabled data-dev="desktop"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Convertir e imprimir</button><button class="btn primary cv-go" id="btn-normales" disabled data-dev="desktop">Convertir y descargar</button><button class="btn btn-send cv-go cv-send" id="send-normales" disabled data-dev="phone"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Convertir y agregar a la cola</button></div>
           <div class="cv-status" id="status-normales" role="status"></div>
         </div>
       </div>
@@ -848,9 +858,9 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
               <p class="crop-psize" id="cropPageSize"></p>
             </section>
             <section class="p-sec">
-              <button class="btn primary block cv-go" id="cropGo">Recortar y descargar PDF</button>
-              <button class="btn btn-send block" id="cropQueue" style="margin-top:8px"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button>
-              <button class="btn ghost block" id="cropPrint" style="margin-top:8px"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button>
+              <button class="btn primary block cv-go only-desktop" id="cropGo">Recortar y descargar PDF</button>
+              <button class="btn btn-send block cv-go only-phone" id="cropQueue"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y agregar a la cola</button>
+              <button class="btn ghost block only-desktop" id="cropPrint" style="margin-top:8px"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button>
               <button class="btn ghost block" id="cropReset" style="margin-top:8px">Restablecer recorte</button>
               <div class="cv-status" id="cropStatus" role="status" style="margin-top:10px"></div>
             </section>
@@ -867,14 +877,14 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <div class="cv-top"><div class="cv-top-text"><h2>PAQ.AR</h2><span class="spec-pill">Correo Argentino · A4 → 10 × 15</span></div><span class="auto-ico"><svg class="i" viewBox="0 0 24 24"><path d="M1.5 5h12.5v10.5H1.5zM15 8.5h4l3.5 3.8v3.2H15z"/><circle cx="6.5" cy="17.5" r="2.3"/><circle cx="18" cy="17.5" r="2.3"/></svg></span></div>
           <p class="auto-desc">La etiqueta de envío de Correo Argentino (PAQ.AR).</p>
           <div class="cv-drop" id="dropzone-paqar" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-paqar"></div><input type="file" id="input-paqar" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-paqar" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-paqar" disabled>Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-paqar" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-paqar" disabled data-dev="desktop"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-paqar" disabled data-dev="desktop">Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-paqar" disabled data-dev="phone"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y agregar a la cola</button></div>
           <div class="cv-status" id="status-paqar" role="status"></div>
         </div>
         <div class="cv-card auto-card" id="panel-bultos">
           <div class="cv-top"><div class="cv-top-text"><h2>Bultos para <span class="accent">Full</span></h2><span class="spec-pill">Mercado Libre · A4 → 10 × 15</span></div><span class="auto-ico"><svg class="i" viewBox="0 0 24 24"><path d="M12 2l9 4.5v11L12 22l-9-4.5v-11z"/><path d="M3 6.5l9 4.5 9-4.5M12 11v11"/></svg></span></div>
           <p class="auto-desc">La etiqueta de las cajas que mandás a Full.</p>
           <div class="cv-drop" id="dropzone-bultos" role="button" tabindex="0"><p>Arrastrá tu PDF o tocá para elegirlo</p><div class="cv-file" id="filename-bultos"></div><input type="file" id="input-bultos" accept="application/pdf" hidden></div>
-          <div class="cv-actions"><button class="btn ghost cv-go" id="print-bultos" disabled><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-bultos" disabled>Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-bultos" disabled><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y mandar a la compu</button></div>
+          <div class="cv-actions"><button class="btn ghost cv-go" id="print-bultos" disabled data-dev="desktop"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Recortar e imprimir</button><button class="btn primary cv-go" id="btn-bultos" disabled data-dev="desktop">Recortar y descargar</button><button class="btn btn-send cv-go cv-send" id="send-bultos" disabled data-dev="phone"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg>Recortar y agregar a la cola</button></div>
           <div class="cv-status" id="status-bultos" role="status"></div>
         </div>
         </div>
@@ -887,24 +897,25 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <div class="lock-card" data-lock hidden></div>
       <header class="full-head">
         <h1>Cola de impresión</h1>
-        <p class="crop-sub">Mandá etiquetas desde el celular y imprimilas acá, todas juntas.</p>
+        <p class="crop-sub only-desktop">Lo que agregás desde el celular aparece acá para imprimirlo todo junto.</p>
+        <p class="crop-sub only-phone">Lo que agregás desde el celular espera acá. Imprimilo desde la compu, en esta misma sección.</p>
       </header>
       <div class="q-wrap">
-        <div class="q-bar">
+        <div class="q-bar only-desktop">
           <label class="switch" title="Imprime solo lo que llega desde el celular"><input type="checkbox" id="stationToggle"><span>Modo estación</span></label>
           <button class="link-btn" id="stationHelp">¿Cómo imprimir sin que pregunte?</button>
           <span class="spacer"></span>
           <span class="q-count" id="queueCount"></span>
         </div>
         <div class="q-tools" id="queueTools" hidden>
-          <button class="btn primary" id="queuePrintAll"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Imprimir todo</button>
+          <button class="btn primary only-desktop" id="queuePrintAll"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>Imprimir todo</button>
           <button class="btn ghost" id="queueClear">Vaciar cola</button>
         </div>
         <div class="q-list" id="queueList"></div>
         <div class="q-empty" id="queueEmpty">
           <span class="q-empty-ico"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg></span>
           <b>No hay nada para imprimir</b>
-          <p>Desde el celular, tocá <b>“Mandar a la compu”</b> en un diseño, en Etiquetas Full o en Recortar PDF, y aparece acá al instante.</p>
+          <p>Desde el celular, tocá <b>“Agregar a la cola”</b> en un diseño, en Etiquetas Full o en Recortar PDF, y aparece acá al instante.</p>
         </div>
       </div>
     </div>
@@ -946,8 +957,9 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <label class="switch" title="Muestra cómo va a salir impresa en la térmica"><input type="checkbox" id="thermal" checked><span class="sw-long">Vista térmica</span><span class="sw-short">Térmica</span></label>
       <button class="icon-btn theme-toggle" aria-label="Cambiar tema"><svg class="i" viewBox="0 0 24 24"><path d="M20.5 13.5A8.5 8.5 0 1 1 10.5 3.5a6.5 6.5 0 0 0 10 10z"/></svg></button>
       <button class="btn ghost" id="btnSave" title="Guardar en Mis diseños"><svg class="i" viewBox="0 0 24 24"><path d="M5 3h11l4 4v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></svg><span>Guardar</span></button>
-      <button class="btn ghost" id="btnPrint" title="Imprimir directo"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>Imprimir</span></button>
-      <button class="btn primary" id="btnExport"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span>Descargar</span></button>
+      <button class="btn ghost only-desktop" id="btnPrint" title="Imprimir directo"><svg class="i" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span>Imprimir</span></button>
+      <button class="btn primary only-phone" id="btnQueue" title="Agregar a la cola de impresión"><svg class="i" viewBox="0 0 24 24"><rect x="2.5" y="4" width="11" height="15" rx="2"/><path d="M8 16h.01"/><path d="M14 11h7M18 8l3 3-3 3"/></svg><span>Agregar a la cola</span></button>
+      <button class="btn primary only-desktop" id="btnExport"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span>Descargar</span></button>
     </header>
 
     <nav class="rail" id="rail" aria-label="Herramientas">
@@ -1055,6 +1067,9 @@ const FONTS = ['Inter','Poppins','Montserrat','Archivo Black','Bebas Neue','Oswa
 const PT = 0.25/0.3528; // unidades -> puntos tipográficos
 
 const $ = s => document.querySelector(s);
+// Celular o tablet: no tienen la TagShip conectada, así que mandan a la cola de impresión
+const IS_PHONE = /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/i.test(navigator.userAgent));
+document.documentElement.classList.add(IS_PHONE ? 'is-phone' : 'is-desktop');
 const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -2649,27 +2664,29 @@ async function printPdfBytes(bytes){
 const PRINT_HINT = 'En la ventana de impresión elegí tu TagShip, el tamaño de etiqueta correcto y escala 100%.';
 
 function exportDialog(mode){
-  const printing = mode === 'print';
+  const printing = mode === 'print', queueing = mode === 'queue';
   const m = $('#modal'), c = $('#modalCard'), s = SZ();
   const sep = isSep();
   const lanesN = s.dual ? (s.dual.lanes || 2) : 1;
   const sizeTxt = s.dual ? `${String(s.dual.pageW).replace('.', ',')} × ${s.h} mm (${lanesN === 3 ? 'triple' : 'doble'} banda)` : s.cut ? '100 × 190 mm, con el talón de 40 mm arriba' : `${s.w} × ${s.h} mm`;
-  const intro = printing
+  const intro = queueing
+    ? 'La etiqueta se agrega a la cola de impresión de tu cuenta. Después la imprimís desde la compu, en la sección Impresiones.'
+    : printing
     ? `Se abre la ventana de impresión con tu etiqueta en ${sizeTxt}. ${PRINT_HINT}`
     : sep ? 'Se descarga la fila de 103 × 25 mm con tus dos etiquetas, lista para el rollo doble banda.'
     : s.dual ? `Se arma un archivo de ${sizeTxt} con ${lanesN === 3 ? 'tres' : 'dos'} etiquetas por fila.`
     : s.cut ? 'Se descarga en 100 × 190 mm, con el talón de 40 mm arriba.'
     : `Se descarga en ${s.w} × ${s.h} mm. Abrila e imprimila en tu TagShip como cualquier etiqueta.`;
-  c.innerHTML = `<h2>${printing ? 'Imprimir etiqueta' : 'Descargar etiqueta'}</h2><p>${intro}</p>
-    <div ${printing ? 'hidden' : ''}><div class="lbl"><span>Formato</span></div>
+  c.innerHTML = `<h2>${queueing ? 'Agregar a la cola de impresión' : printing ? 'Imprimir etiqueta' : 'Descargar etiqueta'}</h2><p>${intro}</p>
+    <div ${printing || queueing ? 'hidden' : ''}><div class="lbl"><span>Formato</span></div>
     <div class="seg" id="exFmt"><button data-f="pdf" class="on">PDF (recomendado)</button><button data-f="png">Imagen PNG</button></div></div>
     <div id="exCopiesRow"><div class="lbl"><span>${sep ? 'Cantidad de filas (2 etiquetas por fila)' : s.dual ? 'Cantidad de etiquetas' : 'Cantidad de copias'}</span></div>
     <input class="field" type="number" id="exCopies" min="1" max="400" value="${s.dual && !sep ? lanesN : 1}" style="width:110px;margin-bottom:12px">
     ${s.dual && !sep ? `<p class="note" style="margin-top:-4px">Van de a ${lanesN === 3 ? 'tres' : 'dos'} por fila. Si no completás la última fila, sale con las que falten.</p>` : ''}</div>
     <label class="check"><input type="checkbox" id="exThermal" checked> Optimizar para impresora térmica (blanco y negro puro)</label>
     <div class="modal-actions"><button class="btn ghost" id="exCancel">Cancelar</button>
-      <button class="btn btn-send" id="exSend">${SEND_ICO}Mandar a la compu</button>
-      <button class="btn ${printing ? 'ghost' : 'primary'}" id="exAlt">${printing ? ic('upload', 'style="transform:rotate(180deg)"') + 'Descargar' : PRINTER_ICO + 'Imprimir'}</button>
+      <button class="btn btn-send" id="exSend" hidden>${SEND_ICO}Agregar a la cola</button>
+      <button class="btn ${printing ? 'ghost' : 'primary'}" id="exAlt" ${queueing ? 'hidden' : ''}>${printing ? ic('upload', 'style="transform:rotate(180deg)"') + 'Descargar' : PRINTER_ICO + 'Imprimir'}</button>
       <button class="btn primary" id="exGo">${printing ? PRINTER_ICO + 'Imprimir' : ic('upload', 'style="transform:rotate(180deg)"') + 'Descargar'}</button></div>`;
   m.hidden = false;
   let fmt = 'pdf';
@@ -2740,7 +2757,8 @@ function exportDialog(mode){
       $('#exGo').disabled = false; $('#exAlt').disabled = false; $('#exSend').disabled = false;
     }
   };
-  $('#exGo').onclick = () => run(printing ? 'print' : 'download');
+  if (queueing) $('#exGo').innerHTML = SEND_ICO + 'Agregar a la cola';
+  $('#exGo').onclick = () => run(queueing ? 'queue' : printing ? 'print' : 'download');
   $('#exAlt').onclick = () => run(printing ? 'download' : 'print');
   $('#exSend').onclick = () => run('queue');
 }
@@ -3045,6 +3063,7 @@ $('#zoomFit').onclick = () => fitZoom();
 $('#thermal').onchange = e => $('#labelWrap').classList.toggle('thermal', e.target.checked);
 $('#btnExport').onclick = () => exportDialog('download');
 $('#btnPrint').onclick = () => exportDialog('print');
+$('#btnQueue').onclick = () => exportDialog('queue');
 async function goHome(){
   if (canvas){ snapshot(); canvas.discardActiveObject(); if (current.id) await persist(); }
   document.body.classList.remove('has-sel', 'show-label', 'sheet-open');
@@ -3110,7 +3129,7 @@ function setupTool(prefix, endpoint, downloadName, queueLabel){
       } else if (action === 'queue'){
         b.textContent = 'Mandando…';
         const pages = await pdfToPages(new Uint8Array(await (await res.blob()).arrayBuffer()));
-        if (await sendToQueue(file.name.replace(/\.pdf$/i, '') + ' · ' + (queueLabel || (prefix === 'full-doble' ? 'Full' : 'Normales')), 'full', pages)) status('Listo. Ya está en la cola de impresión de tu compu.', 'ok');
+        if (await sendToQueue(file.name.replace(/\.pdf$/i, '') + ' · ' + (queueLabel || (prefix === 'full-doble' ? 'Full' : 'Normales')), 'full', pages)) status('Listo. Ya está en la cola de impresión: imprimilo desde la compu.', 'ok');
       } else {
         const r = await saveFile(await res.blob(), downloadName);
         if (r === 'saved') status('Listo. Se descargó tu PDF.', 'ok');
@@ -3343,7 +3362,7 @@ async function cropExport(action){
     if (action === 'queue'){
       btn.textContent = 'Mandando…';
       const pages = await pdfToPages(out);
-      if (await sendToQueue((crop.name || 'PDF') + ' · recortado', 'recorte', pages)){ st.textContent = 'Listo. Ya está en la cola de impresión de tu compu.'; st.className = 'cv-status ok'; }
+      if (await sendToQueue((crop.name || 'PDF') + ' · recortado', 'recorte', pages)){ st.textContent = 'Listo. Ya está en la cola de impresión: imprimilo desde la compu.'; st.className = 'cv-status ok'; }
     } else if (action === 'print'){
       btn.textContent = 'Preparando…';
       await printPdfBytes(out);
@@ -3741,7 +3760,7 @@ async function sendToQueue(name, kind, pages){
     await queueCol().add({ name: chunks.length > 1 ? `${name} (${k + 1}/${chunks.length})` : name, kind,
       imgs:ch.imgs, pages:ch.pages, from, session:QUEUE_SESSION, created: now + k });
   }
-  toast(`Listo: mandado a la cola de impresión${chunks.length > 1 ? ` (${chunks.length} partes)` : ''}`);
+  toast(`Agregado a la cola de impresión${chunks.length > 1 ? ` (${chunks.length} partes)` : ''}. Imprimilo desde la compu.`);
   return true;
 }
 function startQueue(){
@@ -3803,7 +3822,7 @@ function renderQueue(){
     return `<div class="q-item" data-id="${it.id}">
       <span class="q-th"><img src="${it.imgs[p.i]}" alt=""></span>
       <div class="q-info"><b>${esc(it.name || 'Etiqueta')}</b><small>${pages} ${pages === 1 ? 'página' : 'páginas'} · ${p.w ? Math.round(p.w) + ' × ' + Math.round(p.h) + ' mm' : ''}</small><small>Desde ${esc(it.from || 'otro dispositivo')} · ${when}</small></div>
-      <div class="q-act"><button class="btn primary" data-qp>${PRINTER_ICO}<span>Imprimir</span></button><button class="icon-btn del" data-qd title="Sacar de la cola" aria-label="Sacar de la cola">${ic('trash')}</button></div>
+      <div class="q-act"><button class="btn primary only-desktop" data-qp>${PRINTER_ICO}<span>Imprimir</span></button><button class="icon-btn del" data-qd title="Sacar de la cola" aria-label="Sacar de la cola">${ic('trash')}</button></div>
     </div>`;
   }).join('');
   list.querySelectorAll('.q-item').forEach(el => {
