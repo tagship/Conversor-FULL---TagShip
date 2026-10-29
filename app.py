@@ -68,6 +68,12 @@ def iconos(nombre):
     return send_from_directory(os.path.join(STUDIO_DIR, "icons"), nombre, max_age=86400)
 
 
+@app.route("/descargas/<path:nombre>")
+def descargas(nombre):
+    # Archivos para descargar (por ejemplo, la extensión de Chrome para PAQ.AR)
+    return send_from_directory(os.path.join(STUDIO_DIR, "descargas"), nombre, as_attachment=True)
+
+
 @app.route("/disenos")
 def disenos():
     # Enlace directo a Diseños personalizados
