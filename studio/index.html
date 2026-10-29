@@ -381,6 +381,39 @@ button{ cursor:pointer; }
 
 .q-tutorial{ margin-top:34px; }
 
+/* Reproductor de video propio */
+.video-box.tsv{ display:block; background:#000; cursor:pointer; outline:none; }
+.tsv-stage{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.tsv-stage iframe{ position:absolute; left:0; top:-90px; width:1920px; height:1260px; border:0; transform-origin:0 90px; }
+.tsv.native .tsv-stage{ pointer-events:auto; }
+.tsv.native .tsv-shield{ display:none; }
+.tsv-shield{ position:absolute; inset:0; z-index:2; }
+.tsv-poster{ position:absolute; inset:0; z-index:4; display:grid; place-items:center; background:#000; }
+.tsv-poster img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.92; }
+.tsv-poster::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.35)); }
+.tsv-big{ position:relative; z-index:1; width:84px; height:84px; border-radius:50%; background:var(--blue); color:#fff; display:grid; place-items:center; box-shadow:0 12px 30px -8px rgba(2,79,235,.7); transition:transform .15s; }
+.tsv-big svg{ width:36px; height:36px; margin-left:4px; }
+.tsv.ended .tsv-big svg{ margin-left:0; }
+.tsv-poster:hover .tsv-big{ transform:scale(1.06); }
+.tsv.started .tsv-poster{ display:none; }
+.tsv-load{ position:absolute; inset:0; z-index:3; display:none; place-items:center; pointer-events:none; }
+.tsv.is-loading .tsv-load{ display:grid; }
+.tsv-load span{ width:46px; height:46px; border-radius:50%; border:4px solid rgba(255,255,255,.3); border-top-color:#fff; animation:spin .8s linear infinite; }
+.tsv-bar{ position:absolute; left:0; right:0; bottom:0; z-index:5; display:flex; align-items:center; gap:8px; padding:26px 14px 12px; background:linear-gradient(180deg, transparent, rgba(0,0,0,.75)); color:#fff; opacity:0; transform:translateY(6px); transition:opacity .2s, transform .2s; }
+.tsv.started.show-ui .tsv-bar, .tsv.started:not(.is-playing) .tsv-bar{ opacity:1; transform:none; }
+.tsv-btn{ flex:none; height:34px; min-width:34px; padding:0 6px; border:none; border-radius:8px; background:transparent; color:#fff; display:grid; place-items:center; font:700 13px "Inter",sans-serif; }
+.tsv-btn:hover{ background:rgba(255,255,255,.16); }
+.tsv-btn svg{ width:22px; height:22px; }
+.tsv-speed{ min-width:44px; background:rgba(255,255,255,.14); }
+.tsv-prog{ position:relative; flex:1; height:6px; border-radius:999px; background:rgba(255,255,255,.25); cursor:pointer; touch-action:none; }
+.tsv-prog::before{ content:""; position:absolute; inset:-10px 0; }
+.tsv-buf{ position:absolute; left:0; top:0; bottom:0; border-radius:999px; background:rgba(255,255,255,.35); }
+.tsv-played{ position:absolute; left:0; top:0; bottom:0; border-radius:999px; background:var(--blue); }
+.tsv-played i{ position:absolute; right:-7px; top:50%; width:14px; height:14px; margin-top:-7px; border-radius:50%; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+.tsv-time{ flex:none; font:600 13px "Inter",sans-serif; font-variant-numeric:tabular-nums; min-width:48px; text-align:right; }
+.tsv:fullscreen{ border-radius:0; border:none; }
+@media (max-width: 560px){ .tsv-bar{ gap:4px; padding:20px 8px 8px; } .tsv-big{ width:64px; height:64px; } .tsv-big svg{ width:28px; height:28px; } }
+
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .my-head p{ margin:0; color:var(--muted); font-size:13px; }
@@ -3184,16 +3217,151 @@ function setupTool(prefix, endpoint, downloadName, queueLabel){
   pbtn.addEventListener('click', () => go('print'));
   sbtn.addEventListener('click', () => go('queue'));
 }
-// Video de la cola de impresión: pegá acá el código del video de YouTube (lo que va después de "watch?v=")
-const QUEUE_TUTORIAL_YT = '';
-if (QUEUE_TUTORIAL_YT){
-  $('#queueVideo').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${QUEUE_TUTORIAL_YT}" title="Tutorial: cómo mandar a imprimir desde el celular" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+/* ================= Reproductor de videos (propio, sobre YouTube) ================= */
+const TS_VIDEOS = { fullVideo:'95P3LhG_RTM', queueVideo:'KyQIen5Pn-M' };
+let ytReady = null;
+function loadYT(){
+  if (ytReady) return ytReady;
+  ytReady = new Promise((res, rej) => {
+    if (window.YT && window.YT.Player) return res(window.YT);
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(window.YT); };
+    const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api';
+    sc.onerror = () => { ytReady = null; rej(new Error('yt')); };
+    document.head.appendChild(sc);
+  });
+  return ytReady;
 }
-// Para poner el video: pegá acá el código del video de YouTube (lo que va después de "watch?v=")
-const FULL_TUTORIAL_YT = '';
-if (FULL_TUTORIAL_YT){
-  $('#fullVideo').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${FULL_TUTORIAL_YT}" title="Tutorial: cómo preparar tus etiquetas Full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+const fmtT = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const VP = {
+  play:'<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>',
+  pause:'<svg viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>',
+  vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  full:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4.5h4.5"/></svg>'
+};
+function setupVideo(boxId, vid){
+  const box = document.getElementById(boxId); if (!box) return;
+  if (!HAS_SERVER){
+    box.innerHTML = `<div class="video-ph"><span class="play"></span><b>El video se ve en tagstudio.onrender.com</b></div>`;
+    return;
+  }
+  box.classList.add('tsv');
+  box.innerHTML = `
+    <div class="tsv-stage"><div class="tsv-frame" id="${boxId}-yt"></div></div>
+    <div class="tsv-shield"></div>
+    <div class="tsv-poster"><img alt="" src="https://i.ytimg.com/vi/${vid}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${vid}/hqdefault.jpg'"><span class="tsv-big">${VP.play}</span></div>
+    <div class="tsv-load"><span></span></div>
+    <div class="tsv-bar">
+      <button class="tsv-btn" data-v="pp" aria-label="Reproducir">${VP.play}</button>
+      <div class="tsv-prog" role="slider" aria-label="Avance del video" tabindex="0"><div class="tsv-buf"></div><div class="tsv-played"><i></i></div></div>
+      <span class="tsv-time">0:00</span>
+      <button class="tsv-btn tsv-speed" data-v="sp" aria-label="Velocidad">1x</button>
+      <button class="tsv-btn" data-v="mu" aria-label="Silenciar">${VP.vol}</button>
+      <button class="tsv-btn" data-v="fs" aria-label="Pantalla completa">${VP.full}</button>
+    </div>`;
+  const $b = s => box.querySelector(s);
+  let player = null, ready = false, timer = null, hideT = null, speeds = [1, 1.25, 1.5, 2], si = 0;
+  const state = () => (player && ready) ? player.getPlayerState() : -1;
+  const playing = () => [1, 3].includes(state());
+  function paint(){
+    if (!player || !ready) return;
+    const d = player.getDuration() || 0, t = player.getCurrentTime() || 0;
+    $b('.tsv-played').style.width = d ? (t / d * 100) + '%' : '0';
+    $b('.tsv-buf').style.width = ((player.getVideoLoadedFraction() || 0) * 100) + '%';
+    $b('.tsv-time').textContent = d ? '-' + fmtT(d - t) : '0:00';
+  }
+  function showBar(){
+    box.classList.add('show-ui'); clearTimeout(hideT);
+    hideT = setTimeout(() => { if (playing()) box.classList.remove('show-ui'); }, 2500);
+  }
+  function syncState(){
+    const st = state();
+    box.classList.toggle('is-playing', st === 1 || st === 3);
+    box.classList.toggle('is-loading', st === 3);
+    $b('[data-v="pp"]').innerHTML = (st === 1 || st === 3) ? VP.pause : VP.play;
+    if (st === 0){ // terminó
+      box.classList.remove('started'); box.classList.add('ended');
+      $b('.tsv-big').innerHTML = VP.replay;
+    }
+    if (st === 1){ box.classList.add('started'); box.classList.remove('ended'); try { player.setPlaybackQuality('highres'); } catch(e){} }
+    if (st === 2) box.classList.add('show-ui');
+    paint();
+  }
+  async function create(){
+    box.classList.add('is-loading');
+    const YT = await loadYT();
+    return new Promise(res => {
+      player = new YT.Player(boxId + '-yt', {
+        videoId:vid, width:1920, height:1080,
+        host:'https://www.youtube-nocookie.com',
+        playerVars:{ controls:0, disablekb:1, fs:0, rel:0, modestbranding:1, iv_load_policy:3, playsinline:1, cc_load_policy:0, autoplay:1, vq:'hd1080', origin:location.origin },
+        events:{
+          onReady:() => { ready = true; fitFrame(); player.playVideo(); timer = setInterval(paint, 250); res(); },
+          onStateChange:syncState,
+          onPlaybackQualityChange:() => {}
+        }
+      });
+    });
+  }
+  // El reproductor se arma a 1920×1080 y se achica con CSS: así YouTube manda la máxima calidad
+  function fitFrame(){
+    const ifr = box.querySelector('iframe'); if (!ifr) return;
+    const w = box.clientWidth, sc = w / 1920;
+    ifr.style.transform = `scale(${sc})`;
+  }
+  window.addEventListener('resize', fitFrame);
+  document.addEventListener('fullscreenchange', () => setTimeout(fitFrame, 50));
+  async function toggle(){
+    if (!player){
+      try { await create(); } catch(e){ toast('No se pudo cargar el video. Revisá tu conexión.'); box.classList.remove('is-loading'); }
+      // iPhone a veces no deja arrancar desde afuera: se habilita el toque directo sobre el video
+      setTimeout(() => { if (!playing()) box.classList.add('native'); }, 1800);
+      return;
+    }
+    if (state() === 0){ player.seekTo(0, true); player.playVideo(); return; }
+    playing() ? player.pauseVideo() : player.playVideo();
+  }
+  $b('.tsv-poster').onclick = toggle;
+  $b('.tsv-shield').onclick = () => { toggle(); showBar(); };
+  $b('[data-v="pp"]').onclick = toggle;
+  $b('[data-v="sp"]').onclick = () => {
+    si = (si + 1) % speeds.length; const r = speeds[si];
+    $b('[data-v="sp"]').textContent = (r % 1 ? String(r).replace('.', ',') : r) + 'x';
+    if (player && ready) player.setPlaybackRate(r);
+  };
+  $b('[data-v="mu"]').onclick = () => {
+    if (!player || !ready) return;
+    if (player.isMuted()){ player.unMute(); $b('[data-v="mu"]').innerHTML = VP.vol; }
+    else { player.mute(); $b('[data-v="mu"]').innerHTML = VP.mute; }
+  };
+  $b('[data-v="fs"]').onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (box.requestFullscreen) box.requestFullscreen();
+    else if (box.webkitRequestFullscreen) box.webkitRequestFullscreen();
+  };
+  const prog = $b('.tsv-prog');
+  const seekAt = e => {
+    if (!player || !ready) return;
+    const r = prog.getBoundingClientRect(), x = Math.max(0, Math.min(1, ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width));
+    player.seekTo(x * player.getDuration(), true); paint();
+  };
+  let dragging = false;
+  prog.addEventListener('pointerdown', e => { dragging = true; prog.setPointerCapture(e.pointerId); seekAt(e); });
+  prog.addEventListener('pointermove', e => { if (dragging) seekAt(e); });
+  prog.addEventListener('pointerup', () => { dragging = false; });
+  prog.addEventListener('keydown', e => {
+    if (!player || !ready) return;
+    if (e.key === 'ArrowRight') player.seekTo(player.getCurrentTime() + 5, true);
+    if (e.key === 'ArrowLeft') player.seekTo(player.getCurrentTime() - 5, true);
+  });
+  box.addEventListener('pointermove', showBar);
+  box.addEventListener('keydown', e => { if (e.key === ' ' && e.target === box){ e.preventDefault(); toggle(); } });
+  box.tabIndex = 0;
 }
+Object.entries(TS_VIDEOS).forEach(([id, vid]) => setupVideo(id, vid));
+
 setupTool('full-doble', '/convertir/full-doble', 'Etiquetas-Full-Doble-TagShip.pdf');
 setupTool('normales', '/convertir/normales-10', 'Etiquetas-Full-10xhoja-TagShip.pdf');
 setupTool('full-simple', '/convertir/full-simple', 'Etiquetas-Full-Simple-TagShip.pdf', 'Full simple banda');
