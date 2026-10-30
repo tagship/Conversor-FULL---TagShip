@@ -24,6 +24,10 @@ app = Flask(__name__)
 from cuentas import bp as cuentas_bp
 app.register_blueprint(cuentas_bp)
 
+# Editar PDF (convierte una página en elementos editables)
+from editarpdf import bp as editarpdf_bp
+app.register_blueprint(editarpdf_bp)
+
 # Recortes automáticos (PAQ.AR y Bultos para Full)
 from recortes import bp as recortes_bp
 app.register_blueprint(recortes_bp)

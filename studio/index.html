@@ -387,7 +387,7 @@ button{ cursor:pointer; }
 /* Reproductor de video propio */
 .video-box.tsv{ display:block; background:#000; cursor:pointer; outline:none; }
 .tsv-stage{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-.tsv-stage iframe{ position:absolute; left:0; top:-90px; width:1920px; height:1260px; border:0; transform-origin:0 90px; }
+.tsv-stage iframe{ position:absolute; left:0; top:-200px; width:1920px; height:1480px; border:0; transform-origin:0 200px; }
 .tsv.native .tsv-stage{ pointer-events:auto; }
 .tsv.cc-on .tsv-stage iframe{ top:0; height:1080px; transform-origin:0 0; }
 .tsv-cc{ font:800 12px "Inter",sans-serif; letter-spacing:.02em; border:1.5px solid rgba(255,255,255,.55) !important; height:24px !important; min-width:30px !important; padding:0 5px !important; border-radius:5px !important; opacity:.75; }
@@ -402,6 +402,9 @@ button{ cursor:pointer; }
 .tsv.ended .tsv-big svg{ margin-left:0; }
 .tsv-poster:hover .tsv-big{ transform:scale(1.06); }
 .tsv.started .tsv-poster{ display:none; }
+.tsv-pause{ position:absolute; inset:0; z-index:3; display:none; place-items:center; background:rgba(0,0,0,.28); }
+.tsv.started:not(.is-playing):not(.ended) .tsv-pause{ display:grid; }
+.tsv-pause .tsv-big{ pointer-events:none; }
 .tsv-load{ position:absolute; inset:0; z-index:3; display:none; place-items:center; pointer-events:none; }
 .tsv.is-loading .tsv-load{ display:grid; }
 .tsv-load span{ width:46px; height:46px; border-radius:50%; border:4px solid rgba(255,255,255,.3); border-top-color:#fff; animation:spin .8s linear infinite; }
@@ -445,6 +448,11 @@ button{ cursor:pointer; }
 .ext-sep::before, .ext-sep::after{ content:""; flex:1; height:1px; background:var(--line); }
 #crop.loaded .ext-block, #crop.loaded .ext-sep{ display:none; }
 @media (max-width: 960px){ .ext-grid{ grid-template-columns:minmax(0,1fr); } }
+
+.size-card.edit-pdf{ border-style:dashed; border-color:var(--line); }
+.size-card.edit-pdf:hover{ border-color:var(--blue); }
+.pdf-ico svg{ width:28px; height:28px; color:#fff; }
+.size-card.busy{ opacity:.6; pointer-events:none; }
 
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -857,7 +865,8 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <span class="size-name">50 × 25 mm</span>
           <span class="size-use">Doble banda, 2 por fila</span>
         </button>
-        <button class="size-card add-size" id="btnNewSize"><span class="size-stage"><span class="add-plus">+</span></span><span class="size-name">Otro tamaño</span><span class="size-use">100 × 50, 55 × 44, triple banda o la medida que quieras</span></button>
+        <button class="size-card edit-pdf" id="btnEditPdf"><span class="size-stage"><span class="add-plus pdf-ico"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M9 17l1-3.5 5.5-5.5 2.5 2.5-5.5 5.5z"/></svg></span></span><span class="size-name">Editar un PDF</span><span class="size-use">Subí una etiqueta (por ejemplo, del correo) y cambiá sus datos</span></button><input type="file" id="editPdfIn" accept="application/pdf" hidden>
+      <button class="size-card add-size" id="btnNewSize"><span class="size-stage"><span class="add-plus">+</span></span><span class="size-name">Otro tamaño</span><span class="size-use">100 × 50, 55 × 44, triple banda o la medida que quieras</span></button>
       </div>
     
       </section>
@@ -3286,6 +3295,7 @@ function setupVideo(boxId, vid){
     <div class="tsv-stage"><div class="tsv-frame" id="${boxId}-yt"></div></div>
     <div class="tsv-shield"></div>
     <div class="tsv-poster"><img alt="" src="https://i.ytimg.com/vi/${vid}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${vid}/hqdefault.jpg'"><span class="tsv-big">${VP.play}</span></div>
+    <div class="tsv-pause"><span class="tsv-big">${VP.play}</span></div>
     <div class="tsv-load"><span></span></div>
     <div class="tsv-bar">
       <button class="tsv-btn" data-v="pp" aria-label="Reproducir">${VP.play}</button>
@@ -3320,7 +3330,11 @@ function setupVideo(boxId, vid){
       box.classList.remove('started'); box.classList.add('ended');
       $b('.tsv-big').innerHTML = VP.replay;
     }
-    if (st === 1){ box.classList.add('started'); box.classList.remove('ended'); try { player.setPlaybackQuality('highres'); } catch(e){} }
+    if (st === 1){
+      box.classList.add('started'); box.classList.remove('ended');
+      try { player.setPlaybackQuality('highres'); } catch(e){}
+      if (!ccOn) offCaptions();
+    }
     if (st === 2) box.classList.add('show-ui');
     paint();
   }
@@ -3360,6 +3374,12 @@ function setupVideo(boxId, vid){
   }
   $b('.tsv-poster').onclick = toggle;
   $b('.tsv-shield').onclick = () => { toggle(); showBar(); };
+  $b('.tsv-pause').onclick = () => { toggle(); showBar(); };
+  // YouTube carga los subtítulos recién cuando arranca el video: se apagan ahí (y otra vez al rato, por las dudas)
+  function offCaptions(){
+    const off = () => { try { player.setOption('captions', 'track', {}); player.unloadModule('captions'); player.unloadModule('cc'); } catch(e){} };
+    off(); setTimeout(off, 800); setTimeout(off, 2500);
+  }
   $b('[data-v="pp"]').onclick = toggle;
   // Subtítulos: apagados por defecto. Al prenderlos, el video se muestra sin recorte para que entren adentro
   let ccOn = false;
@@ -4226,6 +4246,166 @@ function newSizeDialog(){
 }
 $('#btnNewSize').onclick = newSizeDialog;
 renderSizeCards();
+
+/* ================= Editar un PDF ================= */
+const PDF_FONT = f => {
+  const n = (f || '').toLowerCase();
+  if (/courier|mono|consol/.test(n)) return 'Courier New';
+  if (/times|serif|georgia|garamond|minion/.test(n) && !/sans/.test(n)) return 'Times New Roman';
+  return 'Arial';
+};
+function mergeSpans(list){
+  const out = [];
+  list.slice().sort((a, b) => (Math.abs(a.y - b.y) < 0.4 ? a.x - b.x : a.y - b.y)).forEach(t => {
+    const p = out[out.length - 1];
+    const same = p && Math.abs(p.y - t.y) < 0.4 && Math.abs(p.tam - t.tam) < 0.05 && p.negrita === t.negrita &&
+      p.cursiva === t.cursiva && p.color === t.color && PDF_FONT(p.fuente) === PDF_FONT(t.fuente) && t.x - (p.x + p.w) < 1.2;
+    if (same){ p.texto += t.texto; p.w = t.x + t.w - p.x; }
+    else out.push(Object.assign({}, t));
+  });
+  return out;
+}
+// Separa la imagen sin textos en elementos sueltos (recuadros, códigos, logos...)
+async function splitElements(dataUrl, dpi){
+  const im = await loadImgEl(dataUrl);
+  const Wp = im.naturalWidth, Hp = im.naturalHeight;
+  const c = document.createElement('canvas'); c.width = Wp; c.height = Hp;
+  const ctx = c.getContext('2d'); ctx.drawImage(im, 0, 0);
+  const px = ctx.getImageData(0, 0, Wp, Hp).data;
+  const CELL = 3, gw = Math.ceil(Wp / CELL), gh = Math.ceil(Hp / CELL);
+  const ink = new Uint8Array(gw * gh);
+  for (let y = 0; y < Hp; y++) for (let x = 0; x < Wp; x++){
+    const i = (y * Wp + x) * 4;
+    if (Math.min(px[i], px[i + 1], px[i + 2]) < 215) ink[((y / CELL) | 0) * gw + ((x / CELL) | 0)] = 1;
+  }
+  // componentes conectados (8 vecinos) sobre la grilla
+  const lab = new Int32Array(gw * gh).fill(-1), comps = [];
+  const stack = [];
+  for (let s0 = 0; s0 < gw * gh; s0++){
+    if (!ink[s0] || lab[s0] >= 0) continue;
+    const id = comps.length, b = { x0:1e9, y0:1e9, x1:-1, y1:-1, n:0 };
+    lab[s0] = id; stack.push(s0);
+    while (stack.length){
+      const k = stack.pop(), cx = k % gw, cy = (k / gw) | 0;
+      b.n++; if (cx < b.x0) b.x0 = cx; if (cx > b.x1) b.x1 = cx; if (cy < b.y0) b.y0 = cy; if (cy > b.y1) b.y1 = cy;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++){
+        const nx = cx + dx, ny = cy + dy; if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+        const nk = ny * gw + nx; if (ink[nk] && lab[nk] < 0){ lab[nk] = id; stack.push(nk); }
+      }
+    }
+    comps.push(b);
+  }
+  // juntar lo chico que está pegado (barras de un código, cuadritos de un QR, letras de un logo)
+  const cellMm = CELL / (dpi / 25.4), tol = Math.max(1, Math.round(1.1 / cellMm));
+  const parent = comps.map((_, i) => i), find = i => parent[i] === i ? i : (parent[i] = find(parent[i]));
+  const small = comps.map(b => (b.x1 - b.x0 + 1) * cellMm < 40 && (b.y1 - b.y0 + 1) * cellMm < 40);
+  const order = comps.map((_, i) => i).filter(i => small[i]).sort((a, b) => comps[a].x0 - comps[b].x0);
+  for (let a = 0; a < order.length; a++){
+    const A = comps[order[a]];
+    for (let b2 = a + 1; b2 < order.length; b2++){
+      const B = comps[order[b2]];
+      if (B.x0 - tol > A.x1) break;
+      if (A.y0 - tol <= B.y1 && B.y0 - tol <= A.y1) parent[find(order[a])] = find(order[b2]);
+    }
+  }
+  const groups = new Map();
+  comps.forEach((b, i) => { if (b.n < 2 && small[i]) { /* puntito suelto */ } const r = find(i); if (!groups.has(r)) groups.set(r, { ids:new Set(), x0:1e9, y0:1e9, x1:-1, y1:-1 }); const g = groups.get(r); g.ids.add(i); g.x0 = Math.min(g.x0, b.x0); g.y0 = Math.min(g.y0, b.y0); g.x1 = Math.max(g.x1, b.x1); g.y1 = Math.max(g.y1, b.y1); });
+  const out = [];
+  for (const g of groups.values()){
+    const sx = g.x0 * CELL, sy = g.y0 * CELL, w = Math.min(Wp, (g.x1 + 1) * CELL) - sx, h = Math.min(Hp, (g.y1 + 1) * CELL) - sy;
+    if (w * h < 30) continue;
+    const oc = document.createElement('canvas'); oc.width = w; oc.height = h;
+    const octx = oc.getContext('2d'), od = octx.createImageData(w, h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      const X = sx + x, Y = sy + y, cell = ((Y / CELL) | 0) * gw + ((X / CELL) | 0);
+      if (!g.ids.has(lab[cell])) continue;
+      const i = (Y * Wp + X) * 4, o = (y * w + x) * 4, m = Math.min(px[i], px[i + 1], px[i + 2]);
+      const a = 255 - m;                    // lo blanco queda transparente
+      if (a < 8) continue;
+      const k = 255 / a;                    // se recupera el color original sin el blanco de fondo
+      od.data[o] = Math.max(0, Math.min(255, 255 - (255 - px[i]) * k));
+      od.data[o + 1] = Math.max(0, Math.min(255, 255 - (255 - px[i + 1]) * k));
+      od.data[o + 2] = Math.max(0, Math.min(255, 255 - (255 - px[i + 2]) * k));
+      od.data[o + 3] = a;
+    }
+    octx.putImageData(od, 0, 0);
+    out.push({ url:oc.toDataURL('image/png'), x:sx / (dpi / 25.4), y:sy / (dpi / 25.4), w:w / (dpi / 25.4), h:h / (dpi / 25.4) });
+  }
+  return out;
+}
+async function buildFromPdf(data, name){
+  let s = 1, ox = 0, oy = 0, key;
+  if ((data.ancho > 100.5 || data.alto > 150.5) && data.alto >= data.ancho * 0.9){
+    // etiqueta vertical más grande que 10 × 15 (por ejemplo, la del correo): entra entera en una de 10 × 15
+    s = Math.min(100 / data.ancho, 150 / data.alto);
+    ox = (100 - data.ancho * s) / 2; oy = (150 - data.alto * s) / 2;
+    key = '100x150';
+  } else {
+    if (data.ancho > 104) s = 100 / data.ancho;
+    if (data.alto * s > 300) s = 300 / data.alto;
+    key = keyOf(Math.round(data.ancho * s * 2) / 2, Math.round(data.alto * s * 2) / 2, 1);
+    sizeFromKey(key);
+  }
+  sizeKey = key; orient = 'v'; sepMode = false;
+  current = { id:null, name:name || 'PDF editado', created:0 };
+  const parts = await splitElements('data:image/png;base64,' + data.fondo, data.dpi || 300);
+  await openEditorWith(async () => {
+    canvas.discardActiveObject();
+    canvas.clear(); canvas.backgroundColor = PAPER;
+    // dibujo sin textos, separado en elementos (recuadros, códigos, logos)
+    for (const p of parts){
+      const img = await new Promise(res => fabric.Image.fromURL(p.url, res));
+      img.set({ originX:'left', originY:'top', left:(ox + p.x * s) * MM, top:(oy + p.y * s) * MM,
+        tsType:'image', origSrc:p.url, imgStyle:'original', perPixelTargetFind:true, targetFindTolerance:6 });
+      img.scaleX = (p.w * s * MM) / img.width; img.scaleY = (p.h * s * MM) / img.height;
+      img.setCoords(); canvas.add(img);
+    }
+    // textos editables
+    mergeSpans(data.textos).forEach(t => {
+      const tb = new fabric.Textbox(t.texto.replace(/\s+$/, ''), {
+        originX:'left', originY:'top', left:(ox + t.x * s) * MM, top:(oy + t.y * s) * MM, width:Math.max(4, t.w * s * MM * 1.08 + 2),
+        fontSize:t.tam * s * MM, fontFamily:PDF_FONT(t.fuente), fontWeight:t.negrita ? 700 : 400, fontStyle:t.cursiva ? 'italic' : 'normal',
+        fill:t.color === '#000000' ? INK : t.color, lineHeight:1, textAlign:'left', tsType:'text'
+      });
+      canvas.add(tb);
+    });
+    canvas.requestRenderAll();
+  });
+  toast('Listo: tocá cualquier texto o elemento para cambiarlo');
+}
+async function editPdfFile(file, pagina){
+  if (!HAS_SERVER){ toast('Editar PDF funciona en tagstudio.onrender.com'); return; }
+  const card = $('#btnEditPdf'), label = card.querySelector('.size-name');
+  const old = label.textContent; label.textContent = 'Abriendo el PDF…'; card.classList.add('busy');
+  try {
+    const fd = new FormData(); fd.append('archivo', file); fd.append('pagina', pagina || 0);
+    const res = await fetch('/pdf/editable', { method:'POST', body:fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok){ toast(data.error || 'No se pudo abrir ese PDF.'); return; }
+    if (data.paginas > 1 && pagina == null){
+      const p = await choosePdfPage(data.paginas);
+      if (p == null) return;
+      if (p !== 0) return editPdfFile(file, p);
+    }
+    await buildFromPdf(data, file.name.replace(/\.pdf$/i, ''));
+  } catch(e){ console.error(e); toast('No se pudo abrir ese PDF. Probá de nuevo.'); }
+  finally { label.textContent = old; card.classList.remove('busy'); }
+}
+function choosePdfPage(n){
+  return new Promise(res => {
+    const m = $('#modal'), c = $('#modalCard');
+    c.innerHTML = `<h2>¿Qué página querés editar?</h2><p>Este PDF tiene ${n} páginas.</p>
+      <div class="ns-grid">${Array.from({ length:Math.min(n, 30) }, (_, i) => `<button class="ns-opt" data-p="${i}"><b>${i + 1}</b><small>página</small></button>`).join('')}</div>
+      <div class="modal-actions"><button class="btn ghost" data-x>Cancelar</button></div>`;
+    m.hidden = false;
+    const done = v => { m.hidden = true; res(v); };
+    c.querySelectorAll('[data-p]').forEach(b => b.onclick = () => done(+b.dataset.p));
+    c.querySelector('[data-x]').onclick = () => done(null);
+    m.onclick = e => { if (e.target === m) done(null); };
+  });
+}
+$('#btnEditPdf').onclick = () => $('#editPdfIn').click();
+$('#editPdfIn').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) editPdfFile(f); };
 
 /* ================= Pantalla de inicio ================= */
 const START_ICONS = {
