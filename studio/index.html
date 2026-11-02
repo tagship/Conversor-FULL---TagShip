@@ -1308,9 +1308,9 @@ const K = () => SZ().k;
 // Tamaños personalizados: clave 'c<ancho>x<alto>' o 'c<ancho>x<alto>-<n>b' para varias bandas
 function sizeFromKey(key){
   if (SIZES[key]) return SIZES[key];
-  const m = /^c(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)(?:-(\d)b)?$/.exec(key || '');
+  const m = /^c(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)(?:-(\d)b(?:-g(\d+(?:\.\d+)?))?)?$/.exec(key || '');
   if (!m) return null;
-  const w = +m[1], h = +m[2], lanes = +(m[3] || 1), gap = 3;
+  const w = +m[1], h = +m[2], lanes = +(m[3] || 1), gap = m[4] != null ? +m[4] : 3;
   const sz = { label:`${w} × ${h} mm${lanes === 3 ? ' triple banda' : lanes === 2 ? ' doble banda' : ''}`, w, h, custom:true,
     margin:Math.max(1, Math.min(3, Math.min(w, h) * 0.06)), k:Math.max(0.25, Math.min(1, w / 100, h / 66)), file:`${w}x${h}${lanes > 1 ? '-' + lanes + 'bandas' : ''}` };
   if (lanes > 1) sz.dual = { pageW:+(w * lanes + gap * (lanes - 1)).toFixed(2), gap, lanes };
@@ -4289,7 +4289,7 @@ paintInstall();
 const SIZE_PRESETS = [
   { w:100, h:50 }, { w:55, h:44 }, { w:80, h:50 }, { w:50, h:25 }, { w:29, h:20, lanes:3 }, { w:100, h:100 }
 ];
-const keyOf = (w, h, lanes) => `c${+w}x${+h}${lanes > 1 ? '-' + lanes + 'b' : ''}`;
+const keyOf = (w, h, lanes, gap) => `c${+w}x${+h}${lanes > 1 ? '-' + lanes + 'b' + (gap != null && +gap !== 3 ? '-g' + (+gap) : '') : ''}`;
 let mySizes = [];
 try { mySizes = JSON.parse(localStorage.getItem('tagstudio-tamanos') || '[]').filter(k => sizeFromKey(k)); } catch(e){ mySizes = []; }
 const sizesDoc = () => fbDb.collection('users').doc(fbUser.uid).collection('settings').doc('sizes');
@@ -4348,28 +4348,44 @@ function newSizeDialog(){
     <div class="ns-grid">${SIZE_PRESETS.map((p, i) => `<button class="ns-opt" data-i="${i}"><b>${p.w} × ${p.h}</b><small>${p.lanes === 3 ? 'Triple banda' : 'mm'}</small></button>`).join('')}</div>
     <div class="lbl" style="margin-top:14px"><span>Tamaño personalizado (mm)</span></div>
     <div class="ns-custom"><input class="field" id="nsW" inputmode="decimal" placeholder="Ancho" aria-label="Ancho en mm"><span>×</span><input class="field" id="nsH" inputmode="decimal" placeholder="Alto" aria-label="Alto en mm"></div>
+    <div class="lbl" style="margin-top:14px"><span>Etiquetas por fila del rollo</span></div>
+    <div class="seg" id="nsLanes"><button data-l="1" class="on">Simple</button><button data-l="2">Doble banda</button><button data-l="3">Triple banda</button></div>
+    <div id="nsGapBox" hidden><div class="lbl" style="margin-top:10px"><span>Separación entre etiquetas (mm)</span></div>
+    <input class="field" id="nsGap" inputmode="decimal" value="3" style="max-width:120px"></div>
+    <p class="note" id="nsTotal" style="margin:6px 0 0"></p>
     <p class="err" id="nsErr" style="margin:8px 0 0"></p>
     <div class="modal-actions"><button class="btn ghost" data-r="0">Cancelar</button><button class="btn primary" data-r="1">Crear y empezar</button></div>`;
   m.hidden = false;
   let lanes = 1;
   const close = () => { m.hidden = true; c.classList.remove('wide'); };
+  const num = id => parseFloat(String($('#' + id).value).replace(',', '.'));
+  const paint = () => {
+    c.querySelectorAll('#nsLanes button').forEach(x => x.classList.toggle('on', +x.dataset.l === lanes));
+    $('#nsGapBox').hidden = lanes === 1;
+    const w = num('nsW'), g = lanes > 1 ? (num('nsGap') || 0) : 0;
+    $('#nsTotal').textContent = (lanes > 1 && w > 0) ? `Ancho total del rollo: ${String(+(w * lanes + g * (lanes - 1)).toFixed(1)).replace('.', ',')} mm` : '';
+  };
   c.querySelectorAll('.ns-opt').forEach(b => b.onclick = () => {
     const p = SIZE_PRESETS[+b.dataset.i];
     $('#nsW').value = p.w; $('#nsH').value = p.h; lanes = p.lanes || 1;
     c.querySelectorAll('.ns-opt').forEach(x => x.classList.toggle('on', x === b));
+    paint();
   });
-  ['nsW','nsH'].forEach(id => $('#' + id).addEventListener('input', () => { lanes = 1; c.querySelectorAll('.ns-opt').forEach(x => x.classList.remove('on')); }));
+  c.querySelectorAll('#nsLanes button').forEach(b => b.onclick = () => { lanes = +b.dataset.l; paint(); });
+  ['nsW','nsH','nsGap'].forEach(id => $('#' + id).addEventListener('input', () => { if (id !== 'nsGap') c.querySelectorAll('.ns-opt').forEach(x => x.classList.remove('on')); paint(); }));
   c.querySelector('[data-r="0"]').onclick = close;
   m.onclick = e => { if (e.target === m) close(); };
   c.querySelector('[data-r="1"]').onclick = async () => {
     const w = parseFloat(String($('#nsW').value).replace(',', '.')), h = parseFloat(String($('#nsH').value).replace(',', '.'));
     const err = $('#nsErr');
     if (!(w > 0 && h > 0)){ err.textContent = 'Elegí una medida o completá el ancho y el alto.'; return; }
-    const total = w * lanes + 3 * (lanes - 1);
+    const gap = lanes > 1 ? num('nsGap') : 3;
+    if (lanes > 1 && !(gap >= 0 && gap <= 20)){ err.textContent = 'La separación tiene que estar entre 0 y 20 mm.'; return; }
+    const total = w * lanes + gap * (lanes - 1);
     if (w < 10 || h < 10){ err.textContent = 'La medida mínima es 10 × 10 mm.'; return; }
     if (total > 104){ err.textContent = 'El ancho máximo que imprime la TagShip es 104 mm.'; return; }
     if (h > 300){ err.textContent = 'El alto máximo es 300 mm.'; return; }
-    const key = keyOf(Math.round(w * 10) / 10, Math.round(h * 10) / 10, lanes);
+    const key = keyOf(Math.round(w * 10) / 10, Math.round(h * 10) / 10, lanes, Math.round(gap * 10) / 10);
     sizeFromKey(key);
     if (!mySizes.includes(key)){ mySizes.push(key); await saveSizes(); renderSizeCards(); }
     close();
