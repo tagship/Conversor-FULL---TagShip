@@ -86,6 +86,14 @@ def disenos():
     return resp
 
 
+@app.route("/etiquetas")
+def etiquetas():
+    # Instalación de etiquetas: página libre (para el QR que va con cada rollo)
+    resp = send_from_directory(STUDIO_DIR, "index.html")
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
 @app.route("/cola")
 def cola():
     # Enlace directo a la Cola de impresión (ideal para el modo estación)
