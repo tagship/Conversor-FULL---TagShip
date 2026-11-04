@@ -384,6 +384,14 @@ button{ cursor:pointer; }
 
 .q-tutorial{ margin-top:34px; }
 
+/* Reproductor: pantalla completa simulada (iPhone), girada a horizontal */
+.tsv-pfs-open, .tsv-pfs-open body{ overflow:hidden; }
+.tsv-pfs-open::after{ content:""; position:fixed; inset:0; background:#000; z-index:9998; }
+.video-box.tsv.pfs{ position:fixed !important; z-index:9999; left:50%; top:50%; margin:0; border-radius:0; border:none; aspect-ratio:16 / 9; height:auto;
+  width:min(100vh, calc(100vw * 16 / 9)); transform:translate(-50%, -50%) rotate(90deg); }
+@media (orientation: landscape){
+  .video-box.tsv.pfs{ width:min(100vw, calc(100vh * 16 / 9)); transform:translate(-50%, -50%); }
+}
 /* Reproductor de video propio */
 .video-box.tsv{ display:block; background:#000; cursor:pointer; outline:none; }
 .tsv-stage{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
@@ -487,6 +495,14 @@ button{ cursor:pointer; }
   .st-item.st-guide small{ display:none; }
 }
 
+/* Celular: tamaños de a dos por fila */
+@media (max-width: 860px){
+  #home .size-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)) !important; gap:10px; }
+  #home .size-card{ grid-template-rows:96px auto auto !important; padding:10px; gap:6px; }
+  #home .size-card .size-stage{ transform:scale(.72); transform-origin:center; }
+  #home .size-card .size-name{ font-size:15px; }
+  #home .size-card .size-use{ font-size:12px; }
+}
 /* Celular: menú más liviano */
 .m-acct{ display:none; }
 @media (max-width: 860px){
@@ -683,10 +699,13 @@ button.size-card:hover{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blu
 .stage-inner{ min-width:100%; min-height:100%; display:grid; place-items:center; padding:28px 34px 44px 18px; }
 .board{ display:grid; grid-template-columns:22px auto; grid-template-rows:22px auto; gap:16px; }
 .corner{ font-size:10px; color:var(--muted); display:grid; place-items:end; padding:0 2px 2px 0; }
-.label-wrap{ position:relative; overflow:hidden; background:#fff; box-shadow:0 0 0 9px var(--liner), var(--shadow); }
+.label-wrap{ position:relative; overflow:visible; background:#fff; box-shadow:0 0 0 9px var(--liner), var(--shadow); }
 .label-wrap .canvas-container{ display:block; }
 .label-wrap.thermal .lower-canvas{ filter:grayscale(1) contrast(100); }
 #overlay{ position:absolute; left:0; top:0; pointer-events:none; z-index:3; }
+#labelWrap > .canvas-container{ position:absolute !important; left:calc(-1 * var(--cpadx, 0px)); top:calc(-1 * var(--cpady, 0px)); z-index:2; }
+.dual-bar, .stage-hint{ z-index:6 !important; }
+.stage{ overflow-anchor:none; }
 .dual-bar{ position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:4; display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--ink); border-radius:999px; padding:7px 14px 7px 12px; white-space:nowrap; box-shadow:0 6px 18px -10px rgba(13,17,26,.35); }
 .dual-hint{ font-size:12.5px; color:var(--muted); }
 @media (max-width: 860px){ .dual-hint{ display:none; } }
@@ -885,13 +904,8 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <div class="lock-card" data-lock hidden></div>
       <header class="full-head">
         <h1>Diseñá tus etiquetas personalizadas</h1>
-        <p class="crop-sub">Elegí un tamaño y empezá desde una plantilla o en blanco.</p>
+        <p class="crop-sub">Elegí un tamaño y empezá con una plantilla, en blanco o subiendo tu propio PDF.</p>
       </header>
-      <div class="benefits">
-        <div class="benefit"><b>3 TAMAÑOS</b><p>Común, troquelada y doble banda</p></div>
-        <div class="benefit"><b>PLANTILLAS</b><p>Listas para editar</p></div>
-        <div class="benefit"><b>VISTA TÉRMICA</b><p>Ves cómo se imprime</p></div>
-      </div>
       <div class="resume-row"><button id="btnResume" class="btn" hidden>Continuar mi último diseño</button></div>
       <section class="st-sec" id="myDesigns" hidden>
         <div class="my-head"><h2>Mis diseños</h2><p id="myWhere">Se guardan en este navegador.</p></div>
@@ -905,22 +919,20 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <span class="size-name">100 × 150 mm</span>
           <span class="size-use">Envíos y packaging</span>
         </button>
-        <button class="size-card" data-size="100x190">
-          <span class="size-stage"><span class="size-shape" style="width:76px;height:144px;align-content:start;padding-top:8px"><i style="width:40px;height:3px;background:#777"></i><i style="width:76px;height:0;border-top:2px dashed #5B6888;background:none;margin:14px 0 22px"></i><i style="width:40px"></i><i style="width:50px;height:3px;background:#777"></i><i style="width:28px;height:22px;margin-top:6px"></i></span></span>
-          <span class="size-name">100 × 190 mm</span>
-          <span class="size-use">Con talón troquelado</span>
-          <span class="chip ok">Nuevo</span>
-        </button>
         <button class="size-card" data-size="50x25">
           <span class="size-stage"><span style="display:flex;gap:6px"><span class="size-shape" style="width:84px;height:42px"><i style="width:50px;height:12px"></i><i style="width:34px;height:3px;background:#777"></i></span><span class="size-shape" style="width:84px;height:42px"><i style="width:50px;height:12px"></i><i style="width:34px;height:3px;background:#777"></i></span></span></span>
           <span class="size-name">50 × 25 mm</span>
           <span class="size-use">Doble banda, 2 por fila</span>
         </button>
-        <button class="size-card" id="size5040"><span class="size-stage"><span class="size-shape" style="width:110px;height:88px;padding:8px"><i style="width:60%;height:9px"></i><i style="width:45%;height:4px;background:#777"></i></span></span><span class="size-name">50 × 40 mm</span><span class="size-use">Etiqueta chica horizontal</span></button>
+        <button class="size-card" id="size5040" data-size="c50x40"><span class="size-stage"><span class="size-shape" style="width:110px;height:88px;padding:8px"><i style="width:60%;height:9px"></i><i style="width:45%;height:4px;background:#777"></i></span></span><span class="size-name">50 × 40 mm</span><span class="size-use">Productos, precios y stickers</span></button>
+        <button class="size-card" data-size="100x190">
+          <span class="size-stage"><span class="size-shape" style="width:76px;height:144px;align-content:start;padding-top:8px"><i style="width:40px;height:3px;background:#777"></i><i style="width:76px;height:0;border-top:2px dashed #5B6888;background:none;margin:14px 0 22px"></i><i style="width:40px"></i><i style="width:50px;height:3px;background:#777"></i><i style="width:28px;height:22px;margin-top:6px"></i></span></span>
+          <span class="size-name">100 × 190 mm</span>
+          <span class="size-use">Con talón troquelado</span>
+        </button>
         <button class="size-card edit-pdf" id="btnEditPdf"><span class="size-stage"><span class="add-plus pdf-ico"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M9 17l1-3.5 5.5-5.5 2.5 2.5-5.5 5.5z"/></svg></span></span><span class="size-name">Editar un PDF</span><span class="size-use">Tocá o arrastrá acá una etiqueta en PDF y cambiá sus datos</span></button><input type="file" id="editPdfIn" accept="application/pdf" hidden>
       <button class="size-card add-size" id="btnNewSize"><span class="size-stage"><span class="add-plus">+</span></span><span class="size-name">Otro tamaño</span><span class="size-use">100 × 50, 55 × 44, triple banda o la medida que quieras</span></button>
       </div>
-    
       </section>
       <section class="tutorial">
         <h2>Tutorial: cómo diseñar tus etiquetas</h2>
@@ -1216,6 +1228,8 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
       <section data-panel="image" hidden>
         <div class="drawer-head"><div><h2>Imagen</h2><p class="hint">Subí tu logo o cualquier imagen.</p></div><button class="icon-btn drawer-close" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
         <button class="dropzone" id="dropzone"><svg class="i" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg><b>Subir imagen</b>PNG, JPG o SVG. También podés arrastrarla a la etiqueta o pegarla con Ctrl+V.</button>
+        <button class="btn ghost block" id="btnInsertPdf" style="margin-top:10px"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>Subir un PDF a esta etiqueta</button><input type="file" id="insertPdfIn" accept="application/pdf" hidden>
+        <div class="note">También podés arrastrar una imagen o un PDF directo sobre la etiqueta.</div>
         <div class="note">La térmica imprime solo negro. Para logos usá “Blanco y negro”; para fotos, “Tramado”. Lo cambiás desde el panel de la derecha.</div>
       </section>
       <section data-panel="qr" hidden>
@@ -1791,7 +1805,41 @@ const T25 = [
     T('FRÁGIL', { left:100, top:51, width:180, fontFamily:'Archivo Black', fontSize:38, fill:PAPER })
   ]}
 ];
-const TPLS = { '100x150':TEMPLATES, '100x190':T190, '50x25':T25 };
+const T5040 = [
+  { id:'sku', name:'Producto y código', build: async () => [
+    T('Nombre del producto', { left:100, top:30, width:184, fontFamily:'Poppins', fontWeight:700, fontSize:16 }),
+    pos(makeBarcode({ format:'CODE128', value:'SKU-0001', showText:true }, 70), 100, 100, 168)
+  ]},
+  { id:'precio', name:'Precio', build: async () => [
+    T('Nombre del producto', { left:100, top:42, width:184, fontFamily:'Poppins', fontWeight:600, fontSize:17 }),
+    T('$ 12.500', { left:100, top:100, width:190, fontFamily:'Archivo Black', fontSize:40 })
+  ]},
+  { id:'marca', name:'Logo y marca', build: async () => [
+    pos(makePlaceholder(80, 80), 100, 56),
+    T('Tu marca', { left:100, top:118, width:184, fontFamily:'Poppins', fontWeight:800, fontSize:20 }),
+    T('@tumarca', { left:100, top:142, width:184, fontSize:12, fontWeight:600 })
+  ]},
+  { id:'gracias', name:'Gracias', build: async () => [
+    pos(await makeIcon('heart'), 100, 42, 40),
+    T('¡Gracias por tu compra!', { left:100, top:104, width:180, fontFamily:'Poppins', fontWeight:800, fontSize:20, lineHeight:1.05 })
+  ]},
+  { id:'qr', name:'QR a tus redes', build: async () => [
+    pos(makeQR({ mode:'instagram', value:'tumarca' }), 56, 80, 98),
+    T('Seguinos', { originX:'left', left:110, top:66, textAlign:'left', width:80, fontFamily:'Poppins', fontWeight:800, fontSize:16 }),
+    T('@tumarca', { originX:'left', left:110, top:92, textAlign:'left', width:80, fontSize:11, fontWeight:600 })
+  ]},
+  { id:'talle', name:'Talle', build: async () => [
+    T('TALLE', { left:100, top:34, width:180, fontFamily:'Poppins', fontWeight:700, fontSize:16, charSpacing:200 }),
+    T('M', { left:100, top:96, width:180, fontFamily:'Archivo Black', fontSize:64 })
+  ]},
+  { id:'fragil', name:'Frágil', build: async () => [
+    R({ left:100, top:80, width:186, height:146, fill:INK, rx:8, ry:8 }),
+    T('FRÁGIL', { left:100, top:66, width:180, fontFamily:'Archivo Black', fontSize:40, fill:PAPER }),
+    T('Manipular con cuidado', { left:100, top:112, width:180, fontFamily:'Poppins', fontWeight:600, fontSize:13, fill:PAPER })
+  ]}
+];
+const TPLS = { '100x150':TEMPLATES, '100x190':T190, '50x25':T25, 'c50x40':T5040 };
+sizeFromKey('c50x40');
 
 const thumbCache = new Map();
 let fontsReady = Promise.resolve();
@@ -1885,7 +1933,8 @@ function initCanvas(){
 /* ---- Zoom y reglas ---- */
 function fitZoom(){
   const st = $('#stage');
-  const aw = st.clientWidth - 90, ah = st.clientHeight - 130;
+  // deja lugar alrededor para los controles de lo que se agranda más que la etiqueta
+  const aw = st.clientWidth - (isMobileUI() ? 60 : 220), ah = st.clientHeight - (isMobileUI() ? 120 : 210);
   setZoom(Math.max(0.3, Math.min(aw / W(), ah / H(), (SZ().dual || SZ().w * SZ().h < 6000) ? 5 : 3)), false);
 }
 function setZoom(z, manual){
@@ -1893,11 +1942,37 @@ function setZoom(z, manual){
   manualZoom = !!manual;
   applyZoom();
 }
+// Espacio alrededor de la etiqueta donde se siguen viendo y usando los controles:
+// ocupa todo el lugar libre del área de trabajo, sin agrandar la página
+const CP = { x:60, y:60 };
 function applyZoom(){
   if (!canvas) return;
-  canvas.setZoom(zoom);
-  canvas.setDimensions({ width: Math.round(W() * zoom), height: Math.round(H() * zoom) });
+  const st = $('#stage'), lw = Math.round(W() * zoom), lh = Math.round(H() * zoom);
+  CP.x = Math.round(Math.max(40, Math.min(900, (st.clientWidth - lw) / 2 - 34)));
+  CP.y = Math.round(Math.max(40, Math.min(900, (st.clientHeight - lh) / 2 - 44)));
+  canvas.setDimensions({ width: lw + CP.x * 2, height: lh + CP.y * 2 });
+  canvas.setViewportTransform([zoom, 0, 0, zoom, CP.x, CP.y]);
+  // lo que sale de la etiqueta no se ve (como al imprimir), pero los controles sí: se dibujan después
+  canvas.controlsAboveOverlay = true;
+  if (!canvas.__padOverlay){
+    canvas.__padOverlay = true;
+    canvas._renderOverlay = function(ctx){
+      const v = this.viewportTransform, dpr = this.getRetinaScaling ? this.getRetinaScaling() : 1;
+      const x = v[4], y = v[5], w = W() * v[0], h = H() * v[0];
+      const onScreen = ctx === this.contextContainer;
+      ctx.save();
+      ctx.setTransform(onScreen ? dpr : 1, 0, 0, onScreen ? dpr : 1, 0, 0);
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.rect(0, 0, this.width, this.height);
+      const r = onScreen ? Math.min(w, h) * 0.04 : 0;
+      if (r && ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+      ctx.fill('evenodd');
+      ctx.restore();
+    };
+  }
   const wrap = $('#labelWrap');
+  wrap.style.setProperty('--cpadx', CP.x + 'px'); wrap.style.setProperty('--cpady', CP.y + 'px');
   wrap.style.width = Math.round(W() * zoom) + 'px';
   wrap.style.height = Math.round(H() * zoom) + 'px';
   wrap.style.borderRadius = Math.max(4, (SZ().dual ? 1.5 : 3) * MM * zoom) + 'px';
@@ -2805,9 +2880,13 @@ function buildDrawerStatic(){
 }
 
 /* ================= Exportar ================= */
+function labelCanvasEl(mult){
+  // recorta solo la etiqueta (sin el espacio de alrededor ni los controles)
+  return canvas.toCanvasElement(mult, { left:CP.x, top:CP.y, width:Math.round(W() * zoom), height:Math.round(H() * zoom) });
+}
 function renderLabelCanvas(){
   const sel = active(); canvas.discardActiveObject(); canvas.renderAll();
-  const src = canvas.toCanvasElement(EXPORT_SCALE / zoom);
+  const src = labelCanvasEl(EXPORT_SCALE / zoom);
   if (sel){ canvas.setActiveObject(sel); canvas.requestRenderAll(); }
   return src;
 }
@@ -3024,7 +3103,7 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const fmtDate = t => { const d = new Date(t); return d.toLocaleDateString('es-AR', { day:'numeric', month:'short' }) + ', ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }); };
 function designThumb(){
   const mult = 280 / Math.max(W(), H()) / zoom;
-  return canvas.toCanvasElement(mult).toDataURL('image/png');
+  return labelCanvasEl(mult).toDataURL('image/png');
 }
 function setSaveState(t, ok){
   const el = $('#saveState'); if (!el) return;
@@ -3174,6 +3253,8 @@ async function ensureEditor(){
 }
 async function openEditorWith(fn){
   show('editor');
+  // un paso en el historial: así "atrás" pregunta antes de salir del editor
+  try { if (!history.state || history.state.ts !== 'editor') history.pushState({ ts:'editor' }, ''); } catch(e){}
   await ensureEditor();
   manualZoom = false;
   restoring = true;
@@ -3274,6 +3355,7 @@ const stage = $('#stage');
 stage.addEventListener('dragover', e => { if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')){ e.preventDefault(); } });
 stage.addEventListener('drop', async e => {
   const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f && (f.type === 'application/pdf' || /\.pdf$/i.test(f.name))){ e.preventDefault(); insertPdfFile(f); return; }
   if (!f || !/^image\//.test(f.type)) return;
   e.preventDefault();
   try { addImageSrc(await fileToDataURL(f)); } catch(err){ toast('No pude abrir esa imagen. Probá con un PNG o JPG.'); }
@@ -3289,16 +3371,35 @@ $('#thermal').onchange = e => $('#labelWrap').classList.toggle('thermal', e.targ
 $('#btnExport').onclick = () => exportDialog('download');
 $('#btnPrint').onclick = () => exportDialog('print');
 $('#btnQueue').onclick = () => exportDialog('queue');
-async function goHome(){
+function confirmLeave(){
+  return new Promise(res => {
+    const m = $('#modal'), c = $('#modalCard');
+    c.innerHTML = `<h2>¿Salir sin guardar?</h2><p>Este diseño todavía no está guardado en Mis diseños. Si salís, lo podés recuperar con “Continuar mi último diseño”, pero se pierde si empezás otro.</p>
+      <div class="modal-actions"><button class="btn ghost" data-r="stay">Seguir editando</button><button class="btn ghost" data-r="leave">Salir sin guardar</button><button class="btn primary" data-r="save">Guardar</button></div>`;
+    m.hidden = false;
+    const done = v => { m.hidden = true; res(v); };
+    c.querySelectorAll('[data-r]').forEach(b => b.onclick = () => done(b.dataset.r));
+    m.onclick = e => { if (e.target === m) done('stay'); };
+  });
+}
+async function goHome(force){
+  if (!force && canvas && !$('#editor').hidden && hasUnsavedWork()){
+    const r = await confirmLeave();
+    if (r === 'stay') return false;
+    if (r === 'save'){ await saveNow(); if (!current.id) return false; }
+  }
   if (canvas){ snapshot(); canvas.discardActiveObject(); if (current.id) await persist(); }
   document.body.classList.remove('has-sel', 'show-label', 'sheet-open');
   updateResume(); renderMyDesigns(); show('home');
+  return true;
 }
-$('#btnHome').onclick = goHome;
-$$('.ts-word[href="#"]').forEach(a => a.onclick = async e => { e.preventDefault(); if (!$('#editor').hidden) await goHome(); goSection('start'); });
+$('#btnHome').onclick = () => goHome();
+$$('.ts-word[href="#"]').forEach(a => a.onclick = async e => { e.preventDefault(); if (!$('#editor').hidden && !(await goHome())) return; goSection('start'); });
 $('#tplBack').onclick = () => show('home');
 $$('[data-size]').forEach(b => b.onclick = () => { sizeKey = b.dataset.size; orient = 'v'; sepMode = false; show('tpl'); buildTemplateScreen(); });
 $('#btnSave').onclick = () => saveNow();
+$('#btnInsertPdf').onclick = () => $('#insertPdfIn').click();
+$('#insertPdfIn').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) insertPdfFile(f); };
 $('#mEdit').onclick = () => openSheet();
 $('#dualDup').addEventListener('change', e => setSepMode(!e.target.checked));
 $('#docName').addEventListener('change', async e => {
@@ -3315,7 +3416,17 @@ $('#btnResume').onclick = async () => {
   await openEditorWith(async () => { await restore(d.data); restoring = true; });
 };
 function updateResume(){ const d = readDraft(); $('#btnResume').hidden = !d || !!d.id; }
-window.addEventListener('beforeunload', () => { if (current.id && autoT){ persist(); } });
+window.addEventListener('beforeunload', e => {
+  if (current.id && autoT){ persist(); }
+  // recargar o cerrar la pestaña con un diseño sin guardar: el navegador pregunta antes
+  if (canvas && !$('#editor').hidden && hasUnsavedWork()){ e.preventDefault(); e.returnValue = ''; return ''; }
+});
+// botón "atrás" del navegador o del celular estando en el editor: pregunta en vez de perder el diseño
+window.addEventListener('popstate', async () => {
+  if ($('#editor').hidden) return;
+  history.pushState({ ts:'editor' }, '');
+  await goHome();
+});
 
 /* ================= Etiquetas Full (conversor) ================= */
 const HAS_SERVER = /^https?:$/.test(location.protocol) && !/claude\.ai|claudeusercontent|anthropic/.test(location.hostname);
@@ -3368,7 +3479,7 @@ function setupTool(prefix, endpoint, downloadName, queueLabel){
 }
 /* ================= Reproductor de videos (propio, sobre YouTube) ================= */
 // Videos tutoriales: pegá el código de YouTube (lo que va después de youtu.be/). Vacío = "muy pronto"
-const TS_VIDEOS = { inst150:'paCMafU9lqg', inst190:'uO4vKCvW5tQ', inst5040:'iq5QYwgq3WA', inst5025:'cr6yfKxcnPo', fullVideo:'95P3LhG_RTM', queueVideo:'KyQIen5Pn-M', designVideo:'vDkbd8TkWwM', cropVideo:'AZmY_ApKOo4' };
+const TS_VIDEOS = { inst150:'paCMafU9lqg', inst190:'uO4vKCvW5tQ', inst5040:'iq5QYwgq3WA', inst5025:'cr6yfKxcnPo', fullVideo:'p2R25yeY0WI', queueVideo:'KyQIen5Pn-M', designVideo:'vDkbd8TkWwM', cropVideo:'AZmY_ApKOo4' };
 let ytReady = null;
 function loadYT(){
   if (ytReady) return ytReady;
@@ -3445,21 +3556,41 @@ function setupVideo(boxId, vid){
     if (st === 2) box.classList.add('show-ui');
     paint();
   }
-  async function create(){
-    box.classList.add('is-loading');
-    const YT = await loadYT();
-    return new Promise(res => {
-      player = new YT.Player(boxId + '-yt', {
-        videoId:vid, width:1920, height:1080,
-        host:'https://www.youtube-nocookie.com',
-        playerVars:{ controls:0, disablekb:1, fs:0, rel:0, modestbranding:1, iv_load_policy:3, playsinline:1, cc_load_policy:0, autoplay:1, vq:'hd1080', origin:location.origin },
-        events:{
-          onReady:() => { ready = true; fitFrame(); setCC(false); player.playVideo(); timer = setInterval(paint, 250); res(); },
-          onStateChange:syncState,
-          onPlaybackQualityChange:() => {}
-        }
+  let creating = null, wantPlay = false;
+  function create(){
+    if (creating) return creating;
+    creating = (async () => {
+      const YT = await loadYT();
+      await new Promise(res => {
+        player = new YT.Player(boxId + '-yt', {
+          videoId:vid, width:1920, height:1080,
+          host:'https://www.youtube-nocookie.com',
+          playerVars:{ controls:0, disablekb:1, fs:0, rel:0, modestbranding:1, iv_load_policy:3, playsinline:1, cc_load_policy:0, autoplay:0, vq:'hd1080', origin:location.origin },
+          events:{
+            onReady:() => {
+              ready = true; fitFrame(); setCC(false); timer = setInterval(paint, 250); res();
+              if (wantPlay) startPlay();
+            },
+            onStateChange:syncState,
+            onPlaybackQualityChange:() => {}
+          }
+        });
       });
-    });
+    })();
+    creating.catch(() => { creating = null; });
+    return creating;
+  }
+  // se prepara solo cuando el video está por aparecer en pantalla: así el primer toque arranca al instante
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)){ io.disconnect(); create().catch(() => {}); } }, { rootMargin:'300px' });
+    io.observe(box);
+  }
+  function startPlay(){
+    wantPlay = false;
+    box.classList.add('is-loading');
+    player.playVideo();
+    // si el navegador no deja arrancar desde afuera (algunos iPhone), se habilita el toque directo
+    setTimeout(() => { if (!playing()){ box.classList.remove('is-loading'); box.classList.add('native', 'started'); } }, 1600);
   }
   // El reproductor se arma a 1920×1080 y se achica con CSS: así YouTube manda la máxima calidad
   function fitFrame(){
@@ -3469,15 +3600,15 @@ function setupVideo(boxId, vid){
   }
   window.addEventListener('resize', fitFrame);
   document.addEventListener('fullscreenchange', () => setTimeout(fitFrame, 50));
-  async function toggle(){
-    if (!player){
-      try { await create(); } catch(e){ toast('No se pudo cargar el video. Revisá tu conexión.'); box.classList.remove('is-loading'); }
-      // iPhone a veces no deja arrancar desde afuera: se habilita el toque directo sobre el video
-      setTimeout(() => { if (!playing()) box.classList.add('native'); }, 1800);
+  function toggle(){
+    if (!player || !ready){
+      // todavía cargando: se recuerda el toque y arranca apenas esté listo (no hace falta volver a tocar)
+      wantPlay = true; box.classList.add('is-loading');
+      create().catch(() => { box.classList.remove('is-loading'); toast('No se pudo cargar el video. Revisá tu conexión.'); });
       return;
     }
     if (state() === 0){ player.seekTo(0, true); player.playVideo(); return; }
-    playing() ? player.pauseVideo() : player.playVideo();
+    if (playing()) player.pauseVideo(); else if (!box.classList.contains('started')) startPlay(); else player.playVideo();
   }
   $b('.tsv-poster').onclick = toggle;
   $b('.tsv-shield').onclick = () => { toggle(); showBar(); };
@@ -3510,11 +3641,32 @@ function setupVideo(boxId, vid){
     if (player.isMuted()){ player.unMute(); $b('[data-v="mu"]').innerHTML = VP.vol; }
     else { player.mute(); $b('[data-v="mu"]').innerHTML = VP.mute; }
   };
-  $b('[data-v="fs"]').onclick = () => {
-    if (document.fullscreenElement) document.exitFullscreen();
-    else if (box.requestFullscreen) box.requestFullscreen();
-    else if (box.webkitRequestFullscreen) box.webkitRequestFullscreen();
+  const isPhoneish = () => IS_PHONE || window.matchMedia('(pointer: coarse)').matches;
+  function exitPseudo(){ box.classList.remove('pfs'); document.documentElement.classList.remove('tsv-pfs-open'); setTimeout(fitFrame, 60); }
+  $b('[data-v="fs"]').onclick = async () => {
+    if (box.classList.contains('pfs')) return exitPseudo();
+    if (document.fullscreenElement || document.webkitFullscreenElement){
+      try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch(e){}
+      return (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    }
+    const req = box.requestFullscreen || box.webkitRequestFullscreen;
+    if (req){
+      try {
+        await req.call(box, { navigationUI:'hide' });
+        if (isPhoneish() && screen.orientation && screen.orientation.lock){ try { await screen.orientation.lock('landscape'); } catch(e){} }
+        setTimeout(fitFrame, 80);
+        return;
+      } catch(e){}
+    }
+    // iPhone: no permite pantalla completa de una página: se agranda a toda la pantalla y se gira solo
+    box.classList.add('pfs'); document.documentElement.classList.add('tsv-pfs-open'); showBar();
+    setTimeout(fitFrame, 60);
   };
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement){ try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch(e){} }
+  });
+  window.addEventListener('orientationchange', () => setTimeout(fitFrame, 250));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && box.classList.contains('pfs')) exitPseudo(); });
   const prog = $b('.tsv-prog');
   const seekAt = e => {
     if (!player || !ready) return;
@@ -4338,7 +4490,7 @@ function renderSizeCards(){
       if (!(await ask('¿Quitar este tamaño?', 'Desaparece de tus tamaños. Los diseños que ya hiciste con esta medida no se borran.', 'Quitar'))) return;
       mySizes = mySizes.filter(k => k !== key); await saveSizes(); renderSizeCards();
     };
-    grid.insertBefore(card, add);
+    grid.insertBefore(card, $('#btnEditPdf') || add);
   });
 }
 function newSizeDialog(){
@@ -4393,7 +4545,7 @@ function newSizeDialog(){
   };
 }
 $('#btnNewSize').onclick = newSizeDialog;
-$('#size5040').onclick = () => openCustomSize('c50x40');
+
 renderSizeCards();
 
 /* ---- Cambiar el tamaño de la etiqueta (recortar o ajustar) ---- */
@@ -4573,13 +4725,20 @@ async function buildFromPdf(data, name){
   await openEditorWith(async () => {
     canvas.discardActiveObject();
     canvas.clear(); canvas.backgroundColor = PAPER;
+    await addPdfParts(data, parts, s, ox, oy);
+    canvas.requestRenderAll();
+  });
+  toast('Listo: tocá cualquier texto o elemento para cambiarlo');
+}
+async function addPdfParts(data, parts, s, ox, oy){
+  const added = [];
     // dibujo sin textos, separado en elementos (recuadros, códigos, logos)
     for (const p of parts){
       const img = await new Promise(res => fabric.Image.fromURL(p.url, res));
       img.set({ originX:'left', originY:'top', left:(ox + p.x * s) * MM, top:(oy + p.y * s) * MM,
         tsType:'image', origSrc:p.url, imgStyle:'original', perPixelTargetFind:true, targetFindTolerance:6 });
       img.scaleX = (p.w * s * MM) / img.width; img.scaleY = (p.h * s * MM) / img.height;
-      img.setCoords(); canvas.add(img);
+      img.setCoords(); canvas.add(img); added.push(img);
     }
     // textos editables
     mergeSpans(data.textos).forEach(t => {
@@ -4588,21 +4747,42 @@ async function buildFromPdf(data, name){
         fontSize:t.tam * s * MM, fontFamily:PDF_FONT(t.fuente), fontWeight:t.negrita ? 700 : 400, fontStyle:t.cursiva ? 'italic' : 'normal',
         fill:t.color === '#000000' ? INK : t.color, lineHeight:1, textAlign:'left', tsType:'text'
       });
-      canvas.add(tb);
+      canvas.add(tb); added.push(tb);
     });
-    canvas.requestRenderAll();
-  });
-  toast('Listo: tocá cualquier texto o elemento para cambiarlo');
+  return added;
+}
+async function fetchPdfData(file, pagina){
+  const fd = new FormData(); fd.append('archivo', file); fd.append('pagina', pagina || 0);
+  const res = await fetch('/pdf/editable', { method:'POST', body:fd });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'No se pudo abrir ese PDF.');
+  return data;
+}
+// Subir un PDF adentro de la etiqueta que estás editando: se acomoda para que entre entero
+async function insertPdfFile(file){
+  if (!HAS_SERVER){ toast('Subir un PDF funciona en tagstudio.onrender.com'); return; }
+  toast('Abriendo el PDF…');
+  try {
+    let data = await fetchPdfData(file, 0);
+    if (data.paginas > 1){ const pg = await choosePdfPage(data.paginas); if (pg == null) return; if (pg) data = await fetchPdfData(file, pg); }
+    const wmm = labelW() / MM, hmm = H() / MM;
+    const s = Math.min(wmm / data.ancho, hmm / data.alto);
+    const ox = (wmm - data.ancho * s) / 2, oy = (hmm - data.alto * s) / 2;
+    const parts = await splitElements('data:image/png;base64,' + data.fondo, data.dpi || 300);
+    canvas.discardActiveObject();
+    const added = await addPdfParts(data, parts, s, ox, oy);
+    if (added.length){ canvas.setActiveObject(new fabric.ActiveSelection(added, { canvas })); }
+    canvas.requestRenderAll(); queueSnap();
+    toast('Listo: el PDF quedó en la etiqueta. Movelo o agrandalo todo junto, o tocá cada parte para cambiarla.');
+  } catch(e){ toast(e.message || 'No se pudo abrir ese PDF.'); }
 }
 async function editPdfFile(file, pagina){
   if (!HAS_SERVER){ toast('Editar PDF funciona en tagstudio.onrender.com'); return; }
   const card = $('#btnEditPdf'), label = card.querySelector('.size-name');
   const old = label.textContent; label.textContent = 'Abriendo el PDF…'; card.classList.add('busy');
   try {
-    const fd = new FormData(); fd.append('archivo', file); fd.append('pagina', pagina || 0);
-    const res = await fetch('/pdf/editable', { method:'POST', body:fd });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok){ toast(data.error || 'No se pudo abrir ese PDF.'); return; }
+    let data;
+    try { data = await fetchPdfData(file, pagina); } catch(err){ toast(err.message); return; }
     if (data.paginas > 1 && pagina == null){
       const p = await choosePdfPage(data.paginas);
       if (p == null) return;
