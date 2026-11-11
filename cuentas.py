@@ -182,42 +182,75 @@ def buscar_ordenes(numero, log=None):
                         ordenes.append(o)
                 if ordenes:
                     return ordenes
-    # El número de "Mis compras" del comprador suele ser apenas distinto al de la venta
-    # (ej.: compra ...335 → venta ...337). Probamos los números vecinos.
+    # El número que ve el comprador ("compra" u "operación") no es el de tu venta, pero está cerca:
+    # Mercado Libre numera todo seguido. Ejemplos reales:
+    #   compra de un solo vendedor:  ...335 → tu venta (paquete) ...337
+    #   carrito con otros vendedores: ...863 → tu venta ...873 (en el medio están las ventas de los demás)
     if numero.isdigit():
         base = int(numero)
-        for k in (2, 1, 3, -1, -2, 4):
-            n = base + k
+        sid = sid or seller_id()
+
+        def probar(n):
             rr = ml_get(f"/orders/{n}")
             if rr.status_code == 200:
                 anotar(f"orden vecina {n}", rr)
                 o = rr.json()
-                if str((o.get("seller") or {}).get("id")) == str(sid or seller_id()):
+                if str((o.get("seller") or {}).get("id")) == str(sid):
                     return [o]
             pp = ml_get(f"/packs/{n}")
-            anotar(f"paquete vecino {n}", pp)
             if pp.status_code == 200:
+                anotar(f"paquete vecino {n}", pp)
+                found = []
                 for o in pp.json().get("orders", []):
                     r2 = ml_get(f"/orders/{o.get('id')}")
                     if r2.status_code == 200:
-                        ordenes.append(r2.json())
-                if ordenes:
-                    return ordenes
-        # Último recurso: revisar tus ventas recientes buscando el número en cualquier dato de la venta
-        ordenes = escanear_ventas(numero, sid or seller_id(), log)
+                        found.append(r2.json())
+                return found
+            return []
+
+        # 1) los más cercanos (compra de un solo vendedor)
+        for k in (2, 1, 3, -1, -2, 4):
+            found = probar(base + k)
+            if found:
+                return found
+        # 2) tus ventas recientes, buscando un número cercano en cualquier dato de la venta (rápido)
+        found = escanear_ventas(numero, sid, log)
+        if found:
+            return found
+        # 3) último recurso para compras más viejas: números un poco más lejos (carritos de varios vendedores)
+        for k in [d for d in range(5, 31)] + [-d for d in range(3, 11)]:
+            if log is not None and k in (8, 9, 10, 11, 12):
+                for kind in ("orders", "packs"):
+                    rr = ml_get(f"/{kind}/{base + k}")
+                    anotar(f"detalle {kind} {base + k}", rr)
+            found = probar(base + k)
+            if found:
+                if log is not None:
+                    log.append({"consulta": "vecino lejano", "estado": 200, "detalle": f"encontrado a {k} números"})
+                return found
+        return []
     return ordenes
 
 
-def escanear_ventas(numero, sid, log=None, paginas=12):
-    """Recorre tus últimas ventas (hasta 600) buscando el número o uno pegado."""
+def escanear_ventas(numero, sid, log=None, paginas=20):
+    """Recorre tus últimas ventas (hasta 1000) buscando el número o uno cercano."""
     if not sid:
         return []
-    vecinos = [numero] + [str(int(numero) + k) for k in (1, 2, 3, -1, -2, -3)]
+    # Se buscan números cercanos al que puso el cliente: un poco antes o hasta 30 después
+    # (en un carrito con otros vendedores, entre el número de operación y tu venta están las ventas de los demás)
+    base = int(numero)
+    vecinos = [numero] + [str(base + k) for k in range(-10, 31) if k]
+    revisadas, mas_vieja = 0, ""
     for pg in range(paginas):
         r = ml_get(f"/orders/search?seller={sid}&sort=date_desc&limit=50&offset={pg * 50}")
         if r.status_code != 200:
+            if log is not None:
+                log.append({"consulta": "escaneo de ventas", "estado": r.status_code, "detalle": r.text[:160]})
             break
         res = r.json().get("results", [])
+        revisadas += len(res)
+        if res:
+            mas_vieja = (res[-1].get("date_created") or "")[:10]
         for o in res:
             texto = json.dumps(o)
             if any(v in texto for v in vecinos):
@@ -229,7 +262,8 @@ def escanear_ventas(numero, sid, log=None, paginas=12):
         if len(res) < 50:
             break
     if log is not None:
-        log.append({"consulta": "escaneo de ventas", "estado": 200, "detalle": "no apareció en las últimas ventas"})
+        log.append({"consulta": "escaneo de ventas", "estado": 200, "detalle": "no apareció en las últimas ventas",
+                    "ventas_revisadas": revisadas, "venta_mas_vieja_revisada": mas_vieja})
     return []
 
 
