@@ -519,6 +519,48 @@ button{ cursor:pointer; }
   .m-acct img{ width:100%; height:100%; object-fit:cover; }
 }
 
+/* Tag Tips */
+.tips-list{ max-width:820px; margin:0 auto; display:grid; gap:26px; }
+.tip-group h2{ display:flex; align-items:center; gap:12px; font:800 26px/1.2 "Poppins",sans-serif; margin:0 0 14px; letter-spacing:-.01em; }
+.tip-gico{ width:44px; height:44px; flex:none; border-radius:12px; background:var(--blue-soft); color:var(--blue); display:grid; place-items:center; }
+.tip-gico svg{ width:23px; height:23px; }
+@media (max-width: 860px){ .tip-group h2{ font-size:22px; } .tip-gico{ width:38px; height:38px; } }
+.tip{ border:1px solid var(--line); border-radius:14px; background:var(--surface); margin-bottom:10px; overflow:hidden; transition:border-color .15s, box-shadow .15s; }
+.tip:hover{ border-color:var(--blue); }
+.tip.open{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.tip-q{ width:100%; display:flex; align-items:center; gap:12px; padding:15px 16px; border:none; background:none; text-align:left; color:var(--ink); font:600 15px/1.35 "Inter",sans-serif; cursor:pointer; }
+.tip-emoji{ font-size:20px; width:28px; flex:none; text-align:center; }
+.tip-text{ flex:1; }
+.tip-chev{ width:20px; height:20px; flex:none; color:var(--muted); transition:transform .2s; }
+.tip.open .tip-chev{ transform:rotate(180deg); color:var(--blue); }
+.tip-a{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s ease; }
+.tip.open .tip-a{ grid-template-rows:1fr; }
+.tip-a-in{ overflow:hidden; }
+.tip-a p{ margin:0; padding:0 18px 16px 56px; color:var(--muted); font-size:14.5px; line-height:1.55; }
+.tip-a a{ color:var(--blue); font-weight:700; text-decoration:underline; }
+.tip-lock{ display:flex; align-items:center; gap:12px; margin:0 16px 16px 56px; padding:12px 14px; border-radius:12px; background:var(--blue-soft); flex-wrap:wrap; }
+.tip-lock > span{ font-size:20px; }
+.tip-lock > div{ flex:1; min-width:160px; display:grid; gap:2px; }
+.tip-lock b{ font-size:14px; }
+.tip-lock small{ font-size:12.5px; color:var(--muted); }
+.tip-lock .btn{ padding:8px 14px; font-size:13px; }
+@media (max-width: 860px){
+  .tip-a p{ padding:0 16px 14px 16px; }
+  .tip-lock{ margin:0 12px 14px; }
+  .tip-q{ padding:14px 12px; font-size:14.5px; }
+}
+
+.st-msep{ height:1px; background:var(--line); margin:4px 10px; flex:none; }
+@media (max-width: 860px){ .st-msep{ width:1px; height:22px; margin:0 2px; align-self:center; } }
+
+.tips-promo{ display:flex; align-items:center; gap:16px; padding:20px 22px; border:1px solid var(--ink); border-radius:18px; background:var(--surface); cursor:pointer; margin-bottom:30px; transition:border-color .15s, box-shadow .15s; }
+.tips-promo:hover{ border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+.tips-promo h2{ font:800 22px/1.2 "Poppins",sans-serif; margin:0 0 4px; }
+.tips-promo p{ margin:0; color:var(--muted); font-size:14.5px; }
+.tips-promo > div{ flex:1; min-width:0; }
+.tips-go{ flex:none; font-weight:700; color:var(--blue); font-size:14px; }
+@media (max-width: 860px){ .tips-promo{ flex-wrap:wrap; } .tips-go{ width:100%; } }
+
 /* Mis diseños */
 .my-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
 .my-head p{ margin:0; color:var(--muted); font-size:13px; }
@@ -841,9 +883,12 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
     <div class="st-sep" role="separator"></div>
     <nav class="st-menu" aria-label="Secciones">
       <button class="st-item on" data-sec="start"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Inicio</span></button>
+      <div class="st-msep" role="separator"></div>
       <button class="st-item" data-sec="home"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Diseños</span></button>
       <button class="st-item" data-sec="full"><svg class="i" viewBox="0 0 24 24"><path d="M13.5 2L4 13.5h6.5L9.5 22 20 9.5h-6.6z"/></svg><span>Etiquetas Full</span></button>
       <button class="st-item" data-sec="crop"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6L20 18M8.6 16.4L20 6"/></svg><span>Recortar PDF</span></button>
+      <div class="st-msep" role="separator"></div>
+      <button class="st-item" data-sec="tips"><svg class="i" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1.1 1.3 1.1 2.2h5c0-.9.5-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg><span>Tag Tips</span></button>
       <button class="st-item" data-sec="guide"><svg class="i" viewBox="0 0 24 24"><ellipse cx="7" cy="12" rx="4" ry="8"/><ellipse cx="7" cy="12" rx="1.4" ry="3"/><path d="M7 4h11v14H7M18 18v2.5H9"/></svg><span>Instalar etiquetas</span></button>
     </nav>
     <button class="st-install" id="btnInstall" hidden><svg class="i" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3"/></svg><span><b>Instalar TagStudio</b><small>Usala como una app en tu celu o compu</small></span></button>
@@ -896,6 +941,12 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <p>Iniciá sesión con Google y tus diseños te siguen a todos lados.</p>
         </div>
         <div class="sync-cta" id="syncCta"></div>
+      </section>
+
+      <section class="tips-promo" data-go="tips" role="button" tabindex="0">
+        <span class="tip-gico"><svg class="i" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1.1 1.3 1.1 2.2h5c0-.9.5-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg></span>
+        <div><h2>Tag Tips</h2><p>Consejos y respuestas rápidas para cuidar tu TagShip, pegar bien las etiquetas y resolver los problemas más comunes.</p></div>
+        <span class="tips-go">Ver Tag Tips →</span>
       </section>
     </div>
 
@@ -1082,6 +1133,15 @@ input[type=range]{ width:100%; accent-color:var(--blue); margin:0 0 10px; }
           <div class="cv-status" id="status-bultos" role="status"></div>
         </div>
       </section>
+    </div>
+
+    <!-- ============ TAG TIPS (preguntas libres, respuestas para clientes) ============ -->
+    <div id="tips" hidden>
+      <header class="full-head">
+        <h1>Tag Tips 💡</h1>
+        <p class="crop-sub">Respuestas rápidas para sacarle el máximo a tu TagShip. Tocá una pregunta para ver la respuesta.</p>
+      </header>
+      <div class="tips-list" id="tipsList"></div>
     </div>
 
     <!-- ============ INSTALACIÓN DE ETIQUETAS (libre, sin cuenta) ============ -->
@@ -3239,6 +3299,7 @@ function show(id){
   $('#full').hidden = id !== 'full';
   $('#crop').hidden = id !== 'crop';
   $('#guide').hidden = id !== 'guide';
+  $('#tips').hidden = id !== 'tips';
   $('#queue').hidden = id !== 'queue';
   if (id === 'queue') renderQueue();
   $$('.st-item[data-sec]').forEach(b => b.classList.toggle('on', b.dataset.sec === (id === 'tpl' ? 'home' : id)));
@@ -4072,6 +4133,7 @@ paintThemeButtons();
   else if (location.hash === '#home' || path === '/disenos') show('home');
   else if (location.hash === '#queue' || path === '/cola') show('queue');
   else if (location.hash === '#guide' || path === '/etiquetas') show('guide');
+  else if (location.hash === '#tips' || path === '/tips') show('tips');
   else show('start');
 }
 
@@ -4246,8 +4308,9 @@ function applyLock(){
   ['home','full','crop','tpl','queue'].forEach(id => $('#' + id).classList.toggle('locked', locked));
   if (!locked && fbUser && !queueUnsub) startQueue();
   if (locked) stopQueue();
-  $$('.st-item[data-sec]').forEach(b => b.classList.toggle('is-locked', locked && b.dataset.sec !== 'start' && b.dataset.sec !== 'guide'));
+  $$('.st-item[data-sec]').forEach(b => b.classList.toggle('is-locked', locked && b.dataset.sec !== 'start' && b.dataset.sec !== 'guide' && b.dataset.sec !== 'tips'));
   const gc = $('#guideCta'); if (gc) gc.hidden = !!fbUser || !HAS_SERVER;
+  if (typeof renderTips === 'function') renderTips();
   $$('[data-lock]').forEach(el => { el.hidden = !locked; if (locked) el.innerHTML = lockCardHTML(); });
   renderAccount();
   if (!locked && !$('#start').hidden) renderStart();
@@ -4820,6 +4883,61 @@ $('#btnEditPdf').onclick = () => $('#editPdfIn').click();
 })();
 $('#editPdfIn').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) editPdfFile(f); };
 
+/* ================= Tag Tips ================= */
+const WA_LINK = 'https://wa.me/543496559982';
+const TIP_ICONS = {
+  printer:'<path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/>',
+  tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.6"/>',
+  box:'<path d="M12 2l9 4.5v11L12 22l-9-4.5v-11z"/><path d="M3 6.5l9 4.5 9-4.5M12 11v11"/>',
+  tools:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>'
+};
+const TIPS = [
+  { icon:'printer', title:'La máquina', items:[
+    { e:'✂️', q:'¿Cómo corto la etiqueta correctamente?', a:'Tirá la etiqueta hacia arriba, contra las cuchillas de la parte superior de la máquina. Así sale un corte limpio y el rollo no se corre.' },
+    { e:'🧽', q:'¿Cómo limpio la máquina?', a:'Apagala y abrila. Con un trapito con alcohol, limpiá suavemente el cabezal (la franja donde apoya la etiqueta) y el rodillo de goma, girándolo. Dejá secar un minuto y listo.' },
+    { e:'📅', q:'¿Cada cuánto la limpio?', a:'Recomendamos limpiarla cada 2 meses. Si imprimís mucho, o notás la impresión más clara o con líneas, limpiala antes.' }
+  ]},
+  { icon:'tag', title:'Las etiquetas', items:[
+    { e:'⏳', q:'¿Cuánto dura la impresión?', a:'Varios meses, más que suficiente para que el envío llegue a destino. Para que dure más, evitá dejarlas al sol o cerca del calor, porque el papel térmico se oscurece.' },
+    { e:'🧊', q:'¿Sirven para el freezer?', a:'Sí. Pegala antes de meter el producto al freezer, sobre una superficie seca, así el adhesivo agarra bien.' },
+    { e:'🫒', q:'¿Cómo saco el adhesivo de una etiqueta pegada?', a:'Poné unas gotas de aceite sobre la etiqueta o los restos de pegamento, esperá unos minutos y retiralo con un trapo.' }
+  ]},
+  { icon:'box', title:'En el paquete', items:[
+    { e:'📐', q:'¿Cómo la pego en el paquete?', a:'Siempre sobre una parte plana, sin pliegues ni esquinas. Lo más importante es que el código de barras quede bien liso para que se pueda escanear.' },
+    { e:'🩹', q:'¿Puedo ponerle cinta arriba?', a:'Sí, podés. Solo revisá que la cinta no arrugue ni distorsione los datos, sobre todo el código de barras.' }
+  ]},
+  { icon:'tools', title:'Problemas frecuentes', items:[
+    { e:'⬜', q:'¿Por qué sale la impresión en blanco?', a:`Si compraste etiquetas en otro lado, revisá que sean de papel térmico. Si son de otro material (OPP, ilustración, etc.), la impresora no puede imprimir sobre ellas. Si confirmás que son de papel térmico y sigue saliendo en blanco, escribinos por <a href="${WA_LINK}" target="_blank" rel="noopener">WhatsApp</a>.` },
+    { e:'🌀', q:'¿Por qué la etiqueta sale rara?', a:'Lo más probable es que tengas seleccionado otro tamaño de papel. Te recomendamos ver el video tutorial en la sección <a href="#" data-go-guide>Instalar etiquetas</a>.' },
+    { e:'🔄', q:'¿Por qué salen etiquetas en blanco entre las de envío?', a:'El soporte del rollo está colocado al revés. Abrí la máquina, dalo vuelta, calibrá, y cuando imprimas no vas a tener más problemas.' }
+  ]}
+];
+function tipsUnlocked(){ return accessState === 'active'; }
+function renderTips(){
+  const box = $('#tipsList'); if (!box) return;
+  const open = new Set([...box.querySelectorAll('.tip.open')].map(el => el.dataset.k));
+  const unlocked = tipsUnlocked();
+  box.innerHTML = TIPS.map((g, gi) => `<section class="tip-group">
+      <h2><span class="tip-gico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24">${TIP_ICONS[g.icon]}</svg></span>${esc(g.title)}</h2>
+      ${g.items.map((it, ii) => { const k = gi + '-' + ii; return `<div class="tip ${open.has(k) ? 'open' : ''}" data-k="${k}">
+        <button class="tip-q" aria-expanded="${open.has(k)}"><span class="tip-emoji" aria-hidden="true">${it.e}</span><span class="tip-text">${esc(it.q)}</span><svg class="i tip-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="tip-a"><div class="tip-a-in">${unlocked ? `<p>${it.a}</p>` :
+          `<div class="tip-lock"><span>🔒</span><div><b>Respuesta exclusiva para clientes TagShip</b><small>Iniciá sesión en TagStudio para ver todas las respuestas.</small></div><button class="btn primary" data-tip-login>Iniciar sesión</button></div>`}</div></div>
+      </div>`; }).join('')}
+    </section>`).join('');
+}
+$('#tipsList').addEventListener('click', e => {
+  const q = e.target.closest('.tip-q');
+  if (q){ const t = q.parentElement; t.classList.toggle('open'); q.setAttribute('aria-expanded', t.classList.contains('open')); return; }
+  if (e.target.closest('[data-go-guide]')){ e.preventDefault(); goSection('guide'); return; }
+  if (e.target.closest('[data-tip-login]')){
+    if (!HAS_SERVER){ toast('Iniciar sesión funciona en studio.tagship.ar'); return; }
+    if (!fbUser){ if (fbAuth) signInGoogle(); else toast('Conectando… probá de nuevo en un segundo.'); }
+    else goSection('home');   // ya inició sesión pero falta activar: ahí está el paso del número de compra
+  }
+});
+renderTips();
+
 /* ================= Pantalla de inicio ================= */
 const START_ICONS = {
   design:'<svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
@@ -4830,7 +4948,7 @@ function goSection(sec){
   if (sec === 'home'){ renderMyDesigns(); updateResume(); }
   if (sec === 'start') renderStart();
   show(sec);
-  const path = { start:'/', home:'/disenos', full:'/full', crop:'/recortar', queue:'/cola', guide:'/etiquetas' }[sec];
+  const path = { start:'/', home:'/disenos', full:'/full', crop:'/recortar', queue:'/cola', guide:'/etiquetas', tips:'/tips' }[sec];
   try { history.replaceState(null, '', HAS_SERVER ? path : (sec === 'start' ? location.pathname + location.search : '#' + sec)); } catch(e){}
   if (sec === 'crop' && crop.pdf) cropRenderPage(crop.page);
 }
