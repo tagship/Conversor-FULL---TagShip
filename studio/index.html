@@ -4900,7 +4900,7 @@ const TIPS = [
   { icon:'tag', title:'Las etiquetas', items:[
     { e:'⏳', q:'¿Cuánto dura la impresión?', a:'Varios meses, más que suficiente para que el envío llegue a destino. Para que dure más, evitá dejarlas al sol o cerca del calor, porque el papel térmico se oscurece.' },
     { e:'🧊', q:'¿Sirven para el freezer?', a:'Sí. Pegala antes de meter el producto al freezer, sobre una superficie seca, así el adhesivo agarra bien.' },
-    { e:'🫒', q:'¿Cómo saco el adhesivo de una etiqueta pegada?', a:'Poné unas gotas de aceite sobre la etiqueta o los restos de pegamento, esperá unos minutos y retiralo con un trapo.' }
+    { e:'🫒', q:'¿Cómo saco una etiqueta o el pegamento que quedó?', a:'Poné unas gotas de aceite sobre la etiqueta o los restos, esperá unos minutos y pasá un trapo para sacarlos.' }
   ]},
   { icon:'box', title:'En el paquete', items:[
     { e:'📐', q:'¿Cómo la pego en el paquete?', a:'Siempre sobre una parte plana, sin pliegues ni esquinas. Lo más importante es que el código de barras quede bien liso para que se pueda escanear.' },
@@ -4908,10 +4908,12 @@ const TIPS = [
   ]},
   { icon:'tools', title:'Problemas frecuentes', items:[
     { e:'⬜', q:'¿Por qué sale la impresión en blanco?', a:`Si compraste etiquetas en otro lado, revisá que sean de papel térmico. Si son de otro material (OPP, ilustración, etc.), la impresora no puede imprimir sobre ellas. Si confirmás que son de papel térmico y sigue saliendo en blanco, escribinos por <a href="${WA_LINK}" target="_blank" rel="noopener">WhatsApp</a>.` },
-    { e:'🌀', q:'¿Por qué la etiqueta sale rara?', a:'Lo más probable es que tengas seleccionado otro tamaño de papel. Te recomendamos ver el video tutorial en la sección <a href="#" data-go-guide>Instalar etiquetas</a>.' },
-    { e:'🔄', q:'¿Por qué salen etiquetas en blanco entre las de envío?', a:'El soporte del rollo está colocado al revés. Abrí la máquina, dalo vuelta, calibrá, y cuando imprimas no vas a tener más problemas.' }
+    { e:'🌀', q:'¿Por qué la etiqueta sale mal impresa?', a:`Lo más probable es que esté seleccionado otro tamaño de papel. Mirá el video en <a href="#" data-go-guide>Instalar etiquetas</a>. Si sigue igual, escribinos por <a href="${WA_LINK}" target="_blank" rel="noopener">WhatsApp</a>.` },
+    { e:'🔄', q:'¿Por qué sale una etiqueta en blanco entre cada envío?', a:`Seguramente el soporte del rollo está al revés. Abrí la máquina, dalo vuelta y calibrá. Si sigue pasando, escribinos por <a href="${WA_LINK}" target="_blank" rel="noopener">WhatsApp</a>.` }
   ]}
 ];
+// Problemas frecuentes va primero: pasamos el último grupo al principio
+TIPS.unshift(TIPS.pop());
 function tipsUnlocked(){ return accessState === 'active'; }
 function renderTips(){
   const box = $('#tipsList'); if (!box) return;
@@ -4922,7 +4924,7 @@ function renderTips(){
       ${g.items.map((it, ii) => { const k = gi + '-' + ii; return `<div class="tip ${open.has(k) ? 'open' : ''}" data-k="${k}">
         <button class="tip-q" aria-expanded="${open.has(k)}"><span class="tip-emoji" aria-hidden="true">${it.e}</span><span class="tip-text">${esc(it.q)}</span><svg class="i tip-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="tip-a"><div class="tip-a-in">${unlocked ? `<p>${it.a}</p>` :
-          `<div class="tip-lock"><span>🔒</span><div><b>Respuesta exclusiva para clientes TagShip</b><small>Iniciá sesión en TagStudio para ver todas las respuestas.</small></div><button class="btn primary" data-tip-login>Iniciar sesión</button></div>`}</div></div>
+          `<div class="tip-lock"><span>🔒</span><div><b>Respuesta exclusiva para clientes TagShip</b><small>Iniciá sesión y activá tu cuenta con tu número de compra para verla.</small></div><button class="btn primary" data-tip-login>Iniciar sesión</button></div>`}</div></div>
       </div>`; }).join('')}
     </section>`).join('');
 }
