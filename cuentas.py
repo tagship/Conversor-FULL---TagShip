@@ -4,7 +4,7 @@ Configuración (en Render → Environment):
   FIREBASE_SERVICE_ACCOUNT   JSON completo de la clave privada de Firebase (obligatorio)
   ADMIN_KEY                  una contraseña tuya, para conectar Mercado Libre
   ML_CLIENT_ID / ML_CLIENT_SECRET   datos de tu aplicación de Mercado Libre
-  ML_SKU_PATRON             (opcional) qué SKU cuentan como impresora. Por defecto: tagship + número
+  ML_SKU_PATRON             (opcional) qué SKU cuentan como impresora. Por defecto: tagship solo, o tagship + número
                              + letra opcional (tagship230, tagship15b, tagship56d…). No entran mini ni rollos.
   MAX_CUENTAS_POR_COMPRA     (opcional) cuántas cuentas puede activar un mismo número. Por defecto 2
   BASE_URL                   (opcional) dirección pública. Por defecto https://tagstudio.onrender.com
@@ -36,7 +36,7 @@ ADMIN_KEY = os.environ.get("ADMIN_KEY", "").strip()
 BASE_URL = os.environ.get("BASE_URL", "https://tagstudio.onrender.com").strip().rstrip("/")
 REDIRECT_URI = BASE_URL + "/ml/callback"
 MAX_CUENTAS = int(os.environ.get("MAX_CUENTAS_POR_COMPRA", "2") or 2)
-SKU_RE = re.compile(os.environ.get("ML_SKU_PATRON", r"^tagship\s*\d+\s*[a-z]?$"), re.IGNORECASE)
+SKU_RE = re.compile(os.environ.get("ML_SKU_PATRON", r"^tagship(\s*\d+\s*[a-z]?)?$"), re.IGNORECASE)
 
 _db = None
 _tok = {"access": None, "exp": 0, "seller": None}
