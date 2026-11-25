@@ -1,0 +1,29 @@
+name: Estudio para Windows
+on:
+  push:
+    paths: ["estudio-escritorio/**", ".github/workflows/estudio-escritorio.yml"]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: estudio-escritorio/src-tauri
+      - run: npm i -g @tauri-apps/cli@2
+      - run: tauri build
+        working-directory: estudio-escritorio
+      - shell: pwsh
+        run: Copy-Item (Get-ChildItem estudio-escritorio/src-tauri/target/release/bundle/nsis/*.exe | Select-Object -First 1).FullName Estudio-Instalador.exe
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: estudio-escritorio
+          name: Estudio para Windows
+          body: "Instalador del Estudio (editor de diseños de TagShip). Se actualiza solo: abre https://tagshipstudio.web.app"
+          files: Estudio-Instalador.exe
+          make_latest: false
+          overwrite_files: true

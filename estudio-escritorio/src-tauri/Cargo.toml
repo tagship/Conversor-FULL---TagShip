@@ -1,0 +1,18 @@
+[package]
+name = "estudio"
+version = "1.0.0"
+description = "Estudio: el editor de diseños de TagShip"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde_json = "1"
+
+[profile.release]
+strip = true
+lto = true
+opt-level = "s"
+codegen-units = 1
